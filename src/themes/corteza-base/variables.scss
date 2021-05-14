@@ -1,0 +1,89 @@
+$wideminwidth:767px !default;
+$confortableminwidth:1020px !default;
+
+$logo: 'img/logo.png' !default;
+
+// Paths
+$fonts_dir : './fonts/' !default;
+
+// Typography
+$regular: 'nunito_sansregular' !default;
+$bold: 'nunito_sansbold' !default;
+$semibold: 'nunito_sanssemibold' !default;
+$font-size-base: 1rem !default;
+
+$font-family-base:      $regular !default;
+$headings-font-family:  $semibold !default;
+
+// Color system
+$white:         #fff !default;
+$black:         #000 !default;
+$primary:       #4D7281 !default;
+$secondary:     #90A3B1 !default;
+$success:       #719430 !default;
+$warning:       #F5D380 !default;
+$danger:        #E54122 !default;
+$light:         #E4E9EF !default;
+$dark:          #2D2D2D !default;
+
+// Options
+$enable-rounded:   true !default;
+$enable-gradients: false !default;
+$enable-responsive-font-sizes: true !default;
+
+// Body
+$body-bg: $light !default;
+
+// Card
+$card-border-radius: 1rem !default;
+$card-border-width:  0;
+
+// Tables
+$table-cell-padding-sm: 0.25rem !default;
+
+// Buttons
+$btn-font-size: $font-size-base !default;
+$btn-padding-y: 0.25em !default;
+$btn-padding-x: 1em !default;
+
+$btn-focus-width:       0 !default;
+$btn-focus-box-shadow:  none !default;
+$btn-active-box-shadow: none !default;
+
+$btn-font-size-lg:  16px !default;
+$btn-font-family:   $semibold;
+
+// Navbar
+$navbar-bg:             $white !default;
+$navbar-color:          $black !default;
+$navbar-border:         $primary !default;
+$navbar-active-bg:      $white !default;
+$navbar-active-color:   $primary !default;
+$navbar-active-border:  $primary !default;
+$navbar-hover-bg:       $white !default;
+$navbar-hover-color:    $primary !default;
+$navbar-hover-border:   $primary !default;
+$navbar-height:         50px !default;
+$navbar-padding-y:      0 !default;
+$navbar-padding-x:      0 !default;
+
+$navbar-toggler-font-size:  24px !default;
+$sidebar-width:         250px !default;
+$sidebar-height:        calc(100vh - #{$navbar-height}) !default;
+
+// Pagination
+$pagination-color:        $dark;
+$pagination-disabled-bg:  transparent;
+$pagination-bg:           transparent;
+$pagination-active-bg:    $dark;
+$pagination-border-width: 0;
+
+// Forms
+$input-font-size: $font-size-base !default;
+
+$input-border-color:  $light !default;
+$input-border-width:  2px !default;
+
+$input-btn-focus-width:     0 !default;
+$input-focus-box-shadow:    none !default;
+$input-focus-border-color:  $primary !default;

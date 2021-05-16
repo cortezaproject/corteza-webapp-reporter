@@ -5,5 +5,5 @@ module.exports = buildVueConfig({
   appName: 'reporter',
   appLabel: 'Corteza Reporter Editor',
   theme: 'corteza-base',
-  packageAlias: 'corteza-reporter',
+  packageAlias: 'corteza-webapp-reporter',
 })

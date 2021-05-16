@@ -1,5 +1,5 @@
-import reporter from './reporter'
+import reports from './reports'
 
 export default {
-  reporter,
+  'reporter.reports': reports,
 }

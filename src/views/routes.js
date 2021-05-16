@@ -4,11 +4,14 @@ export default [
   {
     path: '',
     name: 'root',
-    redirect: { name: 'report.list' },
+    redirect: { name: 'reports' },
     component: () => import('./Layout.vue'),
     children: [
-      { name: 'report.list', path: '/list', component: () => import('./Report/Index.vue') },
-      { name: 'dataSource.list', path: '/list', component: () => import('./DataSource/Index.vue') },
+      { name: 'reports', path: '/reports', component: () => import('./Report/Index.vue') },
+      { name: 'reports.view', path: '/reports/:reportID', component: () => import('./Report/Index.vue') },
+      { name: 'reports.create', path: '/reports/new', component: () => import('./Report/Index.vue') },
+      { name: 'reports.edit', path: '/reports/:reportID/edit', component: () => import('./Report/Index.vue') },
+      { name: 'dataSources', path: '/data-sources', component: () => import('./DataSource/Index.vue') },
     ],
   },
 

@@ -15,12 +15,19 @@ import {
   faExclamationTriangle,
   faSearchPlus,
   faSearchMinus,
+  faSearch,
+  faPlus,
+  faThumbtack,
+  faPen,
+  faCogs,
+  faEye,
 } from '@fortawesome/free-solid-svg-icons'
 
 import {
   faEdit,
   faTrashAlt,
   faQuestionCircle,
+  faUser,
 } from '@fortawesome/free-regular-svg-icons'
 
 library.add(
@@ -42,4 +49,11 @@ library.add(
   faQuestionCircle,
   faSearchPlus,
   faSearchMinus,
+  faSearch,
+  faPlus,
+  faUser,
+  faThumbtack,
+  faPen,
+  faCogs,
+  faEye,
 )

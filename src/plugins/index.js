@@ -9,10 +9,15 @@ import { plugins } from '@cortezaproject/corteza-vue'
 
 Vue.use(Router)
 
-Vue.use(BootstrapVue)
+Vue.use(BootstrapVue, {
+  BToast: {
+    // see https://bootstrap-vue.org/docs/components/toast#comp-ref-b-toast-props
+    autoHideDelay: 7000,
+    toaster: 'b-toaster-bottom-right',
+  },
+})
 Vue.use(BootstrapVueIcons)
 
-Vue.use(plugins.Auth(), { app: 'workflow' })
+Vue.use(plugins.Auth(), { app: 'reporter' })
 
 Vue.use(plugins.CortezaAPI('system'))
-Vue.use(plugins.CortezaAPI('compose'))

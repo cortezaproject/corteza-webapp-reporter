@@ -6,7 +6,7 @@
     <grid-layout
       :layout.sync="layout"
       :col-num="24"
-      :row-height="50"
+      :row-height="10"
       vertical-compact
       :is-resizable="editable"
       :is-draggable="editable"

@@ -1,19 +1,20 @@
 <template>
   <wrap
+    v-if="projection"
     v-bind="$props"
     v-on="$listeners"
   >
     <template #header>
       <div
         v-if="projection.title || projection.description"
-        class="py-2 px-3"
+        class="p-2"
       >
-        <h5
+        <h4
           v-if="projection.title"
           class="text-primary mb-0"
         >
           {{ projection.title }}
-        </h5>
+        </h4>
 
         <b-card-text
           v-if="projection.description"
@@ -25,24 +26,19 @@
     </template>
 
     <template #default>
-      <b-container
-        fluid
-        class="h-100 py-2"
+      <div
+        v-if="!processing"
+        class="d-flex"
+        :class="{ 'flex-column': isVertical }"
       >
-        <b-row
-          no-gutters
-          class="h-100"
-        >
-          <b-col
-            v-for="(element, i) in projection.elements"
-            :key="i"
-          >
-            <display-element
-              :display-element="element"
-            />
-          </b-col>
-        </b-row>
-      </b-container>
+        <display-element
+          v-for="(element, i) in projection.elements"
+          :key="i"
+          :display-element="element"
+          :dataset="getDataset(element.name)"
+          class="flex-even"
+        />
+      </div>
     </template>
   </wrap>
 </template>
@@ -69,10 +65,71 @@ export default {
     },
   },
 
+  data () {
+    return {
+      processing: false,
+
+      reportDataframes: {},
+    }
+  },
+
   computed: {
     displayElements () {
       return this.projection.elements || []
     },
+
+    isVertical () {
+      return this.projection.layout === 'vertical'
+    },
+  },
+
+  watch: {
+    'projection.elements': {
+      immediate: true,
+      deep: true,
+      handler (elements = []) {
+        if (elements.length) {
+          this.runReport()
+        }
+      },
+    },
+  },
+
+  methods: {
+    async runReport () {
+      const frames = []
+
+      this.projection.elements.filter(({ kind }) => kind !== 'Text').forEach((element, i) => {
+        const { frames: ff } = element.reportDefinitions()
+        frames.push(...ff)
+      })
+
+      if (frames.length) {
+        this.processing = true
+
+        this.$SystemAPI.reportRunFresh({ steps: this.projection.sources, frames })
+          .then(dataFrames => {
+            this.reportDataframes = dataFrames
+          })
+          .finally(() => {
+            this.processing = false
+          })
+      }
+    },
+
+    getDataset (displayElementName) {
+      if (this.reportDataframes.frames) {
+        return this.reportDataframes.frames.find(({ name }) => name === displayElementName) || {}
+      }
+
+      return {}
+    },
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.flex-even {
+  flex: 1;
+}
+</style>

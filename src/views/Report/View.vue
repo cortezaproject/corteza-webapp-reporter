@@ -90,6 +90,7 @@
 <script>
 import Grid from 'corteza-webapp-reporter/src/components/Report/Grid'
 import Projection from 'corteza-webapp-reporter/src/components/Report/Projections'
+import { system } from '@cortezaproject/corteza-js'
 
 export default {
   name: 'ReportView',
@@ -143,7 +144,7 @@ export default {
 
       return this.$SystemAPI.reportRead({ reportID })
         .then(report => {
-          this.report = report
+          this.report = new system.Report(report)
 
           this.report.projections = this.report.projections.map(({ xywh, ...p }, i) => {
             const [x, y, w, h] = xywh

@@ -1,105 +1,131 @@
 <template>
-  <b-container
-    tag="form"
-    fluid="xl"
+  <div
+    v-if="options"
   >
-    <b-row no-gutters>
-      <b-col v-if="displayElement">
-        <b-container
-          fluid
-          class="px-4 py-3"
+    <b-form-group
+      label="Datasource"
+      label-class="text-primary"
+    >
+      <b-form-select
+        v-model="options.source"
+        :options="sources"
+        @input="sourceChanged"
+      />
+    </b-form-group>
+
+    <b-form-group
+      label="Type"
+      label-class="text-primary"
+    >
+      <b-form-select
+        v-model="options.chartType"
+        :options="chartTypes"
+      />
+    </b-form-group>
+
+    <hr>
+
+    <div
+      v-if="options.source"
+    >
+      <b-form-group
+        label="Label column"
+        label-class="text-primary"
+      >
+        <b-form-select
+          v-model="options.labelColumn"
+          :options="labelColumns"
+          text-field="label"
+          value-field="name"
         >
-          <b-row>
-            <b-col>
-              <fieldset>
-                <b-form-group
-                  label="Color scheme"
-                >
-                  <b-form-select
-                    v-model="displayElement.options.colorScheme"
-                    :options="colorSchemes"
-                    class="mt-1"
-                  >
-                    <template slot="first">
-                      <option
-                        :value="undefined"
-                        disabled
-                      >
-                        {{ $t('chart.colorScheme') }}
-                      </option>
-                    </template>
-                  </b-form-select>
-                </b-form-group>
-              </fieldset>
+          <template #first>
+            <b-form-select-option
+              value=""
+            >
+              None
+            </b-form-select-option>
+          </template>
+        </b-form-select>
+      </b-form-group>
 
-              <!-- Some charts support multiple reports -->
-              <!-- <fieldset
-                v-if="supportsMultipleReports"
-                class="form-group mt-2"
-              >
-                <b-form-group class="mb-2">
-                  <h4 class="d-inline-block">
-                    {{ $t('block.chart.configure.reportsLabel') }}
-                  </h4>
-                  <b-btn
-                    v-if="reportsValid"
-                    class="float-right p-0"
-                    variant="link"
-                    @click="onAddReport"
-                  >
-                    + {{ $t('general.label.add') }}
-                  </b-btn>
-                  <div class="ml-1">
-                    <draggable
-                      v-model="reports"
-                      :options="{ handle:'.handle' }"
-                      class="w-100 d-inline-block"
-                      tag="tbody"
-                    >
-
-                      <report-item
-                        v-for="(r, i) in reports"
-                        :key="i"
-                        :report="r"
-                        :fixed="reports.length === 1"
-                        @edit="onEditReport(i)"
-                        @remove="onRemoveReport(i)"
-                      >
-                        <template #report-label>
-                          <template v-if="r.moduleID">
-                            {{ moduleName(r.moduleID) }}
-                          </template>
-                          <template v-else>
-                            {{ $t('chart.edit.unconfiguredReport') }}
-                          </template>
-                        </template>
-                      </report-item>
-                    </draggable>
-                  </div>
-                </b-form-group>
-              </fieldset> -->
-
-              <!-- Generic report editing component -->
-              <!-- <component
-                :is="reportEditor"
-                v-if="editReport"
-                :report.sync="editReport"
-                :modules="modules"
-                :dimension-field-kind="['Select']"
-                :supported-metrics="1"
-              /> -->
-            </b-col>
-          </b-row>
-        </b-container>
-      </b-col>
-    </b-row>
-  </b-container>
+      <b-form-group
+        label="Data columns"
+        label-class="text-primary"
+      >
+        <column-picker
+          :all-columns="dataColumns"
+          :columns.sync="options.dataColumns"
+        />
+      </b-form-group>
+    </div>
+  </div>
 </template>
 
 <script>
 import base from './base'
+import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
 
 export default {
+
+  components: {
+    ColumnPicker,
+  },
   extends: base,
+
+  data () {
+    return {
+      columns: [],
+    }
+  },
+
+  computed: {
+    chartTypes () {
+      return [
+        { value: 'pie', text: 'Pie' },
+        { value: 'bar', text: 'Bar' },
+        { value: 'line', text: 'Line' },
+      ]
+    },
+
+    labelColumns () {
+      return [
+        ...this.columns.filter(({ kind }) => kind === 'String'),
+      ].sort((a, b) => a.label.localeCompare(b.label))
+    },
+
+    dataColumns () {
+      return [
+        ...this.columns.filter(({ kind }) => kind === 'Number'),
+      ].sort((a, b) => a.label.localeCompare(b.label))
+    },
+  },
+
+  watch: {
+    'options.source': {
+      immediate: true,
+      handler (source) {
+        this.columns = []
+
+        if (source) {
+          const step = this.projection.sources.find(({ load }) => load.name === source)
+          const { frames = [] } = this.displayElement.reportDefinitions()
+
+          this.$SystemAPI.reportRunFresh({ steps: [step], frames })
+            .then(({ frames = [] }) => {
+              const { columns = [] } = frames.find(({ name }) => name === this.displayElement.name) || {}
+              this.columns = columns.sort((a, b) => a.label.localeCompare(b.label))
+            })
+        }
+      },
+    },
+  },
+
+  methods: {
+    sourceChanged () {
+      // Reset columns on user change of source
+      this.options.dataColumns = []
+      this.options.labelColumn = ''
+    },
+  },
 }
 </script>

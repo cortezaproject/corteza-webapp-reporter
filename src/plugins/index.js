@@ -21,3 +21,4 @@ Vue.use(BootstrapVueIcons)
 Vue.use(plugins.Auth(), { app: 'reporter' })
 
 Vue.use(plugins.CortezaAPI('system'))
+Vue.use(plugins.CortezaAPI('compose'))

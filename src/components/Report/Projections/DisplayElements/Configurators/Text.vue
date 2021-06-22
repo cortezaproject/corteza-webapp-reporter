@@ -1,17 +1,20 @@
 <template>
   <b-form-group>
-    <b-form-textarea
+    <rich-text-input
       v-model="displayElement.value"
-      placeholder="Input text..."
-      rows="5"
     />
   </b-form-group>
 </template>
 
 <script>
 import base from './base'
+import RichTextInput from 'corteza-webapp-reporter/src/components/RichTextInput'
 
 export default {
+
+  components: {
+    RichTextInput,
+  },
   extends: base,
 }
 </script>

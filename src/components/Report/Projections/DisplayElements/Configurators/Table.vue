@@ -1,142 +1,192 @@
 <template>
   <div>
     <b-form-group
-      v-slot="{ ariaDescribedby }"
+      label="Datasource"
+      label-class="text-primary"
+    >
+      <b-form-select
+        v-model="options.source"
+        :options="sources"
+        @input="sourceChanged"
+      />
+    </b-form-group>
+
+    <b-form-group
+      v-if="options.source"
+      label="Columns"
+      label-class="text-primary"
+    >
+      <column-picker
+        :all-columns="columns"
+        :columns.sync="options.columns"
+      />
+    </b-form-group>
+
+    <b-row no-gutters>
+      <b-col class="pr-3">
+        <b-form-group
+          label="Head Variant"
+          label-class="text-primary"
+        >
+          <b-form-radio-group
+            v-model="options.headVariant"
+            class="mt-lg-2"
+          >
+            <b-form-radio
+              :value="null"
+              inline
+            >
+              None
+            </b-form-radio>
+            <b-form-radio
+              value="light"
+              inline
+            >
+              Light
+            </b-form-radio>
+            <b-form-radio
+              value="dark"
+              inline
+            >
+              Dark
+            </b-form-radio>
+          </b-form-radio-group>
+        </b-form-group>
+      </b-col>
+      <b-col>
+        <b-form-group
+          label="Table Variant"
+          label-class="text-primary"
+        >
+          <b-form-select
+            v-model="options.tableVariant"
+            :options="tableVariants"
+            class="w-50"
+          />
+        </b-form-group>
+      </b-col>
+    </b-row>
+
+    <b-form-group
       label="Table Options"
-      label-cols-lg="2"
+      label-class="text-primary"
     >
       <b-form-checkbox
         v-model="options.striped"
-        :aria-describedby="ariaDescribedby"
+        inline
       >
         Striped
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.bordered"
-        :aria-describedby="ariaDescribedby"
+        inline
       >
         Bordered
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.borderless"
-        :aria-describedby="ariaDescribedby"
+        inline
       >
         Borderless
       </b-form-checkbox>
       <b-form-checkbox
-        v-model="options.outlined"
-        :aria-describedby="ariaDescribedby"
-      >
-        Outlined
-      </b-form-checkbox>
-      <b-form-checkbox
         v-model="options.small"
-        :aria-describedby="ariaDescribedby"
+        inline
       >
         Small
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.hover"
-        :aria-describedby="ariaDescribedby"
+        inline
       >
         Hover
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.dark"
-        :aria-describedby="ariaDescribedby"
+        inline
       >
         Dark
       </b-form-checkbox>
       <b-form-checkbox
+        v-model="options.responsive"
+        inline
+      >
+        Responsive
+      </b-form-checkbox>
+      <b-form-checkbox
         v-model="options.fixed"
-        :aria-describedby="ariaDescribedby"
+        inline
       >
         Fixed
       </b-form-checkbox>
       <b-form-checkbox
-        v-model="options.footClone"
-        :aria-describedby="ariaDescribedby"
-      >
-        Foot Clone
-      </b-form-checkbox>
-      <b-form-checkbox
         v-model="options.noCollapse"
-        :aria-describedby="ariaDescribedby"
+        inline
       >
         No border collapse
       </b-form-checkbox>
-    </b-form-group>
-
-    <b-form-group
-      v-slot="{ ariaDescribedby }"
-      label="Head Variant"
-      label-cols-lg="2"
-    >
-      <b-form-radio-group
-        v-model="options.headVariant"
-        :aria-describedby="ariaDescribedby"
-        class="mt-lg-2"
-      >
-        <b-form-radio
-          :value="null"
-          inline
-        >
-          None
-        </b-form-radio>
-        <b-form-radio
-          value="light"
-          inline
-        >
-          Light
-        </b-form-radio>
-        <b-form-radio
-          value="dark"
-          inline
-        >
-          Dark
-        </b-form-radio>
-      </b-form-radio-group>
-    </b-form-group>
-
-    <b-form-group
-      label="Table Variant"
-      label-for="table-style-variant"
-      label-cols-lg="2"
-    >
-      <b-form-select
-        id="table-style-variant"
-        v-model="options.tableVariant"
-        :options="tableVariants"
-      >
-        <template #first>
-          <option value="">
-            -- None --
-          </option>
-        </template>
-      </b-form-select>
     </b-form-group>
   </div>
 </template>
 
 <script>
 import base from './base'
+import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
 
 export default {
+
+  components: {
+    ColumnPicker,
+  },
   extends: base,
 
   data () {
     return {
-      tableVariants: [
-        'primary',
-        'secondary',
-        'info',
-        'danger',
-        'warning',
-        'success',
-        'light',
-        'dark',
-      ],
+      columns: [],
     }
+  },
+
+  computed: {
+    tableVariants () {
+      return [
+        { value: '', text: 'None' },
+        { value: 'primary', text: 'Primary' },
+        { value: 'secondary', text: 'Secondary' },
+        { value: 'info', text: 'Info' },
+        { value: 'danger', text: 'Danger' },
+        { value: 'warning', text: 'Warning' },
+        { value: 'success', text: 'Success' },
+        { value: 'light', text: 'Light' },
+        { value: 'dark', text: 'Dark' },
+      ]
+    },
+  },
+
+  watch: {
+    'options.source': {
+      immediate: true,
+      handler (source) {
+        this.columns = []
+
+        if (source) {
+          const step = this.projection.sources.find(({ load }) => load.name === source)
+          const { frames = [] } = this.displayElement.reportDefinitions()
+
+          this.$SystemAPI.reportRunFresh({ steps: [step], frames })
+            .then(({ frames = [] }) => {
+              const { columns = [] } = frames.find(({ name }) => name === this.displayElement.name) || {}
+              this.columns = columns
+            })
+        }
+      },
+    },
+  },
+
+  methods: {
+    sourceChanged () {
+      // Reset columns on user change of source
+      this.options.columns = []
+    },
   },
 }
 </script>

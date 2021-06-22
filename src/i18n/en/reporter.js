@@ -33,6 +33,7 @@ export default {
       back: 'Back',
       delete: 'Delete',
       save: 'Save',
+      add: '+ Add',
     },
   },
 

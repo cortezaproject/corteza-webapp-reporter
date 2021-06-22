@@ -1,3 +1,5 @@
+import { system } from '@cortezaproject/corteza-js'
+
 export default {
   data () {
     return {
@@ -12,7 +14,7 @@ export default {
 
       return this.$SystemAPI.reportRead({ reportID })
         .then(report => {
-          this.report = report
+          this.report = new system.Report(report)
         })
         .catch(this.toastErrorHandler(this.$t('notification.report.fetchFailed')))
         .finally(() => {
@@ -27,7 +29,7 @@ export default {
       if (this.isNew) {
         return this.$SystemAPI.reportCreate(this.report)
           .then(report => {
-            this.report = report
+            this.report = new system.Report(report)
             this.toastSuccess(this.$t('notification.report.created'))
             this.$router.push({ name: 'report.edit', params: { reportID: report.reportID } })
           })
@@ -38,7 +40,7 @@ export default {
       } else {
         return this.$SystemAPI.reportUpdate(this.report)
           .then(report => {
-            this.report = report
+            this.report = new system.Report(report)
             this.toastSuccess(this.$t('notification.report.updated'))
           })
           .catch(this.toastErrorHandler(this.$t('notification.report.updateFailed')))

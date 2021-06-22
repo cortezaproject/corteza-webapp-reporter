@@ -5,6 +5,12 @@ export default {
       type: Object,
       required: true,
     },
+
+    dataset: {
+      type: Object,
+      required: false,
+      default: undefined,
+    },
   },
 
   computed: {

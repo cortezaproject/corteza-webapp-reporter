@@ -1,5 +1,6 @@
 <template>
   <div
+    class="p-2"
     v-html="displayElement.value"
   />
 </template>

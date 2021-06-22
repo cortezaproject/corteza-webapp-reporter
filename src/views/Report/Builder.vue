@@ -70,11 +70,12 @@
             <c-input-confirm
               size="md"
               variant="link text-danger"
-              @confirmed="projections.splice(index, 1)"
+              @confirmed="deleteProjection(index)"
             />
           </div>
 
           <projection
+            v-if="block"
             :projection="block"
             :index="index"
           />
@@ -91,7 +92,7 @@
       body-class="px-0 py-3"
     >
       <selector
-        @select="createDisplayElement"
+        @select="addDisplayElement"
       />
     </b-modal>
 
@@ -121,7 +122,7 @@
         >
           <b-form-group
             label="Title"
-            class="text-primary"
+            label-class="text-primary"
           >
             <b-form-input
               v-model="currentProjection.title"
@@ -132,17 +133,28 @@
 
           <b-form-group
             label="Description"
-            class="text-primary"
+            label-class="text-primary"
           >
             <b-form-textarea
               v-model="currentProjection.description"
               placeholder="Projection description"
             />
           </b-form-group>
+
+          <b-form-group
+            label="Layout"
+            label-class="text-primary"
+          >
+            <b-form-radio-group
+              v-model="currentProjection.layout"
+              :options="projectionLayoutOptions"
+              buttons
+              button-variant="outline-primary"
+            />
+          </b-form-group>
         </b-tab>
 
         <b-tab
-          v-if="currentProjection.elements.length"
           :active="!!currentProjection.elements.length"
           title="Display elements"
         >
@@ -155,24 +167,42 @@
                 cols="2"
               >
                 <b-list-group>
-                  <b-list-group-item
-                    v-for="(element, index) in currentDisplayElements"
-                    :key="index"
-                    button
-                    :active="currentDisplayElementIndex ? currentDisplayElementIndex === index : index === 0"
-                    @click="setCurrentDisplayElement(index)"
+                  <draggable
+                    :list.sync="currentDisplayElements"
+                    group="display-elements"
                   >
-                    {{ element.name || element.kind }}
+                    <b-list-group-item
+                      v-for="(element, index) in currentDisplayElements"
+                      :key="index"
+                      button
+                      :active="currentDisplayElementIndex ? currentDisplayElementIndex === index : index === 0"
+                      :class="{ 'rounded-top': index === 0 }"
+                      @click="setCurrentDisplayElement(index)"
+                    >
+                      {{ element.kind || element.name }}
+                    </b-list-group-item>
+                  </draggable>
+
+                  <b-list-group-item
+                    button
+                    class="text-primary rounded-top"
+                    :class="{ 'border-top-0': currentDisplayElements.length }"
+                    @click="openDisplayElementSelector(currentProjectionIndex)"
+                  >
+                    + Add
                   </b-list-group-item>
                 </b-list-group>
               </b-col>
               <b-col
+                v-if="currentDisplayElementIndex !== undefined"
                 cols="10"
                 class="p-0"
               >
                 <configurator
                   v-if="currentDisplayElement"
                   :display-element="currentDisplayElement"
+                  :projection="currentProjection"
+                  class="pr-2"
                 />
 
                 <c-input-confirm
@@ -193,7 +223,61 @@
         <b-tab
           title="Data sources"
         >
-          Data sources
+          <b-container
+            fluid
+            class="p-0"
+          >
+            <b-row>
+              <b-col
+                cols="2"
+              >
+                <b-list-group>
+                  <b-list-group-item
+                    v-for="(element, index) in currentProjection.sources"
+                    :key="index"
+                    button
+                    :active="currentDataSourceIndex ? currentDataSourceIndex === index : index === 0"
+                    class="d-flex justify-content-between"
+                    @click="currentDataSourceIndex = index"
+                  >
+                    <span
+                      class="d-inline-block text-truncate"
+                    >
+                      {{ element.load.name || index }}
+                    </span>
+                  </b-list-group-item>
+                  <b-list-group-item
+                    key="-1"
+                    button
+                    class="text-primary"
+                    @click="addDatasource(currentProjectionIndex)"
+                  >
+                    + Add
+                  </b-list-group-item>
+                </b-list-group>
+              </b-col>
+              <b-col
+                v-if="currentDataSourceIndex !== undefined"
+                cols="10"
+              >
+                <datasource
+                  :sources.sync="currentProjection.sources"
+                  :current-source-index="currentDataSourceIndex"
+                />
+
+                <c-input-confirm
+                  variant="danger"
+                  size="lg"
+                  size-confirm="lg"
+                  :borderless="false"
+                  class="sticky-bot"
+                  @confirmed="deleteCurrentDataSource"
+                >
+                  {{ $t('general.label.delete') }}
+                </c-input-confirm>
+              </b-col>
+            </b-row>
+          </b-container>
         </b-tab>
       </b-tabs>
     </b-modal>
@@ -219,8 +303,10 @@
 <script>
 import { reporter } from '@cortezaproject/corteza-js'
 import report from 'corteza-webapp-reporter/src/mixins/report'
+import Draggable from 'vuedraggable'
 import Grid from 'corteza-webapp-reporter/src/components/Report/Grid'
 import Projection from 'corteza-webapp-reporter/src/components/Report/Projections'
+import Datasource from 'corteza-webapp-reporter/src/components/Report/Projections/Datasources'
 import Selector from 'corteza-webapp-reporter/src/components/Report/Projections/DisplayElements/Selector'
 import EditorToolbar from 'corteza-webapp-reporter/src/components/EditorToolbar'
 import Configurator from 'corteza-webapp-reporter/src/components/Report/Projections/DisplayElements/Configurators'
@@ -230,10 +316,12 @@ export default {
 
   components: {
     Grid,
+    Draggable,
     Selector,
     Projection,
     Configurator,
     EditorToolbar,
+    Datasource,
   },
 
   mixins: [
@@ -251,6 +339,8 @@ export default {
 
       currentDisplayElementIndex: undefined,
       currentDisplayElement: undefined,
+
+      currentDataSourceIndex: undefined,
 
       displayElementSelector: {
         show: false,
@@ -280,6 +370,13 @@ export default {
     reportEditor () {
       return this.report ? { name: 'report.edit', params: { reportID: this.report.reportID } } : undefined
     },
+
+    projectionLayoutOptions () {
+      return [
+        { text: 'Horizontal', value: 'horizontal' },
+        { text: 'Vertical', value: 'vertical' },
+      ]
+    },
   },
 
   watch: {
@@ -303,6 +400,11 @@ export default {
 
     handleProjectionSave () {
       this.report.projections = this.projections.map(({ moved, x, y, w, h, i, ...p }) => {
+        p.elements = p.elements.map((e, index) => {
+          e.name = `${index}_${e.kind}`
+          return e
+        })
+
         return { ...p, key: `${i}`, xywh: [x, y, w, h] }
       })
 
@@ -319,9 +421,16 @@ export default {
       })
     },
 
+    // If projection is added/reordered or deleted, vue-grid-layout needs fresh indexes to work properly
+    reindexProjections (projections = this.projections) {
+      this.projections = projections.map((projection, i) => {
+        return { ...projection, i }
+      })
+    },
+
     setCurrentDisplayElement (index) {
       this.currentDisplayElementIndex = index
-      this.currentDisplayElement = this.currentDisplayElements[index]
+      this.currentDisplayElement = index !== undefined ? this.currentDisplayElements[index] : undefined
     },
 
     openDisplayElementSelector (index) {
@@ -343,10 +452,7 @@ export default {
         h,
       }
 
-      // Reindex projections
-      this.projections = [newProjection, ...this.projections].map((projection, i) => {
-        return { ...projection, i }
-      })
+      this.reindexProjections([newProjection, ...this.projections])
     },
 
     updateProjection () {
@@ -355,21 +461,31 @@ export default {
 
     editProjection (index = undefined) {
       this.currentProjectionIndex = index
-      this.currentProjection = index ? { ...this.projections[index] } : undefined
+      this.currentProjection = index !== undefined ? { ...this.projections[index] } : undefined
+      this.currentDataSourceIndex = this.currentProjection.sources.length ? 0 : undefined
+      this.setCurrentDisplayElement(this.currentProjection.elements.length ? 0 : undefined)
       this.projectionConfigurator.show = true
-      this.setCurrentDisplayElement(0)
+    },
+
+    deleteProjection (index = undefined) {
+      this.reindexProjections(this.projections.filter((p, i) => index !== i))
     },
 
     deleteCurrentDisplayElement () {
       this.currentProjection.elements.splice(this.currentDisplayElementIndex, 1)
-      this.setCurrentDisplayElement(0)
+      this.currentDisplayElementIndex = this.currentProjection.elements.length ? 0 : undefined
+      this.setCurrentDisplayElement(this.currentDisplayElementIndex)
     },
 
-    createDisplayElement (kind) {
-      const newDisplayElement = reporter.ElementFactory.Make({
-        name: '',
-        kind,
-      })
+    deleteCurrentDataSource () {
+      this.currentProjection.sources.splice(this.currentDataSourceIndex, 1)
+      this.currentDataSourceIndex = this.currentProjection.sources.length ? 0 : undefined
+    },
+
+    addDisplayElement (kind) {
+      const name = `${this.projections[this.currentProjectionIndex].elements.length}_${kind}`
+
+      const newDisplayElement = reporter.ElementFactory.Make({ name, kind })
 
       const projectionElements = this.projections[this.currentProjectionIndex].elements || []
       this.$set(this.projections[this.currentProjectionIndex], 'elements', [
@@ -382,6 +498,18 @@ export default {
       this.displayElementSelector.show = false
 
       this.editProjection(this.currentProjectionIndex)
+      this.setCurrentDisplayElement(this.currentProjection.elements.length - 1)
+    },
+
+    addDatasource () {
+      this.currentProjection.sources.push(reporter.StepFactory({
+        load: {
+          source: 'composeRecords',
+          definition: {},
+        },
+      }))
+
+      this.currentDataSourceIndex = this.currentProjection.sources.length - 1
     },
   },
 }

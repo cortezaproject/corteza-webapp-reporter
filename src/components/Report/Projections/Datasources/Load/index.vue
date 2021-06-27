@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="currentDatasource"
+    v-if="datasource"
   >
     <b-row>
       <b-col>
@@ -9,7 +9,7 @@
           label-class="text-primary"
         >
           <b-form-input
-            v-model="currentDatasource.load.name"
+            v-model="datasource.load.name"
             placeholder="Datasource Name..."
           />
         </b-form-group>
@@ -20,19 +20,19 @@
           label-class="text-primary"
         >
           <b-form-select
-            v-model="currentDatasource.load.source"
+            v-model="datasource.load.source"
             :options="supportedSources"
           />
         </b-form-group>
       </b-col>
     </b-row>
 
-    <hr v-if="currentDatasource.load.source">
+    <hr v-if="datasource.load.source">
 
     <component
-      :is="loader(currentDatasource.load.source)"
-      v-if="currentDatasource.load.source"
-      :definition.sync="currentDatasource.load.definition"
+      :is="loader(datasource.load.source)"
+      v-if="datasource.load.source"
+      :definition.sync="datasource.load.definition"
     />
   </div>
 </template>
@@ -42,22 +42,15 @@ import loader from './loader'
 
 export default {
   props: {
-    sources: {
-      type: Array,
+    datasource: {
+      type: Object,
       required: true,
-      default: () => [],
-    },
-
-    currentSourceIndex: {
-      type: Number,
-      required: true,
+      default: () => ({}),
     },
   },
 
   data () {
     return {
-      currentDatasource: undefined,
-
       // @todo get this from the API
       supportedSources: [
         {
@@ -75,23 +68,8 @@ export default {
     }
   },
 
-  watch: {
-    currentSourceIndex: {
-      immediate: true,
-      handler (index) {
-        this.currentDatasource = index >= 0 ? this.sources[index] : undefined
-      },
-    },
-  },
-
   methods: {
     loader: loader,
-
-    deleteDatasource () {
-      this.sources.splice(this.currentSourceIndex, 1)
-
-      this.$emit('update:sources', this.sources)
-    },
   },
 }
 </script>

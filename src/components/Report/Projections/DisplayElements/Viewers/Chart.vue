@@ -1,8 +1,6 @@
 <template>
   <div class="d-flex">
-    <canvas
-      ref="chart"
-    />
+    <canvas ref="chart" />
   </div>
 </template>
 <script>
@@ -19,14 +17,26 @@ export default {
     }
   },
 
+  computed: {
+    // @todo temporary solution; dataframes can have multiple entries, not just one
+    //       you get multiple dataframes when you join data.
+    dataframe () {
+      if (!this.dataframes || !this.dataframes.length) {
+        return undefined
+      }
+
+      return this.dataframes[0]
+    },
+  },
+
   watch: {
-    dataset: {
+    dataframe: {
       immediate: true,
       deep: true,
-      handler (dataset = {}) {
-        if (dataset.columns.length) {
+      handler (dataframe = {}) {
+        if (dataframe.columns.length) {
           this.$nextTick(() => {
-            this.renderChart(dataset)
+            this.renderChart(dataframe)
           })
         }
       },
@@ -34,7 +44,7 @@ export default {
   },
 
   methods: {
-    renderChart (dataset) {
+    renderChart (dataframe) {
       if (this.chart) {
         if (this.chart) {
           this.chart.destroy()
@@ -47,24 +57,24 @@ export default {
       this.chartConfig = {
         type: chartType,
         data: {
-          labels: this.getLabels(labelColumn, dataset),
-          datasets: this.getChartDatasets(dataColumns, dataset),
+          labels: this.getLabels(labelColumn, dataframe),
+          datasets: this.getChartDatasets(dataColumns, dataframe),
         },
       }
 
       this.chart = new Chart(ctx, this.chartConfig)
     },
 
-    getLabels (labelColumn, dataset) {
+    getLabels (labelColumn, dataframe) {
       const labels = []
 
-      if (labelColumn && dataset) {
-        const columnIndex = this.getColIndex(dataset, labelColumn)
+      if (labelColumn && dataframe) {
+        const columnIndex = this.getColIndex(dataframe, labelColumn)
         if (columnIndex < 0) {
           throw new Error(`Column ${labelColumn} not found`)
         }
 
-        for (const row of dataset.rows) {
+        for (const row of dataframe.rows) {
           labels.push(row[columnIndex])
         }
       }
@@ -72,14 +82,14 @@ export default {
       return labels
     },
 
-    getChartDatasets (dataColumns, dataset) {
+    getChartDatasets (dataColumns, dataframe) {
       const chartDataset = []
 
-      if (dataColumns.length && dataset) {
+      if (dataColumns.length && dataframe) {
         // Find indexes for all columns we wish to have
         const columnIndexes = []
         for (const column of dataColumns) {
-          const columnIndex = this.getColIndex(dataset, column.name)
+          const columnIndex = this.getColIndex(dataframe, column.name)
           if (columnIndex < 0) {
             throw new Error(`Column ${column} not found`)
           }
@@ -89,7 +99,7 @@ export default {
         // Now make all of the datasets
         for (const columnIndex of columnIndexes) {
           const d = {
-            label: dataset.columns[columnIndex].name,
+            label: dataframe.columns[columnIndex].name,
             backgroundColor: [
               '#48639C',
               '#4C4C9D',
@@ -101,7 +111,7 @@ export default {
             data: [],
           }
 
-          for (const row of dataset.rows) {
+          for (const row of dataframe.rows) {
             d.data.push(row[columnIndex])
           }
 
@@ -112,15 +122,11 @@ export default {
       return chartDataset
     },
 
-    getColIndex (dataset, col) {
-      if (!dataset || !dataset.columns) return -1
+    getColIndex (dataframe, col) {
+      if (!dataframe || !dataframe.columns) return -1
 
-      return dataset.columns.findIndex(({ name }) => name === col)
+      return dataframe.columns.findIndex(({ name }) => name === col)
     },
   },
 }
 </script>
-
-<style>
-
-</style>

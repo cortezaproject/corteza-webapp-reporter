@@ -13,31 +13,38 @@
     :no-border-collapse="options.noCollapse"
     class="h-100 mb-0"
   >
-    <b-thead
-      :head-variant="options.headVariant"
-    >
-      <b-tr>
+    <b-thead head-variant="dark">
+      <b-tr
+        v-for="(h, i) of tabelify.headers"
+        :key="i"
+      >
         <b-th
-          v-for="(column, i) in tabelify.columns"
-          :key="i"
+          v-for="(col, j) of h"
+          :key="j"
+          v-bind="col.attrs"
         >
-          {{ column.name }}
+          {{ col.name }}
         </b-th>
       </b-tr>
     </b-thead>
-    <b-tbody
-      class="h-100"
-    >
+    <b-tbody>
       <b-tr
-        v-for="(row, i) in tabelify.rows"
+        v-for="(r, i) of tabelify.rows"
         :key="i"
       >
-        <b-td
-          v-for="(value, k) in row"
-          :key="k"
+        <component
+          :is="c.slot === 'header' ? 'b-th' : 'b-td'"
+          v-for="(c, j) of r"
+          :key="j"
+          v-bind="c.attrs || {}"
         >
-          {{ value }}
-        </b-td>
+          <template v-if="c.slot === 'header'">
+            {{ c.name }}
+          </template>
+          <template v-else>
+            {{ c.value }}
+          </template>
+        </component>
       </b-tr>
     </b-tbody>
   </b-table-simple>
@@ -50,110 +57,133 @@ export default {
   extends: base,
 
   computed: {
-    tabelify () {
-      let { columns = [], rows = [] } = this.dataset
+    localFrame () {
+      return this.dataframes[0]
+    },
+    localColumns () {
+      return this.localFrame.columns
+    },
 
-      if (columns.length) {
-        // return {
-        //   columns: this.castDatasetColumns(columns, undefined, columns.length),
-        //   rows: this.castDatasetRows(rows),
-        // }
-
-        // Get selected column indexes
-        const columnIndexes = this.options.columns.map(({ name }) => {
-          return columns.findIndex(c => name === c.name)
-        })
-
-        columns = this.options.columns
-
-        rows = rows.map(values => {
-          const rowValues = []
-          columnIndexes.forEach(i => {
-            rowValues.push(values[i])
-          })
-
-          return rowValues
-        })
+    foreignFrames () {
+      return this.dataframes.slice(1)
+    },
+    hasForeignFrames () {
+      return !!this.foreignFrames.length
+    },
+    foreignColumns () {
+      if (!this.hasForeignFrames) {
+        return undefined
       }
 
-      return { columns, rows }
+      return this.foreignFrames[0].columns
     },
-  },
+    foreignLocalCol () {
+      if (!this.hasForeignFrames) {
+        return
+      }
 
-  methods: {
-    castDatasetRows (datasetRows = []) {
+      // they are all the same, so this is ok
+      return this.foreignFrames[0].relColumn
+    },
+
+    localColIndex () {
+      if (!this.hasForeignFrames) {
+        return -1
+      }
+
+      for (let i = 0; i < this.localColumns.length; i++) {
+        const c = this.localColumns[i]
+        if (c.name === this.foreignLocalCol) {
+          return i
+        }
+      }
+
+      return -1
+    },
+    foreignFramesIndexed () {
+      if (!this.hasForeignFrames) {
+        return
+      }
+
+      const i = {}
+      for (const f of this.foreignFrames) {
+        i[f.refValue] = f
+      }
+
+      return i
+    },
+
+    tabelify () {
+      return {
+        headers: this.tabelifyHeaders,
+        rows: this.tabelifyRows,
+      }
+    },
+
+    tabelifyHeaders () {
+      const headers = []
+      if (this.hasForeignFrames) {
+        // the first header row is for local columns
+        const aux = this.localColumns.map(c => ({ ...c }))
+        for (const c of aux.slice(0, this.localColIndex)) {
+          c.attrs = { rowspan: 2 }
+        }
+
+        aux[this.localColIndex].attrs = { colspan: this.foreignColumns.length }
+
+        for (const c of aux.slice(this.localColIndex + 1)) {
+          c.attrs = { rowspan: 2 }
+        }
+
+        headers.push(aux, this.foreignColumns)
+      } else {
+        headers.push(this.localColumns.map(c => ({ ...c })))
+      }
+
+      return headers
+    },
+
+    // TabelifyRows returns a list of local rows with nested foreign rows.
+    // The data is shaped with colspans and rowspans.
+    tabelifyRows () {
       const rows = []
 
-      for (const r of datasetRows) {
-        const row = []
-        const attrs = {
-          rowspan: 1,
-        }
-
-        rows.push(row)
-
-        for (const c of r) {
-          if (!c) {
-            row.push({
-              variable: undefined,
-              attrs,
-            })
-          } else {
-            if (c.matrix) {
-              const aux = this.castDatasetRows(c.matrix)
-              attrs.rowspan += (aux.length - 1)
-              for (const ac of aux[0]) {
-                if (ac) {
-                  row.push(ac)
-                }
-              }
-              rows.push(...aux.slice(1))
-            } else {
-              row.push({
-                variable: c.variable,
-                attrs,
-                value: c,
-              })
-            }
-          }
-        }
+      // nothing special todo
+      if (!this.hasForeignFrames) {
+        return this.localFrame.rows.map(r => r.map(c => ({ value: c, attrs: {} })))
       }
 
-      return rows
-    },
+      for (const r of this.localFrame.rows) {
+        const out = []
+        rows.push(out)
 
-    castDatasetColumns (columns, padLeft = undefined, reqSize = undefined) {
-      const row = []
-      const rows = [row]
-      const seenDimensions = new Set([])
+        const c = r[this.localColIndex]
+        const ff = this.foreignFramesIndexed[c]
 
-      const rootDim = columns[0].dimension
-      const attrs = { rowspan: 1 }
+        out.push(...r.map(c => ({ value: c, attrs: {} })))
 
-      for (const [i, c] of columns.entries()) {
-        if (seenDimensions.has(c.dimension)) {
+        // no foreign; nothing to do
+        if (!ff) {
           continue
         }
-        if (c.dimension && c.dimension !== rootDim) {
-          const aux = this.castDatasetColumns(columns.slice(i), i, reqSize)
 
-          row.push({
-            name: c.dimension,
-            attrs: { colspan: aux[0].length },
-          })
-          rows.push(...aux)
-
-          attrs.rowspan += (aux[0].rowspan || 1)
-
-          seenDimensions.add(c.dimension)
-        } else if (rootDim && !c.dimension) {
-          return rows
-        } else {
-          row.push({
-            name: c.name,
-            attrs,
-          })
+        // give local cell rowspan
+        for (const c of out.slice(0, this.localColIndex)) {
+          c.attrs = {
+            rowspan: ff.rows.length + 1,
+          }
         }
+        for (const c of out.slice(this.localColIndex + 1)) {
+          c.attrs = {
+            rowspan: ff.rows.length + 1,
+          }
+        }
+
+        // replace local column with foreign header
+        out.splice(this.localColIndex, 1, ...this.foreignColumns.map(c => ({ ...c, slot: 'header' })))
+
+        // add foreign rows
+        rows.push(...ff.rows.map(r => r.map(c => ({ value: c, attrs: {} }))))
       }
 
       return rows

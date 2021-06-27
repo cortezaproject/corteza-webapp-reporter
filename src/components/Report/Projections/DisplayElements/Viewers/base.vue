@@ -6,10 +6,10 @@ export default {
       required: true,
     },
 
-    dataset: {
-      type: Object,
+    dataframes: {
+      type: Array,
       required: false,
-      default: undefined,
+      default: () => [],
     },
   },
 

@@ -233,7 +233,7 @@
               >
                 <b-list-group>
                   <b-list-group-item
-                    v-for="(element, index) in currentProjection.sources"
+                    v-for="(source, index) in currentProjection.sources"
                     :key="index"
                     button
                     :active="currentDataSourceIndex ? currentDataSourceIndex === index : index === 0"
@@ -243,7 +243,7 @@
                     <span
                       class="d-inline-block text-truncate"
                     >
-                      {{ element.load.name || index }}
+                      {{ sourceLabel(source, index) }}
                     </span>
                   </b-list-group-item>
                   <b-list-group-item
@@ -252,7 +252,24 @@
                     class="text-primary"
                     @click="addDatasource(currentProjectionIndex)"
                   >
-                    + Add
+                    + Load
+                  </b-list-group-item>
+                  <!-- @todo model the ts interface definition -->
+                  <!-- <b-list-group-item
+                    key="-2"
+                    button
+                    class="text-primary"
+                    @click="addDatasource('group')"
+                  >
+                    + Group
+                  </b-list-group-item> -->
+                  <b-list-group-item
+                    key="-3"
+                    button
+                    class="text-primary"
+                    @click="addDatasource('join')"
+                  >
+                    + Join
                   </b-list-group-item>
                 </b-list-group>
               </b-col>
@@ -260,9 +277,11 @@
                 v-if="currentDataSourceIndex !== undefined"
                 cols="10"
               >
-                <datasource
-                  :sources.sync="currentProjection.sources"
-                  :current-source-index="currentDataSourceIndex"
+                <component
+                  :is="datasourceComponent(currentProjection.sources[currentDataSourceIndex])"
+                  :sources="currentProjection.sources"
+                  :index="currentDataSourceIndex"
+                  :datasource.sync="currentProjection.sources[currentDataSourceIndex]"
                 />
 
                 <c-input-confirm
@@ -306,7 +325,7 @@ import report from 'corteza-webapp-reporter/src/mixins/report'
 import Draggable from 'vuedraggable'
 import Grid from 'corteza-webapp-reporter/src/components/Report/Grid'
 import Projection from 'corteza-webapp-reporter/src/components/Report/Projections'
-import Datasource from 'corteza-webapp-reporter/src/components/Report/Projections/Datasources'
+import datasource from 'corteza-webapp-reporter/src/components/Report/Projections/Datasources/loader'
 import Selector from 'corteza-webapp-reporter/src/components/Report/Projections/DisplayElements/Selector'
 import EditorToolbar from 'corteza-webapp-reporter/src/components/EditorToolbar'
 import Configurator from 'corteza-webapp-reporter/src/components/Report/Projections/DisplayElements/Configurators'
@@ -321,7 +340,6 @@ export default {
     Projection,
     Configurator,
     EditorToolbar,
-    Datasource,
   },
 
   mixins: [
@@ -391,6 +409,21 @@ export default {
   },
 
   methods: {
+    datasourceComponent (d) {
+      for (const k in d) {
+        return datasource(k)
+      }
+    },
+
+    sourceLabel (source, currentIndex) {
+      for (const v of Object.values(source)) {
+        if (v && v.name) {
+          return v.name
+        }
+      }
+      return `${currentIndex}`
+    },
+
     refresh () {
       this.fetchReport(this.reportID)
         .then(() => {
@@ -501,13 +534,28 @@ export default {
       this.setCurrentDisplayElement(this.currentProjection.elements.length - 1)
     },
 
-    addDatasource () {
-      this.currentProjection.sources.push(reporter.StepFactory({
-        load: {
-          source: 'composeRecords',
-          definition: {},
-        },
-      }))
+    addDatasource (k = '') {
+      switch (k) {
+        case 'group':
+          this.currentProjection.sources.push(reporter.StepFactory({
+            group: {},
+          }))
+          break
+
+        case 'join':
+          this.currentProjection.sources.push(reporter.StepFactory({
+            join: {},
+          }))
+          break
+
+        default:
+          this.currentProjection.sources.push(reporter.StepFactory({
+            load: {
+              source: 'composeRecords',
+              definition: {},
+            },
+          }))
+      }
 
       this.currentDataSourceIndex = this.currentProjection.sources.length - 1
     },

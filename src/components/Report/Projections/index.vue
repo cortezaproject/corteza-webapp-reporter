@@ -35,7 +35,7 @@
           v-for="(element, i) in projection.elements"
           :key="i"
           :display-element="element"
-          :dataset="getDataset(element.name)"
+          :dataframes="getFrames(element.name)"
           class="flex-even"
         />
       </div>
@@ -48,6 +48,8 @@ import Wrap from './Wrap'
 import DisplayElement from './DisplayElements/Viewers'
 
 export default {
+  name: 'Projection',
+
   components: {
     Wrap,
     DisplayElement,
@@ -100,7 +102,7 @@ export default {
       const frames = []
 
       this.projection.elements.filter(({ kind }) => kind !== 'Text').forEach((element, i) => {
-        const { frames: ff } = element.reportDefinitions()
+        const { frames: ff } = element.reportDefinitions('', this.projection.sources)
         frames.push(...ff)
       })
 
@@ -117,9 +119,9 @@ export default {
       }
     },
 
-    getDataset (displayElementName) {
+    getFrames (displayElementName) {
       if (this.reportDataframes.frames) {
-        return this.reportDataframes.frames.find(({ name }) => name === displayElementName) || {}
+        return this.reportDataframes.frames.filter(({ name }) => name === displayElementName) || {}
       }
 
       return {}

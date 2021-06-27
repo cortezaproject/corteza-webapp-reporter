@@ -63,7 +63,7 @@
                 tbody-tr-class="pointer"
                 responsive
                 hover
-                :class="{ 'mb-0': reports.length }"
+                :class="{ 'mb-0': !!reports.length }"
                 @row-clicked="viewReport"
               >
                 <template v-slot:cell(name)="{ item: r }">
@@ -76,6 +76,13 @@
                     @click="editReport(r)"
                   >
                     Open Builder
+                  </b-button>
+                  <b-button
+                    variant="link"
+                    class="mr-2"
+                    :to="{ name: 'report.edit', params: { reportID: r.reportID } }"
+                  >
+                    Edit report
                   </b-button>
                   <c-permissions-button
                     :title="r.handle"
@@ -101,7 +108,6 @@ export default {
   data () {
     return {
       query: '',
-
       reports: [],
     }
   },

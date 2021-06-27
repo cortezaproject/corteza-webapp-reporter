@@ -13,12 +13,15 @@ export default {
 
   computed: {
     sources () {
-      return [
-        { value: '', text: 'None' },
-        ...this.projection.sources
-          .filter(({ load }) => load)
-          .map(({ load }, index) => ({ value: load.name || `${index}`, text: load.name || `${index}` })),
-      ]
+      const o = [{ value: '', text: 'None', disabled: true }]
+
+      for (const [i, s] of Object.entries(this.projection.sources)) {
+        for (const v of Object.values(s)) {
+          o.push({ value: v.name || `${i}`, text: v.name || `${i}` })
+        }
+      }
+
+      return o
     },
 
     options () {

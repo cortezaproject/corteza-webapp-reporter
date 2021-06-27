@@ -1,7 +1,9 @@
-import ComposeRecordConfigurator from './ComposeRecordConfigurator'
+import { default as DLoad } from './Load/index.vue'
+import { default as DJoin } from './Join.vue'
 
 const Registry = {
-  composeRecords: ComposeRecordConfigurator,
+  load: DLoad,
+  join: DJoin,
 }
 
 export default function (k) {

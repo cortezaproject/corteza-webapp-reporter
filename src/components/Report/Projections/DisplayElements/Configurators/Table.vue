@@ -134,7 +134,6 @@ import base from './base'
 import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
 
 export default {
-
   components: {
     ColumnPicker,
   },
@@ -169,8 +168,9 @@ export default {
         this.columns = []
 
         if (source) {
+          // @todo support different step variants
           const step = this.projection.sources.find(({ load }) => load.name === source)
-          const { frames = [] } = this.displayElement.reportDefinitions()
+          const { frames = [] } = this.displayElement.reportDefinitions('', this.projection.sources)
 
           this.$SystemAPI.reportRunFresh({ steps: [step], frames })
             .then(({ frames = [] }) => {

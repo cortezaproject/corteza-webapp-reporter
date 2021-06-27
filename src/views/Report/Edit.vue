@@ -126,7 +126,7 @@
               >
                 <b-form-textarea
                   v-model="report.meta.description"
-                  placeholder="..."
+                  placeholder="Report description..."
                   rows="5"
                 />
               </b-form-group>

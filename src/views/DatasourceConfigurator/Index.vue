@@ -6,7 +6,9 @@
           xl="8"
           offset-xl="2"
         >
-          <h1>Hello o/ // Datasource</h1>
+          <h1>
+            @todo
+          </h1>
         </b-col>
       </b-row>
     </b-container>
@@ -16,6 +18,6 @@
 <script>
 
 export default {
-  name: 'ReportList',
+  name: 'DatasourceConfigurator',
 }
 </script>

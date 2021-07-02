@@ -11,19 +11,19 @@
     :hover="options.hover"
     :small="options.small"
     :no-border-collapse="options.noCollapse"
-    class="h-100 mb-0"
+    class="mb-0"
   >
-    <b-thead head-variant="dark">
+    <b-thead :head-variant="options.headVariant">
       <b-tr
-        v-for="(h, i) of tabelify.headers"
+        v-for="(h, i) of tabelify.columns"
         :key="i"
       >
         <b-th
-          v-for="(col, j) of h"
+          v-for="(c, j) of h"
           :key="j"
-          v-bind="col.attrs"
+          v-bind="c.attrs"
         >
-          {{ col.name }}
+          {{ c.label }}
         </b-th>
       </b-tr>
     </b-thead>
@@ -39,7 +39,7 @@
           v-bind="c.attrs || {}"
         >
           <template v-if="c.slot === 'header'">
-            {{ c.name }}
+            {{ c.label }}
           </template>
           <template v-else>
             {{ c.value }}
@@ -58,10 +58,10 @@ export default {
 
   computed: {
     localFrame () {
-      return this.dataframes[0]
+      return this.dataframes[0] || { rows: [] }
     },
     localColumns () {
-      return this.localFrame.columns
+      return (this.localFrame || {}).columns || []
     },
 
     foreignFrames () {
@@ -114,14 +114,39 @@ export default {
     },
 
     tabelify () {
-      return {
-        headers: this.tabelifyHeaders,
+      const tableConfiguration = {
+        columns: this.tabelifyColumns,
         rows: this.tabelifyRows,
       }
+
+      if (!this.hasForeignFrames) {
+        let { columns = [] } = tableConfiguration
+
+        if (columns.length && this.options.columns.length) {
+          columns = columns[0] || []
+          // Get selected column indexes
+          const columnIndexes = this.options.columns.map(({ name }) => {
+            return columns.findIndex(c => name === c.name)
+          })
+
+          tableConfiguration.columns = [this.options.columns]
+
+          tableConfiguration.rows = tableConfiguration.rows.map(values => {
+            const rowValues = []
+            columnIndexes.forEach(i => {
+              rowValues.push(values[i])
+            })
+
+            return rowValues
+          })
+        }
+      }
+
+      return tableConfiguration
     },
 
-    tabelifyHeaders () {
-      const headers = []
+    tabelifyColumns () {
+      const columns = []
       if (this.hasForeignFrames) {
         // the first header row is for local columns
         const aux = this.localColumns.map(c => ({ ...c }))
@@ -135,12 +160,12 @@ export default {
           c.attrs = { rowspan: 2 }
         }
 
-        headers.push(aux, this.foreignColumns)
+        columns.push(aux, this.foreignColumns)
       } else {
-        headers.push(this.localColumns.map(c => ({ ...c })))
+        columns.push(this.localColumns.map(c => ({ ...c })))
       }
 
-      return headers
+      return columns
     },
 
     // TabelifyRows returns a list of local rows with nested foreign rows.

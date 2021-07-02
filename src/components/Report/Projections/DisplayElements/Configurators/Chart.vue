@@ -23,7 +23,7 @@
       />
     </b-form-group>
 
-    <hr>
+    <hr v-if="options.source">
 
     <div
       v-if="options.source"

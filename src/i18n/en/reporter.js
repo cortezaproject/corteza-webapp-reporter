@@ -37,6 +37,38 @@ export default {
     },
   },
 
+  permission: {
+    saveChanges: 'Save changes',
+    resetBack: 'Reset back to "{{current}}"',
+    setFor: 'Set permissions for {{target}}',
+    report: {
+      all: 'all reports',
+      specific: 'report "{{target}}"',
+    },
+    'system-report': {
+      read: {
+        title: 'Read any report',
+        specific: 'Read report "{{target}}"',
+        description: '',
+      },
+      update: {
+        title: 'Update any report',
+        specific: 'Update report "{{target}}"',
+        description: '',
+      },
+      delete: {
+        title: 'Delete any report',
+        specific: 'Delete report "{{target}}"',
+        description: '',
+      },
+      run: {
+        title: 'Run any report',
+        specific: 'Run report "{{target}}"',
+        description: '',
+      },
+    },
+  },
+
   notification: {
     general: {
       success: 'Success',

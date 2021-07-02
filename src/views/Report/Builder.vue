@@ -164,22 +164,28 @@
           >
             <b-row>
               <b-col
-                cols="2"
+                cols="3"
               >
                 <b-list-group>
                   <draggable
                     :list.sync="currentDisplayElements"
                     group="display-elements"
+                    handle=".grab"
                   >
                     <b-list-group-item
                       v-for="(element, index) in currentDisplayElements"
                       :key="index"
                       button
                       :active="currentDisplayElementIndex ? currentDisplayElementIndex === index : index === 0"
+                      class="display-element d-flex align-items-center justify-content-between"
                       :class="{ 'rounded-top': index === 0 }"
                       @click="setCurrentDisplayElement(index)"
                     >
                       {{ element.kind || element.name }}
+                      <font-awesome-icon
+                        :icon="['fas', 'bars']"
+                        class="grab text-grey"
+                      />
                     </b-list-group-item>
                   </draggable>
 
@@ -195,7 +201,7 @@
               </b-col>
               <b-col
                 v-if="currentDisplayElementIndex !== undefined"
-                cols="10"
+                cols="9"
                 class="p-0"
               >
                 <configurator
@@ -229,7 +235,7 @@
           >
             <b-row>
               <b-col
-                cols="2"
+                cols="3"
               >
                 <b-list-group>
                   <b-list-group-item
@@ -275,7 +281,7 @@
               </b-col>
               <b-col
                 v-if="currentDataSourceIndex !== undefined"
-                cols="10"
+                cols="9"
               >
                 <component
                   :is="datasourceComponent(currentProjection.sources[currentDataSourceIndex])"
@@ -289,7 +295,7 @@
                   size="lg"
                   size-confirm="lg"
                   :borderless="false"
-                  class="sticky-bot"
+                  class="d-flex"
                   @confirmed="deleteCurrentDataSource"
                 >
                   {{ $t('general.label.delete') }}
@@ -421,6 +427,7 @@ export default {
           return v.name
         }
       }
+
       return `${currentIndex}`
     },
 
@@ -538,19 +545,24 @@ export default {
       switch (k) {
         case 'group':
           this.currentProjection.sources.push(reporter.StepFactory({
-            group: {},
+            group: {
+              name: 'Group',
+            },
           }))
           break
 
         case 'join':
           this.currentProjection.sources.push(reporter.StepFactory({
-            join: {},
+            join: {
+              name: 'Join',
+            },
           }))
           break
 
         default:
           this.currentProjection.sources.push(reporter.StepFactory({
             load: {
+              name: 'Load',
               source: 'composeRecords',
               definition: {},
             },
@@ -574,6 +586,18 @@ export default {
 
   &:hover {
     opacity: 1;
+  }
+}
+
+.display-element {
+  .grab {
+    opacity: 0;
+  }
+
+  &:hover {
+    .grab {
+      opacity: 1;
+    }
   }
 }
 </style>

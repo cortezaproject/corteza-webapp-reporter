@@ -45,45 +45,6 @@
         />
       </template>
     </grid>
-
-    <!-- <portal to="sidebar-body-expanded">
-      <ul v-if="reports">
-        <li
-          v-for="r in reports"
-          :key="r.reportID"
-        >
-          <router-link :to="{ name: 'reports.view', params: { reportID: r.reportID } }">
-            {{ (r.meta || {}).name || r.handle }}
-          </router-link>
-        </li>
-      </ul>
-    </portal> -->
-
-    <!-- <portal to="sidebar-footer-expanded">
-      <router-link
-        :to="{ name: 'report.create' }"
-        class="float-right"
-      >
-        + Add report
-      </router-link>
-    </portal>
-
-    <portal to="sidebar-footer-collapsed">
-      <router-link
-        :to="{ name: 'report.create' }"
-        class="mx-auto"
-      >
-        +
-      </router-link>
-    </portal> -->
-
-    <!-- <c-report
-      v-if="openReport"
-      class="mx-2"
-      :report="openReport"
-      :dataset="reportDataset"
-      :editing="editing"
-    /> -->
   </div>
 </template>
 

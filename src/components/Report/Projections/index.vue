@@ -124,7 +124,7 @@ export default {
         return this.reportDataframes.frames.filter(({ name }) => name === displayElementName) || {}
       }
 
-      return {}
+      return []
     },
   },
 }

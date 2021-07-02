@@ -5,12 +5,12 @@
   >
     <grid-layout
       :layout.sync="layout"
-      :col-num="24"
+      :col-num="48"
       :row-height="10"
       vertical-compact
       :is-resizable="editable"
       :is-draggable="editable"
-      :cols="{ lg: 24, md: 24, sm: 1, xs: 1, xxs: 1 }"
+      :cols="{ lg: 48, md: 48, sm: 1, xs: 1, xxs: 1 }"
       :margin="[0, 0]"
       :responsive="!editable"
       use-css-transforms

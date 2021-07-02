@@ -12,7 +12,7 @@
     </b-form-group>
 
     <b-form-group
-      v-if="options.source"
+      v-if="options.source && columns.length"
       label="Columns"
       label-class="text-primary"
     >
@@ -61,7 +61,6 @@
           <b-form-select
             v-model="options.tableVariant"
             :options="tableVariants"
-            class="w-50"
           />
         </b-form-group>
       </b-col>
@@ -169,7 +168,7 @@ export default {
 
         if (source) {
           // @todo support different step variants
-          const step = this.projection.sources.find(({ load }) => load.name === source)
+          const step = this.projection.sources.find(({ load = {} }) => load.name && load.name === source)
           const { frames = [] } = this.displayElement.reportDefinitions('', this.projection.sources)
 
           this.$SystemAPI.reportRunFresh({ steps: [step], frames })

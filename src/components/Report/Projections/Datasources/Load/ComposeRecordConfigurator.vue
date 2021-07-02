@@ -45,19 +45,6 @@
         </b-form-group>
       </b-col>
     </b-row>
-
-    <b-form-group
-      label="Filter"
-      label-class="text-primary"
-    >
-      <b-form-textarea
-        v-model="filter"
-        placeholder="field1 = 1 AND field2 = 232"
-      />
-      <b-form-text>
-        Simplified SQL condition (WHERE ...) syntax is supported.
-      </b-form-text>
-    </b-form-group>
   </div>
 </template>
 

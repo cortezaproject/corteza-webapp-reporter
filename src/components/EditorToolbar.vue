@@ -46,6 +46,7 @@
         <b-button
           variant="primary"
           size="lg"
+          :disabled="saveDisabled"
           @click="$emit('save')"
         >
           {{ $t('general.label.save') }}
@@ -71,7 +72,7 @@ export default {
       type: Boolean,
       required: false,
     },
-    disableSave: {
+    saveDisabled: {
       type: Boolean,
       required: false,
       default: false,

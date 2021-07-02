@@ -10,7 +10,7 @@ body {
 }
 
 :focus {
-  outline: none;
+  outline-color: $primary;
 }
 
 button:disabled {
@@ -28,13 +28,17 @@ button:disabled {
   cursor: pointer;
 }
 
+.grab {
+  cursor: grab;
+}
+
 thead th,
 label,
 legend,
 strong,
 b,
 .font-weight-bold {
-  font-family: $bold;
+  font-family: $semibold;
 }
 
 th {
@@ -87,22 +91,6 @@ th {
 
 .icon-logo {
   background-image: url($icon-logo);
-}
-
-.loader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  background-image: url($logo);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 130px;
-  padding-top: 180px;
-
-  .pending {
-    width: 30px;
-  }
 }
 
 .ProseMirror.ProseMirror-focused {
@@ -211,13 +199,12 @@ fieldset.required {
     }
   }
 
-  legend::after {
+  label::after {
     content: "*";
     display: inline-block;
     color: $danger;
     width: 10px;
     height: 18px;
-    margin-left: 5px;
     overflow: hidden;
   }
 }
@@ -243,4 +230,9 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .b-toaster.b-toaster-bottom-right {
   bottom: 75px;
+}
+
+.vs__spinner, .vs__spinner::after {
+  width: 4em;
+  height: 4em;
 }

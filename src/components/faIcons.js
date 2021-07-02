@@ -37,6 +37,7 @@ import {
   faAlignCenter,
   faAlignJustify,
   faLink,
+  faBars,
 } from '@fortawesome/free-solid-svg-icons'
 
 import {
@@ -88,4 +89,5 @@ library.add(
   faAlignCenter,
   faAlignJustify,
   faLink,
+  faBars,
 )

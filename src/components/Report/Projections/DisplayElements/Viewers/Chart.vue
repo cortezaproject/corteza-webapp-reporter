@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex">
+  <div class="h-100 w-auto p-1">
     <canvas ref="chart" />
   </div>
 </template>

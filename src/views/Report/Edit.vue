@@ -70,9 +70,9 @@
                   </b-button>
 
                   <c-permissions-button
-                    :title="report.name"
-                    :target="report.name"
-                    :resource="`system:report:${report.moduleID}`"
+                    :title="report.handle"
+                    :target="report.handle"
+                    :resource="`system:report:${report.reportID}`"
                     button-label="Permissions"
                     button-variant="light"
                     class="btn-lg ml-1"
@@ -99,6 +99,7 @@
                       v-model="report.meta.name"
                       placeholder="Name"
                       required
+                      :state="nameState"
                     />
                   </b-form-group>
                 </b-col>
@@ -115,6 +116,7 @@
                       v-model="report.handle"
                       placeholder="handle (a - z, 0 - 9, underscore, dash)"
                       required
+                      :state="handleState"
                     />
                   </b-form-group>
                 </b-col>
@@ -149,6 +151,7 @@
       <editor-toolbar
         :back-link="{ name: 'report.list' }"
         :hide-delete="isNew"
+        :save-disabled="!canSave"
         @delete="handleDelete"
         @save="handleSave"
       />
@@ -199,6 +202,27 @@ export default {
 
     reportViewer () {
       return this.report ? { name: 'report.view', params: { reportID: this.report.reportID } } : undefined
+    },
+
+    nameState () {
+      if (this.report) {
+        const { name = '' } = this.report.meta
+        return name.length ? true : null
+      }
+
+      return null
+    },
+
+    handleState () {
+      if (!this.report || !this.report.handle.length) {
+        return null
+      }
+
+      return /^[A-Za-z][0-9A-Za-z_\-.]*[A-Za-z0-9]$/.test(this.report.handle)
+    },
+
+    canSave () {
+      return this.nameState && this.handleState
     },
   },
 

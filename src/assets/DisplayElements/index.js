@@ -1,2 +1,3 @@
-export const Text = require('./Text.png')
-export const Chart = require('./Chart.png')
+export const Text = require('./Placeholder.jpg')
+export const Table = require('./Placeholder.jpg')
+export const Chart = require('./Placeholder.jpg')

@@ -21,10 +21,6 @@ export default {
     // @todo temporary solution; dataframes can have multiple entries, not just one
     //       you get multiple dataframes when you join data.
     dataframe () {
-      if (!this.dataframes || !this.dataframes.length) {
-        return undefined
-      }
-
       return this.dataframes[0]
     },
   },
@@ -33,8 +29,8 @@ export default {
     dataframe: {
       immediate: true,
       deep: true,
-      handler (dataframe = {}) {
-        if (dataframe.columns.length) {
+      handler (dataframe) {
+        if (dataframe) {
           this.$nextTick(() => {
             this.renderChart(dataframe)
           })

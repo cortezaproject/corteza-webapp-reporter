@@ -43,6 +43,7 @@
           :index="index"
           :projection="block"
           :datasources="reportDatasources"
+          :dataframes="dataframes"
         />
       </template>
     </grid>
@@ -65,7 +66,9 @@ export default {
   data () {
     return {
       processing: false,
+
       report: undefined,
+      dataframes: [],
     }
   },
 
@@ -115,11 +118,38 @@ export default {
             const [x, y, w, h] = xywh
             return { ...p, x, y, w, h, i }
           })
+
+          this.runReport()
         })
         .catch(this.toastErrorHandler(this.$t('notification.report.fetchFailed')))
         .finally(() => {
           this.processing = false
         })
+    },
+
+    async runReport () {
+      this.dataframes = []
+
+      const frames = []
+
+      this.report.projections.forEach(({ elements = [] }) => {
+        elements.forEach((element) => {
+          if (element.kind !== 'Text') {
+            const { dataframes = [] } = element.reportDefinitions(this.reportDatasources)
+
+            frames.push(...dataframes.filter(({ source }) => source))
+          }
+        })
+      })
+
+      if (frames.length) {
+        const steps = this.reportDatasources.map(({ step }) => step)
+
+        this.$SystemAPI.reportRunFresh({ steps, frames })
+          .then(({ frames = [] }) => {
+            this.dataframes = frames
+          })
+      }
     },
   },
 }

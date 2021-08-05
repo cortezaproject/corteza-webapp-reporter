@@ -27,7 +27,6 @@
 
     <template #default>
       <div
-        v-if="!processing"
         class="d-flex"
         :class="{ 'flex-column': isVertical }"
       >
@@ -66,18 +65,10 @@ export default {
       required: true,
     },
 
-    datasources: {
+    dataframes: {
       type: Array,
       required: true,
     },
-  },
-
-  data () {
-    return {
-      processing: false,
-
-      reportDataframes: {},
-    }
   },
 
   computed: {
@@ -90,45 +81,10 @@ export default {
     },
   },
 
-  watch: {
-    'projection.elements': {
-      immediate: true,
-      deep: true,
-      handler (elements = []) {
-        if (elements.length) {
-          this.runReport()
-        }
-      },
-    },
-  },
-
   methods: {
-    async runReport () {
-      const frames = []
-
-      this.projection.elements.filter(({ kind }) => kind !== 'Text').forEach((element, i) => {
-        const { frames: ff } = element.reportDefinitions('', this.datasources)
-        frames.push(...ff)
-      })
-
-      if (frames.length) {
-        this.processing = true
-
-        const steps = this.datasources.map(({ step }) => step)
-
-        this.$SystemAPI.reportRunFresh({ steps, frames })
-          .then(dataFrames => {
-            this.reportDataframes = dataFrames
-          })
-          .finally(() => {
-            this.processing = false
-          })
-      }
-    },
-
     getFrames (displayElementName) {
-      if (this.reportDataframes.frames) {
-        return this.reportDataframes.frames.filter(({ name }) => name === displayElementName) || {}
+      if (this.dataframes) {
+        return this.dataframes.filter(({ name }) => name === displayElementName) || {}
       }
 
       return []

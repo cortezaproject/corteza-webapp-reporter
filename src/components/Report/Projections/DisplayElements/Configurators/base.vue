@@ -19,7 +19,7 @@ export default {
 
   computed: {
     sources () {
-      const options = [{ value: '', text: 'None', disabled: true }]
+      const options = [{ value: '', text: 'None' }]
 
       this.datasources.forEach(({ step }, index) => {
         Object.values(step).forEach(({ name }) => {

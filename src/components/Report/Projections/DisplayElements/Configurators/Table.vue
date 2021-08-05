@@ -22,6 +22,16 @@
       />
     </b-form-group>
 
+    <b-form-group
+      v-if="options.source && columns.length"
+      label="Presort"
+      label-class="text-primary"
+    >
+      <b-form-input
+        v-model="options.sort"
+      />
+    </b-form-group>
+
     <b-row no-gutters>
       <b-col class="pr-3">
         <b-form-group

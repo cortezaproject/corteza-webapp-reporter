@@ -45,6 +45,18 @@
         </b-form-group>
       </b-col>
     </b-row>
+    <!-- <b-row>
+      <b-col>
+        <b-form-group
+          label="Presort"
+          label-class="text-primary"
+        >
+          <b-form-input
+            v-model="sort"
+          />
+        </b-form-group>
+      </b-col>
+    </b-row> -->
   </div>
 </template>
 
@@ -95,6 +107,16 @@ export default {
 
       set (filter) {
         this.$emit('update:definition', { ...this.definition, filter })
+      },
+    },
+
+    sort: {
+      get () {
+        return this.definition.sort
+      },
+
+      set (sort) {
+        this.$emit('update:definition', { ...this.definition, sort })
       },
     },
   },

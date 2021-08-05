@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="datasource"
+    v-if="step.join"
   >
     <b-row>
       <b-col>
@@ -9,7 +9,7 @@
           label-class="text-primary"
         >
           <b-form-input
-            v-model="datasource.join.name"
+            v-model="step.join.name"
             placeholder="Datasource Name..."
           />
         </b-form-group>
@@ -25,7 +25,7 @@
           label-class="text-primary"
         >
           <b-form-select
-            v-model="datasource.join.localSource"
+            v-model="step.join.localSource"
             :options="supportedSources"
           >
             <template #first>
@@ -40,12 +40,12 @@
       </b-col>
       <b-col cols="6">
         <b-form-group
-          v-if="datasource.join.localSource"
+          v-if="step.join.localSource"
           label="Local Column"
           label-class="text-primary"
         >
           <b-form-select
-            v-model="datasource.join.localColumn"
+            v-model="step.join.localColumn"
             :options="localColumns"
             value-field="name"
             text-field="label"
@@ -69,7 +69,7 @@
           label-class="text-primary"
         >
           <b-form-select
-            v-model="datasource.join.foreignSource"
+            v-model="step.join.foreignSource"
             :options="supportedSources"
           >
             <template #first>
@@ -84,12 +84,12 @@
       </b-col>
       <b-col cols="6">
         <b-form-group
-          v-if="datasource.join.foreignSource"
+          v-if="step.join.foreignSource"
           label="Foreign Column"
           label-class="text-primary"
         >
           <b-form-select
-            v-model="datasource.join.foreignColumn"
+            v-model="step.join.foreignColumn"
             :options="foreignColumns"
             value-field="name"
             text-field="label"
@@ -109,24 +109,16 @@
 </template>
 
 <script>
+import base from './base.vue'
+
 export default {
+  extends: base,
+
   props: {
-    sources: {
+    datasources: {
       type: Array,
       required: false,
       default: () => [],
-    },
-
-    datasource: {
-      type: Object,
-      required: true,
-      default: () => ({}),
-    },
-
-    index: {
-      type: Number,
-      required: false,
-      default: 0,
     },
   },
 
@@ -139,47 +131,40 @@ export default {
 
   computed: {
     supportedSources () {
-      const o = []
+      const options = []
 
-      for (let i = 0; i < this.sources.length; i++) {
-        if (i === this.index) {
-          continue
-        }
-
-        for (const [k, v] of Object.entries(this.sources[i])) {
-          // @todo for now nested joins are not supported
-          if (k === 'join') {
-            break
+      this.datasources.forEach(({ step }, index) => {
+        Object.entries(step).forEach(([kind, { name }]) => {
+          if (kind === 'load') {
+            options.push({ value: name || `${index}`, text: name || `${index}` })
           }
+        })
+      })
 
-          o.push({ text: v.name, value: v.name })
-        }
-      }
-
-      return o
+      return options
     },
   },
 
   watch: {
-    datasource: {
+    'step.join.name': {
       immediate: true,
-      handler (newDatasource, oldDatasource) {
-        if (!oldDatasource && newDatasource) {
+      handler (newStep, oldStep) {
+        if (!oldStep && newStep) {
           this.getSourceColumns(['local', 'foreign'])
         }
       },
     },
 
-    'datasource.join.localSource': {
+    'step.join.localSource': {
       handler () {
-        this.datasource.join.localColumn = undefined
+        this.step.join.localColumn = undefined
         this.getSourceColumns(['local'])
       },
     },
 
-    'datasource.join.foreignSource': {
+    'step.join.foreignSource': {
       handler () {
-        this.datasource.join.foreignColumn = undefined
+        this.step.join.foreignColumn = undefined
         this.getSourceColumns(['foreign'])
       },
     },
@@ -187,35 +172,24 @@ export default {
 
   methods: {
     async getSourceColumns (sources = []) {
-      const frames = []
-      const steps = []
-
       sources.forEach(source => {
         this[`${source}Columns`] = []
 
-        const name = `${source}Source`
-        const sourceName = this.datasource.join[name]
+        const sourceType = this.step.join[`${source}Source`]
 
-        if (sourceName) {
-          const frame = { name, source: sourceName }
-          const step = this.sources.find(({ load }) => load.name === sourceName)
+        if (sourceType) {
+          const steps = this.datasources.filter(({ step }) => step.load).map(({ step }) => step)
+          const describe = [sourceType]
 
-          if (step && frame) {
-            frames.push(frame)
-            steps.push(step)
+          if (steps.length && describe.length) {
+            this.$SystemAPI.reportDescribe({ steps, describe })
+              .then((frames = []) => {
+                const { columns = [] } = frames.find(({ source }) => describe.includes(source)) || {}
+                this[`${source}Columns`] = columns
+              })
           }
         }
       })
-
-      if (frames.length && steps.length) {
-        await this.$SystemAPI.reportRunFresh({ steps, frames })
-          .then(({ frames = [] }) => {
-            sources.forEach(source => {
-              const { columns = [] } = frames.find(({ name }) => name === `${source}Source`) || {}
-              this[`${source}Columns`] = columns
-            })
-          })
-      }
     },
   },
 }

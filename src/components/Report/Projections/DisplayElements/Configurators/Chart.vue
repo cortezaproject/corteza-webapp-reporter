@@ -100,27 +100,6 @@ export default {
     },
   },
 
-  watch: {
-    'options.source': {
-      immediate: true,
-      handler (source) {
-        this.columns = []
-
-        if (source) {
-          // @todo support different step variants
-          const step = this.projection.sources.find(({ load }) => load.name === source)
-          const { frames = [] } = this.displayElement.reportDefinitions('', this.projection.sources)
-
-          this.$SystemAPI.reportRunFresh({ steps: [step], frames })
-            .then(({ frames = [] }) => {
-              const { columns = [] } = frames.find(({ name }) => name === this.displayElement.name) || {}
-              this.columns = columns.sort((a, b) => a.label.localeCompare(b.label))
-            })
-        }
-      },
-    },
-  },
-
   methods: {
     sourceChanged () {
       // Reset columns on user change of source

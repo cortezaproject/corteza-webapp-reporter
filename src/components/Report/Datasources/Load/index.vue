@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="datasource"
+    v-if="step.load"
   >
     <b-row>
       <b-col>
@@ -9,7 +9,7 @@
           label-class="text-primary"
         >
           <b-form-input
-            v-model="datasource.load.name"
+            v-model="step.load.name"
             placeholder="Datasource Name..."
           />
         </b-form-group>
@@ -20,34 +20,29 @@
           label-class="text-primary"
         >
           <b-form-select
-            v-model="datasource.load.source"
+            v-model="step.load.source"
             :options="supportedSources"
           />
         </b-form-group>
       </b-col>
     </b-row>
 
-    <hr v-if="datasource.load.source">
+    <hr v-if="step.load.source">
 
     <component
-      :is="loader(datasource.load.source)"
-      v-if="datasource.load.source"
-      :definition.sync="datasource.load.definition"
+      :is="sourceTypeComponent(step.load.source)"
+      v-if="step.load.source"
+      :definition.sync="stepDefinition"
     />
   </div>
 </template>
 
 <script>
+import base from '../base.vue'
 import loader from './loader'
 
 export default {
-  props: {
-    datasource: {
-      type: Object,
-      required: true,
-      default: () => ({}),
-    },
-  },
+  extends: base,
 
   data () {
     return {
@@ -68,8 +63,20 @@ export default {
     }
   },
 
+  computed: {
+    stepDefinition: {
+      get () {
+        return this.step.load ? this.step.load.definition : undefined
+      },
+
+      set (definition) {
+        this.step.load.definition = definition
+      },
+    },
+  },
+
   methods: {
-    loader: loader,
+    sourceTypeComponent: loader,
   },
 }
 </script>

@@ -65,6 +65,11 @@ export default {
       type: Object,
       required: true,
     },
+
+    datasources: {
+      type: Array,
+      required: true,
+    },
   },
 
   data () {
@@ -102,14 +107,16 @@ export default {
       const frames = []
 
       this.projection.elements.filter(({ kind }) => kind !== 'Text').forEach((element, i) => {
-        const { frames: ff } = element.reportDefinitions('', this.projection.sources)
+        const { frames: ff } = element.reportDefinitions('', this.datasources)
         frames.push(...ff)
       })
 
       if (frames.length) {
         this.processing = true
 
-        this.$SystemAPI.reportRunFresh({ steps: this.projection.sources, frames })
+        const steps = this.datasources.map(({ step }) => step)
+
+        this.$SystemAPI.reportRunFresh({ steps, frames })
           .then(dataFrames => {
             this.reportDataframes = dataFrames
           })

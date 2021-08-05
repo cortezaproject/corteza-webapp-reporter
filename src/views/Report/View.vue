@@ -42,6 +42,7 @@
         <projection
           :index="index"
           :projection="block"
+          :datasources="reportDatasources"
         />
       </template>
     </grid>
@@ -84,6 +85,10 @@ export default {
 
     reportEditor () {
       return this.report ? { name: 'report.edit', params: { reportID: this.report.reportID } } : undefined
+    },
+
+    reportDatasources () {
+      return this.report ? this.report.sources : []
     },
   },
 

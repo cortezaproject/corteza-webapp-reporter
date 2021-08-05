@@ -7,6 +7,15 @@
     </portal>
 
     <portal to="topbar-tools">
+      <b-button
+        variant="secondary"
+        size="sm"
+        class="mr-1"
+        @click="openDatasourceConfigurator"
+      >
+        Datasources
+      </b-button>
+
       <b-button-group
         size="sm"
         class="mr-1"
@@ -34,7 +43,7 @@
 
     <grid
       v-if="report"
-      :blocks.sync="projections"
+      :blocks.sync="projections.items"
       editable
     >
       <template
@@ -76,28 +85,16 @@
 
           <projection
             v-if="block"
-            :projection="block"
             :index="index"
+            :projection="block"
+            :dataframes="dataframes"
           />
         </div>
       </template>
     </grid>
 
     <b-modal
-      v-model="displayElementSelector.show"
-      size="lg"
-      scrollable
-      hide-footer
-      title="Add display element"
-      body-class="px-0 py-3"
-    >
-      <selector
-        @select="addDisplayElement"
-      />
-    </b-modal>
-
-    <b-modal
-      v-model="projectionConfigurator.show"
+      v-model="projections.showConfigurator"
       title="Projection configurator"
       ok-title="Save Projection"
       ok-variant="primary"
@@ -107,10 +104,9 @@
       body-class="p-0 border-top-0"
       header-class="pb-0 px-3 pt-3 border-bottom-0"
       @ok="updateProjection()"
-      @hide="editor=null"
     >
       <b-tabs
-        v-if="currentProjection"
+        v-if="projections.current"
         active-nav-item-class="bg-grey"
         nav-wrapper-class="bg-white border-bottom"
         active-tab-class="tab-content h-auto overflow-auto"
@@ -125,7 +121,7 @@
             label-class="text-primary"
           >
             <b-form-input
-              v-model="currentProjection.title"
+              v-model="projections.current.title"
               type="text"
               placeholder="Projection title"
             />
@@ -136,7 +132,7 @@
             label-class="text-primary"
           >
             <b-form-textarea
-              v-model="currentProjection.description"
+              v-model="projections.current.description"
               placeholder="Projection description"
             />
           </b-form-group>
@@ -146,7 +142,7 @@
             label-class="text-primary"
           >
             <b-form-radio-group
-              v-model="currentProjection.layout"
+              v-model="projections.current.layout"
               :options="projectionLayoutOptions"
               buttons
               button-variant="outline-primary"
@@ -155,156 +151,105 @@
         </b-tab>
 
         <b-tab
-          :active="!!currentProjection.elements.length"
+          :active="!!projections.current.elements.length"
           title="Display elements"
         >
-          <b-container
-            fluid
-            class="p-0"
+          <configurator
+            :items="currentDisplayElements"
+            :current-index="currentDisplayElementIndex"
+            draggable
+            @select="setCurrentDisplayElement"
+            @add="openDisplayElementSelector(projections.currentIndex)"
+            @delete="deleteCurrentDisplayElement"
           >
-            <b-row>
-              <b-col
-                cols="3"
-              >
-                <b-list-group>
-                  <draggable
-                    :list.sync="currentDisplayElements"
-                    group="display-elements"
-                    handle=".grab"
-                  >
-                    <b-list-group-item
-                      v-for="(element, index) in currentDisplayElements"
-                      :key="index"
-                      button
-                      :active="currentDisplayElementIndex ? currentDisplayElementIndex === index : index === 0"
-                      class="display-element d-flex align-items-center justify-content-between"
-                      :class="{ 'rounded-top': index === 0 }"
-                      @click="setCurrentDisplayElement(index)"
-                    >
-                      {{ element.kind || element.name }}
-                      <font-awesome-icon
-                        :icon="['fas', 'bars']"
-                        class="grab text-grey"
-                      />
-                    </b-list-group-item>
-                  </draggable>
+            <template v-slot:label="{ item: { kind, name } }">
+              {{ kind || name }}
+              <font-awesome-icon
+                :icon="['fas', 'bars']"
+                class="grab text-grey"
+              />
+            </template>
 
-                  <b-list-group-item
-                    button
-                    class="text-primary rounded-top"
-                    :class="{ 'border-top-0': currentDisplayElements.length }"
-                    @click="openDisplayElementSelector(currentProjectionIndex)"
-                  >
-                    + Add
-                  </b-list-group-item>
-                </b-list-group>
-              </b-col>
-              <b-col
-                v-if="currentDisplayElementIndex !== undefined"
-                cols="9"
-                class="p-0"
-              >
-                <configurator
-                  v-if="currentDisplayElement"
-                  :display-element="currentDisplayElement"
-                  :projection="currentProjection"
-                  class="pr-2"
-                />
-
-                <c-input-confirm
-                  variant="danger"
-                  size="lg"
-                  size-confirm="lg"
-                  :borderless="false"
-                  class="sticky-bot"
-                  @confirmed="deleteCurrentDisplayElement"
-                >
-                  {{ $t('general.label.delete') }}
-                </c-input-confirm>
-              </b-col>
-            </b-row>
-          </b-container>
-        </b-tab>
-
-        <b-tab
-          title="Data sources"
-        >
-          <b-container
-            fluid
-            class="p-0"
-          >
-            <b-row>
-              <b-col
-                cols="3"
-              >
-                <b-list-group>
-                  <b-list-group-item
-                    v-for="(source, index) in currentProjection.sources"
-                    :key="index"
-                    button
-                    :active="currentDataSourceIndex ? currentDataSourceIndex === index : index === 0"
-                    class="d-flex justify-content-between"
-                    @click="currentDataSourceIndex = index"
-                  >
-                    <span
-                      class="d-inline-block text-truncate"
-                    >
-                      {{ sourceLabel(source, index) }}
-                    </span>
-                  </b-list-group-item>
-                  <b-list-group-item
-                    key="-1"
-                    button
-                    class="text-primary"
-                    @click="addDatasource(currentProjectionIndex)"
-                  >
-                    + Load
-                  </b-list-group-item>
-                  <!-- @todo model the ts interface definition -->
-                  <!-- <b-list-group-item
-                    key="-2"
-                    button
-                    class="text-primary"
-                    @click="addDatasource('group')"
-                  >
-                    + Group
-                  </b-list-group-item> -->
-                  <b-list-group-item
-                    key="-3"
-                    button
-                    class="text-primary"
-                    @click="addDatasource('join')"
-                  >
-                    + Join
-                  </b-list-group-item>
-                </b-list-group>
-              </b-col>
-              <b-col
-                v-if="currentDataSourceIndex !== undefined"
-                cols="9"
-              >
-                <component
-                  :is="datasourceComponent(currentProjection.sources[currentDataSourceIndex])"
-                  :sources="currentProjection.sources"
-                  :index="currentDataSourceIndex"
-                  :datasource.sync="currentProjection.sources[currentDataSourceIndex]"
-                />
-
-                <c-input-confirm
-                  variant="danger"
-                  size="lg"
-                  size-confirm="lg"
-                  :borderless="false"
-                  class="d-flex"
-                  @confirmed="deleteCurrentDataSource"
-                >
-                  {{ $t('general.label.delete') }}
-                </c-input-confirm>
-              </b-col>
-            </b-row>
-          </b-container>
+            <template #configurator>
+              <display-element-configurator
+                v-if="currentDisplayElement"
+                :display-element="currentDisplayElement"
+                :projection="projections.current"
+                :datasources="reportDatasources"
+                class="pr-2"
+              />
+            </template>
+          </configurator>
         </b-tab>
       </b-tabs>
+    </b-modal>
+
+    <b-modal
+      v-model="datasources.showConfigurator"
+      size="xl"
+      scrollable
+      ok-title="Save Datasources"
+      ok-variant="primary"
+      title="Datasources"
+      body-class="py-3"
+      @ok="runReport()"
+    >
+      <configurator
+        v-if="report"
+        :items="reportDatasources"
+        :current-index="datasources.currentIndex"
+        draggable
+        @select="setCurrentDatasource"
+        @add="openDatasourceSelector()"
+        @delete="deleteCurrentDataSource"
+      >
+        <template v-slot:label="{ item: { step } }">
+          <span
+            class="d-inline-block text-truncate"
+          >
+            {{ datasourceLabel(step, datasources.currentIndex) }}
+          </span>
+        </template>
+
+        <template #configurator>
+          <component
+            :is="getDatasourceComponent(reportDatasources[datasources.currentIndex])"
+            v-if="currentDatasourceStep"
+            :datasources="reportDatasources"
+            :index="datasources.currentIndex"
+            :step.sync="currentDatasourceStep"
+          />
+        </template>
+      </configurator>
+    </b-modal>
+
+    <b-modal
+      v-model="displayElements.showSelector"
+      size="lg"
+      scrollable
+      hide-footer
+      title="Add display element"
+      body-class="px-0 py-3"
+    >
+      <selector
+        :items="displayElements.types"
+        @select="addDisplayElement"
+      />
+    </b-modal>
+
+    <b-modal
+      v-model="datasources.showSelector"
+      size="lg"
+      scrollable
+      hide-footer
+      title="Add datasource"
+      body-class="px-0 py-3"
+    >
+      <selector
+        :items="datasources.types"
+        display-mode="text"
+        @select="addDatasource"
+      />
     </b-modal>
 
     <portal to="report-toolbar">
@@ -328,23 +273,24 @@
 <script>
 import { reporter } from '@cortezaproject/corteza-js'
 import report from 'corteza-webapp-reporter/src/mixins/report'
-import Draggable from 'vuedraggable'
 import Grid from 'corteza-webapp-reporter/src/components/Report/Grid'
 import Projection from 'corteza-webapp-reporter/src/components/Report/Projections'
-import datasource from 'corteza-webapp-reporter/src/components/Report/Projections/Datasources/loader'
-import Selector from 'corteza-webapp-reporter/src/components/Report/Projections/DisplayElements/Selector'
+import datasources from 'corteza-webapp-reporter/src/components/Report/Datasources/loader'
+import Configurator from 'corteza-webapp-reporter/src/components/Common/Configurator'
+import Selector from 'corteza-webapp-reporter/src/components/Common/Selector'
 import EditorToolbar from 'corteza-webapp-reporter/src/components/EditorToolbar'
-import Configurator from 'corteza-webapp-reporter/src/components/Report/Projections/DisplayElements/Configurators'
+import DisplayElementConfigurator from 'corteza-webapp-reporter/src/components/Report/Projections/DisplayElements/Configurators'
+import * as displayElementThumbnails from 'corteza-webapp-reporter/src/assets/DisplayElements'
 
 export default {
   name: 'ReportBuilder',
 
   components: {
     Grid,
-    Draggable,
     Selector,
-    Projection,
     Configurator,
+    Projection,
+    DisplayElementConfigurator,
     EditorToolbar,
   },
 
@@ -358,23 +304,66 @@ export default {
 
       report: undefined,
 
-      currentProjectionIndex: undefined,
-      currentProjection: undefined,
+      dataframes: [],
 
       currentDisplayElementIndex: undefined,
       currentDisplayElement: undefined,
 
-      currentDataSourceIndex: undefined,
+      projections: {
+        showConfigurator: false,
 
-      displayElementSelector: {
-        show: false,
+        currentIndex: undefined,
+        current: undefined,
+
+        items: [],
       },
 
-      projectionConfigurator: {
-        show: false,
+      displayElements: {
+        showSelector: false,
+
+        types: [
+          {
+            label: 'Text',
+            kind: 'Text',
+            value: displayElementThumbnails.Text,
+          },
+          {
+            label: 'Table',
+            kind: 'Table',
+            value: displayElementThumbnails.Table,
+          },
+          {
+            label: 'Chart',
+            kind: 'Chart',
+            value: displayElementThumbnails.Chart,
+          },
+        ],
       },
 
-      projections: [],
+      datasources: {
+        showSelector: false,
+        showConfigurator: false,
+
+        currentIndex: undefined,
+
+        types: [
+          {
+            label: 'Load',
+            kind: 'Load',
+            value: 'Load step description',
+          },
+          {
+            label: 'Join',
+            kind: 'Join',
+            value: 'Join step description',
+          },
+          {
+            label: 'Group',
+            kind: 'Group',
+            value: 'Group step description',
+          },
+        ],
+      },
     }
   },
 
@@ -384,7 +373,29 @@ export default {
     },
 
     currentDisplayElements () {
-      return this.currentProjection ? this.currentProjection.elements : []
+      return this.projections.current ? this.projections.current.elements : []
+    },
+
+    reportDatasources: {
+      get () {
+        return this.report ? this.report.sources : []
+      },
+
+      set (sources) {
+        this.report.sources = sources
+      },
+    },
+
+    currentDatasourceStep: {
+      get () {
+        return this.datasources.currentIndex !== undefined ? this.reportDatasources[this.datasources.currentIndex].step : undefined
+      },
+
+      set (step) {
+        if (this.datasources.currentIndex !== undefined) {
+          this.reportDatasources[this.datasources.currentIndex].step = step
+        }
+      },
     },
 
     reportViewer () {
@@ -415,14 +426,63 @@ export default {
   },
 
   methods: {
-    datasourceComponent (d) {
-      for (const k in d) {
-        return datasource(k)
+    async runReport () {
+      this.dataframes = []
+
+      const frames = []
+
+      this.projections.items.forEach(({ elements = [] }) => {
+        elements.forEach((element) => {
+          if (element.kind !== 'Text') {
+            const { dataframes = [] } = element.reportDefinitions(this.reportDatasources)
+
+            frames.push(...dataframes.filter(({ source }) => source))
+          }
+        })
+      })
+
+      if (frames.length) {
+        const steps = this.reportDatasources.map(({ step }) => step)
+
+        this.$SystemAPI.reportRunFresh({ steps, frames })
+          .then(({ frames = [] }) => {
+            this.dataframes = frames
+          })
       }
     },
 
-    sourceLabel (source, currentIndex) {
-      for (const v of Object.values(source)) {
+    refresh () {
+      this.processing = true
+
+      this.fetchReport(this.reportID)
+        .then(() => {
+          this.mapProjections()
+          this.runReport()
+        }).finally(() => {
+          this.processing = false
+        })
+    },
+
+    // If projection is added/reordered or deleted, vue-grid-layout needs fresh indexes to work properly
+    reindexProjections (projections = this.projections.items || []) {
+      this.projections.items = projections.map((projection, i) => {
+        return { ...projection, i }
+      })
+    },
+
+    // Datasources
+    getDatasourceComponent ({ step }) {
+      if (step) {
+        for (const s in step) {
+          return datasources(s)
+        }
+      }
+
+      return undefined
+    },
+
+    datasourceLabel (datasource, currentIndex) {
+      for (const v of Object.values(datasource)) {
         if (v && v.name) {
           return v.name
         }
@@ -431,15 +491,73 @@ export default {
       return `${currentIndex}`
     },
 
-    refresh () {
-      this.fetchReport(this.reportID)
-        .then(() => {
-          this.mapProjections()
-        })
+    openDatasourceSelector () {
+      this.datasources.showSelector = true
+      this.datasources.currentIndex = this.reportDatasources.length ? 0 : undefined
     },
 
+    openDatasourceConfigurator () {
+      this.datasources.showConfigurator = true
+      this.datasources.currentIndex = this.reportDatasources.length ? 0 : undefined
+    },
+
+    setCurrentDatasource (index) {
+      this.datasources.currentIndex = index
+    },
+
+    deleteCurrentDataSource () {
+      this.reportDatasources.splice(this.datasources.currentIndex, 1)
+      this.datasources.currentIndex = this.reportDatasources.length ? 0 : undefined
+    },
+
+    addDatasource (kind = '') {
+      if (kind) {
+        let step
+
+        switch (kind) {
+          case 'Group':
+            step = reporter.StepFactory({
+              group: {
+                name: 'Group',
+              },
+            })
+            break
+
+          case 'Join':
+            step = reporter.StepFactory({
+              join: {
+                name: 'Join',
+              },
+            })
+            break
+
+          default:
+            step = reporter.StepFactory({
+              load: {
+                name: 'Load',
+                source: 'composeRecords',
+                definition: {},
+              },
+            })
+        }
+
+        this.reportDatasources.push({
+          step,
+          meta: {},
+        })
+      }
+
+      // Select newly added datasource in configurator
+      this.datasources.currentIndex = this.reportDatasources.length - 1
+
+      // Close selector, open configurator
+      this.datasources.showSelector = false
+      this.datasources.showConfigurator = true
+    },
+
+    // Projections
     handleProjectionSave () {
-      this.report.projections = this.projections.map(({ moved, x, y, w, h, i, ...p }) => {
+      this.report.projections = this.projections.items.map(({ moved, x, y, w, h, i, ...p }) => {
         p.elements = p.elements.map((e, index) => {
           e.name = `${index}_${e.kind}`
           return e
@@ -455,27 +573,10 @@ export default {
     },
 
     mapProjections () {
-      this.projections = this.report.projections.map(({ xywh, ...p }, i) => {
+      this.projections.items = this.report.projections.map(({ xywh, ...p }, i) => {
         const [x, y, w, h] = xywh
         return { ...p, x, y, w, h, i }
       })
-    },
-
-    // If projection is added/reordered or deleted, vue-grid-layout needs fresh indexes to work properly
-    reindexProjections (projections = this.projections) {
-      this.projections = projections.map((projection, i) => {
-        return { ...projection, i }
-      })
-    },
-
-    setCurrentDisplayElement (index) {
-      this.currentDisplayElementIndex = index
-      this.currentDisplayElement = index !== undefined ? this.currentDisplayElements[index] : undefined
-    },
-
-    openDisplayElementSelector (index) {
-      this.currentProjectionIndex = index
-      this.displayElementSelector.show = true
     },
 
     createProjection () {
@@ -492,84 +593,59 @@ export default {
         h,
       }
 
-      this.reindexProjections([newProjection, ...this.projections])
+      this.reindexProjections([newProjection, ...this.projections.items])
     },
 
     updateProjection () {
-      this.projections.splice(this.currentProjectionIndex, 1, this.currentProjection)
+      this.projections.items.splice(this.projections.currentIndex, 1, this.projections.current)
+      this.runReport()
     },
 
     editProjection (index = undefined) {
-      this.currentProjectionIndex = index
-      this.currentProjection = index !== undefined ? { ...this.projections[index] } : undefined
-      this.currentDataSourceIndex = this.currentProjection.sources.length ? 0 : undefined
-      this.setCurrentDisplayElement(this.currentProjection.elements.length ? 0 : undefined)
-      this.projectionConfigurator.show = true
+      this.projections.currentIndex = index
+      this.projections.current = index !== undefined ? { ...this.projections.items[index] } : undefined
+      this.setCurrentDisplayElement(this.projections.current.elements.length ? 0 : undefined)
+      this.projections.showConfigurator = true
     },
 
     deleteProjection (index = undefined) {
-      this.reindexProjections(this.projections.filter((p, i) => index !== i))
+      this.reindexProjections(this.projections.items.filter((p, i) => index !== i))
+    },
+
+    // Display elements
+    openDisplayElementSelector (index) {
+      this.projections.currentIndex = index
+      this.displayElements.showSelector = true
+    },
+
+    setCurrentDisplayElement (index) {
+      this.currentDisplayElementIndex = index
+      this.currentDisplayElement = index !== undefined ? this.currentDisplayElements[index] : undefined
     },
 
     deleteCurrentDisplayElement () {
-      this.currentProjection.elements.splice(this.currentDisplayElementIndex, 1)
-      this.currentDisplayElementIndex = this.currentProjection.elements.length ? 0 : undefined
+      this.projections.current.elements.splice(this.currentDisplayElementIndex, 1)
+      this.currentDisplayElementIndex = this.projections.current.elements.length ? 0 : undefined
       this.setCurrentDisplayElement(this.currentDisplayElementIndex)
     },
 
-    deleteCurrentDataSource () {
-      this.currentProjection.sources.splice(this.currentDataSourceIndex, 1)
-      this.currentDataSourceIndex = this.currentProjection.sources.length ? 0 : undefined
-    },
-
     addDisplayElement (kind) {
-      const name = `${this.projections[this.currentProjectionIndex].elements.length}_${kind}`
+      const name = `${this.projections.items[this.projections.currentIndex].elements.length}_${kind}`
 
       const newDisplayElement = reporter.ElementFactory.Make({ name, kind })
 
-      const projectionElements = this.projections[this.currentProjectionIndex].elements || []
-      this.$set(this.projections[this.currentProjectionIndex], 'elements', [
+      const projectionElements = this.projections.items[this.projections.currentIndex].elements || []
+      this.$set(this.projections.items[this.projections.currentIndex], 'elements', [
         ...projectionElements,
         newDisplayElement,
       ])
 
       this.currentDisplayElement = newDisplayElement
 
-      this.displayElementSelector.show = false
+      this.displayElements.showSelector = false
 
-      this.editProjection(this.currentProjectionIndex)
-      this.setCurrentDisplayElement(this.currentProjection.elements.length - 1)
-    },
-
-    addDatasource (k = '') {
-      switch (k) {
-        case 'group':
-          this.currentProjection.sources.push(reporter.StepFactory({
-            group: {
-              name: 'Group',
-            },
-          }))
-          break
-
-        case 'join':
-          this.currentProjection.sources.push(reporter.StepFactory({
-            join: {
-              name: 'Join',
-            },
-          }))
-          break
-
-        default:
-          this.currentProjection.sources.push(reporter.StepFactory({
-            load: {
-              name: 'Load',
-              source: 'composeRecords',
-              definition: {},
-            },
-          }))
-      }
-
-      this.currentDataSourceIndex = this.currentProjection.sources.length - 1
+      this.editProjection(this.projections.currentIndex)
+      this.setCurrentDisplayElement(this.projections.current.elements.length - 1)
     },
   },
 }
@@ -586,18 +662,6 @@ export default {
 
   &:hover {
     opacity: 1;
-  }
-}
-
-.display-element {
-  .grab {
-    opacity: 0;
-  }
-
-  &:hover {
-    .grab {
-      opacity: 1;
-    }
   }
 }
 </style>

@@ -3,7 +3,7 @@
     class="d-flex overflow-auto px-2 w-100"
   >
     <portal to="topbar-title">
-      Report Builder
+      {{ pageTitle }}
     </portal>
 
     <portal to="topbar-tools">
@@ -370,6 +370,11 @@ export default {
   computed: {
     reportID () {
       return this.$route.params.reportID
+    },
+
+    pageTitle () {
+      const title = this.report ? (this.report.meta.name || this.report.handle) : ''
+      return `Report Builder - '${title}'` || 'Report Builder'
     },
 
     currentDisplayElements () {

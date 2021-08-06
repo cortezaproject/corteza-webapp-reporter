@@ -278,6 +278,6 @@ export default {
 
       this.updateDefinition()
     },
-  }
+  },
 }
 </script>

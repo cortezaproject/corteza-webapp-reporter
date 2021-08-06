@@ -53,15 +53,27 @@
         />
       </template>
 
-      <router-view />
+      <div
+        class="d-flex flex-column w-100"
+      >
+        <router-view
+          class="flex-grow-1 overflow-auto"
+        />
+
+        <portal-target
+          name="report-toolbar"
+        />
+      </div>
     </main>
     <!-- <c-prompts /> -->
     <c-permissions-modal />
+    <report-sidebar />
   </div>
 </template>
 
 <script>
 import { components } from '@cortezaproject/corteza-vue'
+import ReportSidebar from 'corteza-webapp-reporter/src/components/ReportSidebar'
 const { CPermissionsModal, CTopbar, CSidebar } = components
 
 export default {
@@ -69,6 +81,7 @@ export default {
     CPermissionsModal,
     CTopbar,
     CSidebar,
+    ReportSidebar,
   },
 
   data () {

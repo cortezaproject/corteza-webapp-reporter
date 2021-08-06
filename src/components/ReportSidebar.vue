@@ -1,15 +1,5 @@
 <template>
-  <div
-    class="d-flex flex-column w-100"
-  >
-    <router-view
-      class="flex-grow-1 overflow-auto"
-    />
-
-    <portal-target
-      name="report-toolbar"
-    />
-
+  <div>
     <portal to="sidebar-body-expanded">
       <div
         v-if="reports.length"

@@ -44,6 +44,7 @@
           :projection="block"
           :datasources="reportDatasources"
           :dataframes="dataframes"
+          @update="updateDataframes(index, $event)"
         />
       </template>
     </grid>
@@ -149,6 +150,30 @@ export default {
           .then(({ frames = [] }) => {
             this.dataframes = frames
           })
+      }
+    },
+
+    updateDataframes (index, { displayElementIndex, definition }) {
+      const element = this.report.projections[index].elements[displayElementIndex]
+      const frames = []
+
+      if (element) {
+        const { dataframes = [] } = element.reportDefinitions(this.reportDatasources, definition)
+
+        frames.push(...dataframes.filter(({ source }) => source))
+
+        if (frames.length) {
+          const steps = this.reportDatasources.map(({ step }) => step)
+
+          this.$SystemAPI.reportRunFresh({ steps, frames })
+            .then(({ frames = [] }) => {
+              const dataframeIndex = this.dataframes.findIndex(({ name }) => name === element.name)
+
+              if (dataframeIndex >= 0) {
+                this.$set(this.dataframes, dataframeIndex, frames.find(({ name }) => name === element.name))
+              }
+            })
+        }
       }
     },
   },

@@ -22,8 +22,37 @@
           v-for="(c, j) of h"
           :key="j"
           v-bind="c.attrs"
+          class="pointer"
+          @click="handleSort(c.name)"
         >
-          {{ c.label }}
+          <div
+            class="d-flex align-items-center"
+          >
+            <div
+              class="d-flex text-nowrap"
+            >
+              {{ c.label }}
+            </div>
+
+            <font-awesome-layers
+              class="ml-2"
+            >
+              <font-awesome-icon
+                :icon="['fas', 'angle-up']"
+                class="mb-1"
+                :style="{
+                  color: sort.field === c.name && !sort.descending ? 'black' : 'grey',
+                }"
+              />
+              <font-awesome-icon
+                :icon="['fas', 'angle-down']"
+                class="mt-1"
+                :style="{
+                  color: sort.field === c.name && sort.descending ? 'black' : 'grey',
+                }"
+              />
+            </font-awesome-layers>
+          </div>
         </b-th>
       </b-tr>
     </b-thead>
@@ -55,6 +84,15 @@ import base from './base'
 
 export default {
   extends: base,
+
+  data () {
+    return {
+      sort: {
+        field: '',
+        descending: false,
+      },
+    }
+  },
 
   computed: {
     localFrame () {
@@ -214,5 +252,32 @@ export default {
       return rows
     },
   },
+
+  methods: {
+    updateDefinition () {
+      const { field, descending } = this.sort
+      if (field) {
+        // Generate sort string
+        const sort = descending ? `${field} DESC` : field
+
+        this.$emit('update', { sort })
+      }
+    },
+
+    handleSort (fieldName) {
+      if (fieldName) {
+        const { field, descending } = this.sort
+
+        if (fieldName === field) {
+          this.sort.descending = !descending
+        } else {
+          this.sort.field = fieldName
+          this.sort.descending = false
+        }
+      }
+
+      this.updateDefinition()
+    },
+  }
 }
 </script>

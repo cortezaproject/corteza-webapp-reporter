@@ -31,11 +31,12 @@
         :class="{ 'flex-column': isVertical }"
       >
         <display-element
-          v-for="(element, i) in projection.elements"
-          :key="i"
+          v-for="(element, displayElementIndex) in projection.elements"
+          :key="displayElementIndex"
           :display-element="element"
           :dataframes="getFrames(element.name)"
           class="flex-even"
+          @update="$emit('update', { displayElementIndex, definition: $event })"
         />
       </div>
     </template>

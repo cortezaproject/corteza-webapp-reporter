@@ -1,7 +1,8 @@
 <template>
-  <div class="h-auto w-100">
-    <canvas ref="chart" />
-  </div>
+  <canvas
+    ref="chart"
+    class="h-100 w-100"
+  />
 </template>
 <script>
 import base from './base'
@@ -12,7 +13,12 @@ export default {
 
   data () {
     return {
-      chartConfig: undefined,
+      chartConfig: {
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+        },
+      },
       chart: undefined,
     }
   },
@@ -50,7 +56,7 @@ export default {
       const ctx = this.$refs.chart.getContext('2d')
       const { chartType = 'bar', labelColumn = '', dataColumns = [] } = this.options
 
-      this.chartConfig = {
+      const chartConfig = {
         type: chartType,
         data: {
           labels: this.getLabels(labelColumn, dataframe),
@@ -58,7 +64,7 @@ export default {
         },
       }
 
-      this.chart = new Chart(ctx, this.chartConfig)
+      this.chart = new Chart(ctx, { ...this.chartConfig, ...chartConfig })
     },
 
     getLabels (labelColumn, dataframe) {

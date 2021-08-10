@@ -23,6 +23,7 @@
         :min-h="3"
         v-bind="{ ...item }"
         :class="{ 'editable-grid-item': editable }"
+        drag-ignore-from=".gutter"
       >
         <slot
           :block="blocks[item.i]"

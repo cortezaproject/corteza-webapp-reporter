@@ -16,7 +16,7 @@
 
       <b-card-body
         v-if="bodySet"
-        class="p-0 h-100 overflow-auto"
+        class="p-0 h-100"
       >
         <slot
           name="default"

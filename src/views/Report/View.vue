@@ -54,7 +54,7 @@
 <script>
 import Grid from 'corteza-webapp-reporter/src/components/Report/Grid'
 import Projection from 'corteza-webapp-reporter/src/components/Report/Projections'
-import { system } from '@cortezaproject/corteza-js'
+import { system, reporter } from '@cortezaproject/corteza-js'
 
 export default {
   name: 'ReportView',
@@ -135,7 +135,9 @@ export default {
 
       this.report.projections.forEach(({ elements = [] }) => {
         elements.forEach((element) => {
-          if (element.kind !== 'Text') {
+          element = reporter.ElementFactory.Make(element)
+
+          if (element && element.kind !== 'Text') {
             const { dataframes = [] } = element.reportDefinitions(this.reportDatasources)
 
             frames.push(...dataframes.filter(({ source }) => source))
@@ -154,10 +156,10 @@ export default {
     },
 
     updateDataframes (index, { displayElementIndex, definition }) {
-      const element = this.report.projections[index].elements[displayElementIndex]
+      const element = reporter.ElementFactory.Make(this.report.projections[index].elements[displayElementIndex])
       const frames = []
 
-      if (element) {
+      if (element && element.kind !== 'Text') {
         const { dataframes = [] } = element.reportDefinitions(this.reportDatasources, definition)
 
         frames.push(...dataframes.filter(({ source }) => source))

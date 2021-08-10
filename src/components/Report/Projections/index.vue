@@ -26,31 +26,43 @@
     </template>
 
     <template #default>
-      <div
-        class="d-flex"
-        :class="{ 'flex-column': isVertical }"
+      <split
+        v-if="showDisplayElements"
+        ref="split"
+        :direction="projection.layout"
+        :gutter-size="12"
+        class="h-100"
+        @onDragEnd="setDisplayElementSizes"
       >
-        <display-element
+        <split-area
           v-for="(element, displayElementIndex) in projection.elements"
           :key="displayElementIndex"
-          :display-element="element"
-          :dataframes="getFrames(element.name)"
-          class="flex-even"
-          @update="$emit('update', { displayElementIndex, definition: $event })"
-        />
-      </div>
+          :size="element.meta.size"
+          :min-size="0"
+          class="overflow-auto"
+        >
+          <display-element
+            :display-element="element"
+            :dataframes="getFrames(element.name)"
+            @update="$emit('update', { displayElementIndex, definition: $event })"
+          />
+        </split-area>
+      </split>
     </template>
   </wrap>
 </template>
 
 <script>
 import Wrap from './Wrap'
+import { Split, SplitArea } from 'vue-split-panel'
 import DisplayElement from './DisplayElements/Viewers'
 
 export default {
   name: 'Projection',
 
   components: {
+    Split,
+    SplitArea,
     Wrap,
     DisplayElement,
   },
@@ -72,13 +84,34 @@ export default {
     },
   },
 
-  computed: {
-    displayElements () {
-      return this.projection.elements || []
-    },
+  data () {
+    return {
+      showDisplayElements: false,
+    }
+  },
 
-    isVertical () {
-      return this.projection.layout === 'vertical'
+  watch: {
+    'projection.elements.length': {
+      immediate: true,
+      handler (length, oldLength) {
+        if (length) {
+          const defaultSize = Math.floor(100 / length)
+
+          // Reset sizes to default if element was added or removed
+          const addedOrRemoved = length !== oldLength && oldLength !== undefined
+
+          this.projection.elements = this.projection.elements.map(e => {
+            e.meta.size = !addedOrRemoved && e.meta.size ? e.meta.size : defaultSize
+            return e
+          })
+
+          // Hack around split not rerendering
+          this.showDisplayElements = false
+          this.$nextTick().then(() => {
+            this.showDisplayElements = true
+          })
+        }
+      },
     },
   },
 
@@ -90,12 +123,18 @@ export default {
 
       return []
     },
+
+    setDisplayElementSizes (sizes = []) {
+      sizes.forEach((size, index) => {
+        this.projection.elements[index].meta.size = size
+      })
+    },
   },
 }
 </script>
 
-<style lang="scss" scoped>
-.flex-even {
-  flex: 1;
+<style lang="scss">
+.split .gutter {
+  background-color: transparent;
 }
 </style>

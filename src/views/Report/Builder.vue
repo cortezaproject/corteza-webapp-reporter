@@ -257,7 +257,7 @@
       <editor-toolbar
         :back-link="{ name: 'report.list' }"
         @delete="handleDelete"
-        @save="handleProjectionSave"
+        @save="handleReportSave"
       >
         <b-button
           variant="light"
@@ -439,9 +439,10 @@ export default {
 
       this.projections.items.forEach(({ elements = [] }) => {
         elements.forEach((element) => {
-          if (element.kind !== 'Text') {
-            const { dataframes = [] } = element.reportDefinitions(this.reportDatasources)
+          element = reporter.ElementFactory.Make(element)
 
+          if (element && element.kind !== 'Text') {
+            const { dataframes = [] } = element.reportDefinitions(this.reportDatasources)
             frames.push(...dataframes.filter(({ source }) => source))
           }
         })
@@ -458,10 +459,9 @@ export default {
     },
 
     updateDataframes (index, { displayElementIndex, definition }) {
-      const element = this.report.projections[index].elements[displayElementIndex]
+      const element = reporter.ElementFactory.Make(this.projections.items[index].elements[displayElementIndex])
       const frames = []
-
-      if (element) {
+      if (element && element.kind !== 'Text') {
         const { dataframes = [] } = element.reportDefinitions(this.reportDatasources, definition)
 
         frames.push(...dataframes.filter(({ source }) => source))
@@ -586,7 +586,7 @@ export default {
     },
 
     // Projections
-    handleProjectionSave () {
+    handleReportSave () {
       this.report.projections = this.projections.items.map(({ moved, x, y, w, h, i, ...p }) => {
         p.elements = p.elements.map((e, index) => {
           e.name = `${index}_${e.kind}`
@@ -623,7 +623,7 @@ export default {
         h,
       }
 
-      this.reindexProjections([newProjection, ...this.projections.items])
+      this.reindexProjections([...this.projections.items, newProjection])
     },
 
     updateProjection () {

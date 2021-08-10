@@ -31,6 +31,7 @@
     "vue": "^2.6.11",
     "vue-grid-layout": "^2.3.12",
     "vue-router": "^3.4.9",
+    "vue-split-panel": "^1.0.4",
     "vue-swatches": "^2.1.1",
     "vue-tippy": "^4.10.1",
     "vuedraggable": "^2.24.3",

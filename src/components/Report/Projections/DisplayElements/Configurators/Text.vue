@@ -1,6 +1,6 @@
 <template>
   <b-form-group>
-    <rich-text-input
+    <c-rich-text-input
       v-model="displayElement.value"
     />
   </b-form-group>
@@ -8,12 +8,12 @@
 
 <script>
 import base from './base'
-import RichTextInput from 'corteza-webapp-reporter/src/components/RichTextInput'
+import { components } from '@cortezaproject/corteza-vue'
+const { CRichTextInput } = components
 
 export default {
-
   components: {
-    RichTextInput,
+    CRichTextInput,
   },
   extends: base,
 }

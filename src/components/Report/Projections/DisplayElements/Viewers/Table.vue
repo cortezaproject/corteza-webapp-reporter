@@ -11,9 +11,11 @@
     :hover="options.hover"
     :small="options.small"
     :no-border-collapse="options.noCollapse"
-    class="mb-0"
+    class="mb-0 px-1"
   >
-    <b-thead :head-variant="options.headVariant">
+    <b-thead
+      :head-variant="options.headVariant"
+    >
       <b-tr
         v-for="(h, i) of tabelify.columns"
         :key="i"
@@ -251,6 +253,21 @@ export default {
 
       return rows
     },
+  },
+
+  created () {
+    let firstField = this.options.sort
+
+    if (firstField.includes(',')) {
+      firstField = this.options.sort.split(',')[0]
+    }
+
+    if (firstField.includes('DESC')) {
+      this.sort.descending = true
+      this.sort.field = firstField.split(' ')[0]
+    } else {
+      this.sort.field = firstField
+    }
   },
 
   methods: {

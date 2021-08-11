@@ -11,7 +11,8 @@
     :hover="options.hover"
     :small="options.small"
     :no-border-collapse="options.noCollapse"
-    class="mb-0 px-1"
+    sticky-header
+    class="mh-100 mb-0"
   >
     <b-thead
       :head-variant="options.headVariant"

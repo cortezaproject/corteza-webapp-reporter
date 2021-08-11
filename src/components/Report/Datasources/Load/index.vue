@@ -2,32 +2,27 @@
   <div
     v-if="step.load"
   >
-    <b-row>
-      <b-col>
-        <b-form-group
-          label="Name"
-          label-class="text-primary"
-        >
-          <b-form-input
-            v-model="step.load.name"
-            placeholder="Datasource Name..."
-          />
-        </b-form-group>
-      </b-col>
-      <b-col>
-        <b-form-group
-          label="Source"
-          label-class="text-primary"
-        >
-          <b-form-select
-            v-model="step.load.source"
-            :options="supportedSources"
-          />
-        </b-form-group>
-      </b-col>
-    </b-row>
+    <b-form-group
+      label="Name"
+      label-class="text-primary"
+    >
+      <b-form-input
+        v-model="step.load.name"
+        placeholder="Datasource Name..."
+      />
+    </b-form-group>
 
-    <hr v-if="step.load.source">
+    <hr>
+
+    <b-form-group
+      label="Source"
+      label-class="text-primary"
+    >
+      <b-form-select
+        v-model="step.load.source"
+        :options="supportedSources"
+      />
+    </b-form-group>
 
     <component
       :is="sourceTypeComponent(step.load.source)"

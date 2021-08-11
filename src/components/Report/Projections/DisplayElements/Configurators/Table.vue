@@ -27,79 +27,11 @@
       label="Presort order"
       label-class="text-primary"
     >
-      <draggable
-        :list.sync="presort"
-        group="sort"
-        handle=".grab"
-      >
-        <b-form-row
-          v-for="(column, index) in presort"
-          :key="index"
-          class="mb-1"
-        >
-          <b-col
-            cols="1"
-            class="d-flex align-items-center justify-content-center"
-          >
-            <font-awesome-icon
-              :icon="['fas', 'bars']"
-              class="grab text-grey"
-            />
-          </b-col>
-
-          <b-col
-            cols="5"
-          >
-            <b-form-select
-              v-model="column.field"
-              :options="columns"
-              text-field="label"
-              value-field="name"
-              class="rounded"
-            >
-              <template #first>
-                <b-form-select-option
-                  :value="undefined"
-                >
-                  None
-                </b-form-select-option>
-              </template>
-            </b-form-select>
-          </b-col>
-
-          <b-col
-            cols="4"
-            class="d-flex align-items-center"
-          >
-            <b-form-radio-group
-              v-model="column.descending"
-              :options="sortDirections"
-              buttons
-              button-variant="outline-primary"
-            />
-          </b-col>
-
-          <b-col
-            cols="1"
-            class="d-flex align-items-center"
-          >
-            <c-input-confirm
-              variant="link"
-              size="lg"
-              button-class="text-dark px-0"
-              @confirmed="presort.splice(index, 1)"
-            />
-          </b-col>
-        </b-form-row>
-      </draggable>
-
-      <b-button
-        variant="primary"
-        class="mt-1"
-        @click="presort.push({ field: undefined, descending: false })"
-      >
-        +Add
-      </b-button>
+      <presort
+        :presort="options.sort"
+        :columns="columns"
+        @update="options.sort = $event"
+      />
     </b-form-group>
 
     <b-row no-gutters>
@@ -210,33 +142,24 @@
 
 <script>
 import base from './base'
-import Draggable from 'vuedraggable'
+import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
 import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
 
 export default {
+
   components: {
-    Draggable,
+    Presort,
     ColumnPicker,
   },
-
   extends: base,
 
   data () {
     return {
       columns: [],
-
-      presort: undefined,
     }
   },
 
   computed: {
-    sortDirections () {
-      return [
-        { value: false, text: 'Ascending' },
-        { value: true, text: 'Descending' },
-      ]
-    },
-
     tableVariants () {
       return [
         { value: '', text: 'None' },
@@ -250,50 +173,6 @@ export default {
         { value: 'dark', text: 'Dark' },
       ]
     },
-  },
-
-  watch: {
-    presort: {
-      deep: true,
-      handler (presort = [], oldPresort = undefined) {
-        if (oldPresort) {
-          this.options.sort = presort.filter(({ field }) => field).map(({ field, descending }) => {
-            return descending ? `${field} DESC` : field
-          }).join(',')
-        }
-      },
-    },
-  },
-
-  created () {
-    if (this.options.sort) {
-      let sort = []
-
-      if (this.options.sort.includes(',')) {
-        sort = this.options.sort.split(',')
-      } else {
-        sort = [this.options.sort]
-      }
-
-      this.presort = sort.map(value => {
-        let field = ''
-        let descending = false
-
-        if (value.includes('DESC')) {
-          descending = true
-          field = value.split(' ')[0]
-        } else {
-          field = value
-        }
-
-        return {
-          field,
-          descending: !!descending,
-        }
-      })
-    } else {
-      this.presort = []
-    }
   },
 
   methods: {

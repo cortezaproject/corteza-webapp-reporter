@@ -57,17 +57,31 @@
           :columns.sync="options.dataColumns"
         />
       </b-form-group>
+
+      <b-form-group
+        v-if="columns.length"
+        label="Presort order"
+        label-class="text-primary"
+      >
+        <presort
+          :presort="options.sort"
+          :columns="columns"
+          @update="options.sort = $event"
+        />
+      </b-form-group>
     </div>
   </div>
 </template>
 
 <script>
 import base from './base'
+import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
 import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
 
 export default {
 
   components: {
+    Presort,
     ColumnPicker,
   },
   extends: base,

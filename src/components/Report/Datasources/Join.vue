@@ -40,15 +40,12 @@
       </b-col>
       <b-col cols="6">
         <b-form-group
-          v-if="step.join.localSource"
-          label="Local Column"
+          label="Foreign Source"
           label-class="text-primary"
         >
           <b-form-select
-            v-model="step.join.localColumn"
-            :options="localColumns"
-            value-field="name"
-            text-field="label"
+            v-model="step.join.foreignSource"
+            :options="supportedSources"
           >
             <template #first>
               <b-form-select-option
@@ -65,12 +62,15 @@
     <b-row>
       <b-col cols="6">
         <b-form-group
-          label="Foreign Source"
+          v-if="step.join.localSource"
+          label="Local Column"
           label-class="text-primary"
         >
           <b-form-select
-            v-model="step.join.foreignSource"
-            :options="supportedSources"
+            v-model="step.join.localColumn"
+            :options="localColumns"
+            value-field="name"
+            text-field="label"
           >
             <template #first>
               <b-form-select-option

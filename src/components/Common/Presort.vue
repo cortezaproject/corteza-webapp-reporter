@@ -48,6 +48,7 @@
             v-model="column.descending"
             :options="sortDirections"
             buttons
+            size="sm"
             button-variant="outline-primary"
           />
           <c-input-confirm
@@ -65,11 +66,16 @@
         cols="5"
       >
         <b-button
-          variant="primary"
-          class="mt-1"
+          variant="link text-decoration-none"
+          class="d-flex align-items-center px-1 mt-1"
           @click="items.push({ field: undefined, descending: false })"
         >
-          +Add
+          <font-awesome-icon
+            :icon="['fas', 'plus']"
+            size="sm"
+            class="mr-1"
+          />
+          Add
         </b-button>
       </b-col>
     </b-row>
@@ -126,7 +132,6 @@ export default {
   },
 
   created () {
-    console.log(this.presort)
     if (this.presort) {
       let sort = []
 

@@ -567,6 +567,7 @@ export default {
                 name: 'Load',
                 source: 'composeRecords',
                 definition: {},
+                filter: {},
               },
             })
         }

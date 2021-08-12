@@ -1,0 +1,347 @@
+<template>
+  <div>
+    <b-table-simple
+      v-if="render && filter.ref"
+      responsive
+      borderless
+      small
+    >
+      <template
+        v-for="(group, groupIndex) in filter.args"
+      >
+        <tr
+          v-for="(arg, argIndex) in group.args[0].args"
+          :key="`${groupIndex}-${argIndex}`"
+        >
+          <td
+            class="fit text-center align-middle pl-0"
+          >
+            <b-form-select
+              v-if="argIndex === 1"
+              v-model="group.args[0].ref"
+              :options="conditions"
+              class="w-auto"
+              @input="reRender()"
+            />
+            <h6
+              v-else
+              class="mb-0"
+              style="min-width: 60px;"
+            >
+              {{ argIndex === 0 ? 'Where' : group.args[0].ref }}
+            </h6>
+          </td>
+          <template v-if="Object.keys(arg).includes('raw')">
+            <td>
+              <b-input-group>
+                <b-input-group-prepend>
+                  <b-button
+                    variant="dark"
+                    @click="toggleMode(groupIndex, argIndex)"
+                  >
+                    ƒ
+                  </b-button>
+                </b-input-group-prepend>
+
+                <b-form-input
+                  v-model="arg.raw"
+                />
+              </b-input-group>
+            </td>
+          </template>
+          <template v-else-if="group">
+            <td>
+              <b-input-group>
+                <b-input-group-prepend>
+                  <b-button
+                    variant="dark"
+                    @click="toggleMode(groupIndex, argIndex)"
+                  >
+                    ƒ
+                  </b-button>
+                </b-input-group-prepend>
+
+                <b-form-select
+                  v-model="group.args[0].args[argIndex].args[0].args[0].symbol"
+                  :options="columns"
+                  text-field="label"
+                  value-field="name"
+                  style="max-width: 25%;"
+                >
+                  <template #first>
+                    <b-form-select-option
+                      value=""
+                    >
+                      None
+                    </b-form-select-option>
+                  </template>
+                </b-form-select>
+
+                <b-form-select
+                  v-model="group.args[0].args[argIndex].args[0].ref"
+                  :options="operators"
+                  style="max-width: 10%;"
+                />
+
+                <b-form-input
+                  v-model="group.args[0].args[argIndex].args[0].args[1].value['@value']"
+                  placeholder="Value"
+                />
+              </b-input-group>
+            </td>
+          </template>
+          <td
+            class="text-center pr-0"
+          >
+            <c-input-confirm
+              variant="link"
+              size="lg"
+              button-class="text-dark px-0"
+              @confirmed="deleteFilter(groupIndex, argIndex)"
+            />
+          </td>
+        </tr>
+        <tr
+          :key="`${groupIndex}-add`"
+        >
+          <td
+            class="fit align-middle pl-0"
+            :class="{ 'text-center': group.args[0].args && group.args[0].args.length }"
+          >
+            <b-button
+              variant="link text-decoration-none"
+              class="px-0"
+              @click="addFilter(groupIndex)"
+            >
+              <font-awesome-icon
+                :icon="['fas', 'plus']"
+                size="sm"
+                class="mr-1"
+              />
+              Add
+            </b-button>
+          </td>
+        </tr>
+
+        <tr
+          v-if="group.args[0].args && group.args[0].args.length"
+          :key="`${groupIndex}-addGroup`"
+        >
+          <td
+            colspan="100%"
+            class="p-0 filter-border text-center"
+            :class="{ 'pb-1': groupIndex < filter.args.length - 1 }"
+          >
+            <b-form-select
+              v-if="groupIndex < filter.args.length - 1"
+              v-model="filter.ref"
+              :options="conditions"
+              class="w-auto"
+            />
+
+            <b-button
+              v-else
+              variant="outline-primary"
+              class="btn-add-group bg-white py-2 px-3"
+              @click="addGroup()"
+            >
+              <font-awesome-icon
+                :icon="['fas', 'plus']"
+                class="h6 mb-0 "
+              />
+            </b-button>
+          </td>
+        </tr>
+      </template>
+    </b-table-simple>
+
+    <tr
+      v-else
+    >
+      <b-button
+        variant="link text-decoration-none"
+        class="px-0"
+        @click="initFilter()"
+      >
+        <font-awesome-icon
+          :icon="['fas', 'plus']"
+          size="sm"
+          class="mr-1"
+        />
+        Add
+      </b-button>
+    </tr>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    filter: {
+      type: Object,
+      required: true,
+    },
+
+    columns: {
+      type: Array,
+      default: () => [],
+    },
+  },
+
+  data () {
+    return {
+      render: true,
+
+      defaultFilter: {
+        ref: 'group',
+        // raw: ''
+        args: [{
+          ref: 'eq',
+          args: [
+            { symbol: '' },
+            { value: { '@type': 'String', '@value': '' } },
+          ],
+        }],
+      },
+
+      conditions: [
+        { value: 'and', text: 'And' },
+        { value: 'or', text: 'Or' },
+      ],
+
+      operators: [
+        {
+          value: 'eq',
+          text: '=',
+        },
+        {
+          value: 'ne',
+          text: '!=',
+        },
+        {
+          value: 'lt',
+          text: '<',
+        },
+        {
+          value: 'le',
+          text: '<=',
+        },
+        {
+          value: 'gt',
+          text: '>',
+        },
+        {
+          value: 'ge',
+          text: '>=',
+        },
+      ],
+    }
+  },
+
+  methods: {
+    initFilter () {
+      this.filter.ref = 'and'
+      this.filter.args = []
+      this.addGroup()
+    },
+
+    addGroup () {
+      if (this.filter.args) {
+        this.filter.args.push({
+          ref: 'group',
+          args: [
+            {
+              ref: 'or',
+              args: [this.defaultFilter],
+            },
+          ],
+        })
+      }
+      this.reRender()
+    },
+
+    addFilter (groupIndex) {
+      if (!this.filter.args[groupIndex].args[0].args) {
+        this.filter.args[groupIndex].args[0].args = []
+      }
+
+      this.filter.args[groupIndex].args[0].args.push(this.defaultFilter)
+
+      this.reRender()
+    },
+
+    deleteFilter (groupIndex, argIndex) {
+      const { args } = this.filter.args[groupIndex].args[0]
+
+      if (args) {
+        // If last group and last filter, set filter to default
+        if (this.filter.args.length === 1 && args.length === 1) {
+          delete this.filter.ref
+          delete this.filter.args
+        } else if (args.length === 1) {
+          // If only one left in group, remove group
+          this.filter.args.splice(groupIndex, 1)
+        } else {
+          // Remove filter from group
+          args.splice(argIndex, 1)
+        }
+      }
+
+      this.reRender()
+    },
+
+    toggleMode (groupIndex, argIndex) {
+      const { args } = this.filter.args[groupIndex].args[0]
+
+      if (args[argIndex]) {
+        if (Object.keys(args[argIndex]).includes('raw')) {
+          if (!args[argIndex].args || (args[argIndex].args && !args[argIndex].args.length)) {
+            args[argIndex].args = [{
+              ref: 'eq',
+              args: [
+                { symbol: '' },
+                { value: { '@type': 'String', '@value': '' } },
+              ],
+            }]
+          }
+
+          delete args[argIndex].raw
+        } else {
+          args[argIndex].raw = ''
+        }
+
+        this.reRender()
+      }
+    },
+
+    reRender () {
+      this.render = false
+      this.$nextTick().then(() => {
+        this.render = true
+      })
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.table td.fit,
+.table th.fit {
+  white-space: nowrap;
+  width: 1%;
+}
+
+.btn-add-group {
+  &:hover, &:active {
+    background-color: $primary !important;
+    color: white !important;
+  }
+}
+
+.filter-border {
+  background-image: linear-gradient(to left, lightgray, lightgray);
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: center;
+}
+</style>

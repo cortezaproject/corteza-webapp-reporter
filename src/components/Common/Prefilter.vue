@@ -28,7 +28,7 @@
               class="mb-0"
               style="min-width: 60px;"
             >
-              {{ argIndex === 0 ? 'Where' : group.args[0].ref }}
+              {{ argIndex === 0 ? 'Where' : `${group.args[0].ref[0].toUpperCase() + group.args[0].ref.slice(1).toLowerCase()}` }}
             </h6>
           </td>
           <template v-if="Object.keys(arg).includes('raw')">
@@ -36,15 +36,20 @@
               <b-input-group>
                 <b-input-group-prepend>
                   <b-button
-                    variant="dark"
+                    variant="outline-primary"
+                    class="d-flex justify-content-center align-items-center"
                     @click="toggleMode(groupIndex, argIndex)"
                   >
-                    ƒ
+                    <font-awesome-icon
+                      :icon="['fas', 'filter']"
+                      size="sm"
+                    />
                   </b-button>
                 </b-input-group-prepend>
 
                 <b-form-input
                   v-model="arg.raw"
+                  placeholder="Filter expression"
                 />
               </b-input-group>
             </td>
@@ -54,10 +59,14 @@
               <b-input-group>
                 <b-input-group-prepend>
                   <b-button
-                    variant="dark"
+                    variant="primary"
+                    class="d-flex justify-content-center align-items-center"
                     @click="toggleMode(groupIndex, argIndex)"
                   >
-                    ƒ
+                    <font-awesome-icon
+                      :icon="['fas', 'filter']"
+                      size="sm"
+                    />
                   </b-button>
                 </b-input-group-prepend>
 
@@ -67,6 +76,7 @@
                   text-field="label"
                   value-field="name"
                   style="max-width: 25%;"
+                  @input="setType(groupIndex, argIndex)"
                 >
                   <template #first>
                     <b-form-select-option
@@ -91,7 +101,7 @@
             </td>
           </template>
           <td
-            class="text-center pr-0"
+            class="d-flex align-items-center justify-content-center pl-2 pr-0"
           >
             <c-input-confirm
               variant="link"
@@ -137,6 +147,7 @@
               v-model="filter.ref"
               :options="conditions"
               class="w-auto"
+              @input="reRender()"
             />
 
             <b-button
@@ -252,7 +263,17 @@ export default {
           args: [
             {
               ref: 'or',
-              args: [this.defaultFilter],
+              args: [{
+                ref: 'group',
+                // raw: ''
+                args: [{
+                  ref: 'eq',
+                  args: [
+                    { symbol: '' },
+                    { value: { '@type': '', '@value': '' } },
+                  ],
+                }],
+              }],
             },
           ],
         })
@@ -265,7 +286,17 @@ export default {
         this.filter.args[groupIndex].args[0].args = []
       }
 
-      this.filter.args[groupIndex].args[0].args.push(this.defaultFilter)
+      this.filter.args[groupIndex].args[0].args.push({
+        ref: 'group',
+        // raw: ''
+        args: [{
+          ref: 'eq',
+          args: [
+            { symbol: '' },
+            { value: { '@type': '', '@value': '' } },
+          ],
+        }],
+      })
 
       this.reRender()
     },
@@ -295,22 +326,37 @@ export default {
 
       if (args[argIndex]) {
         if (Object.keys(args[argIndex]).includes('raw')) {
-          if (!args[argIndex].args || (args[argIndex].args && !args[argIndex].args.length)) {
-            args[argIndex].args = [{
-              ref: 'eq',
-              args: [
-                { symbol: '' },
-                { value: { '@type': 'String', '@value': '' } },
-              ],
-            }]
-          }
+          args[argIndex].args = [{
+            ref: 'eq',
+            args: [
+              { symbol: '' },
+              { value: { '@type': '', '@value': '' } },
+            ],
+          }]
 
           delete args[argIndex].raw
         } else {
           args[argIndex].raw = ''
+
+          delete args[argIndex].args
         }
 
         this.reRender()
+      }
+    },
+
+    setType (groupIndex, argIndex) {
+      // Get arg
+      if (this.filter.args[groupIndex].args[0].args[argIndex]) {
+        const { symbol } = this.filter.args[groupIndex].args[0].args[argIndex].args[0].args[0]
+
+        // Get type
+        const { kind } = this.columns.find(({ name }) => name === symbol)
+
+        // Set type
+        if (kind) {
+          this.filter.args[groupIndex].args[0].args[argIndex].args[0].args[1].value['@type'] = kind
+        }
       }
     },
 

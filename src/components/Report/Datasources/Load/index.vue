@@ -21,6 +21,7 @@
       <b-form-select
         v-model="step.load.source"
         :options="supportedSources"
+        @input="reset"
       />
     </b-form-group>
 
@@ -28,6 +29,7 @@
       :is="sourceTypeComponent(step.load.source)"
       v-if="step.load.source"
       :definition.sync="stepDefinition"
+      @reset="reset"
     />
 
     <b-form-group
@@ -91,13 +93,8 @@ export default {
     stepDefinition: {
       immediate: true,
       deep: true,
-      handler (def, oldDef) {
+      handler () {
         this.getSourceColumns()
-
-        // Reset if not immediate
-        if (def && oldDef) {
-          this.step.load.filter = {}
-        }
       },
     },
   },
@@ -105,7 +102,7 @@ export default {
   methods: {
     sourceTypeComponent: loader,
 
-    async getSourceColumns (step) {
+    async getSourceColumns () {
       const steps = [this.step]
       const describe = [this.step.load.name]
 
@@ -116,6 +113,11 @@ export default {
             this.columns = columns
           })
       }
+    },
+
+    reset () {
+      this.step.load.filter = {}
+      this.step.load.sort = {}
     },
   },
 }

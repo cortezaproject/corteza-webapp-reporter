@@ -86,6 +86,7 @@ export default {
       },
 
       set (namespaceID) {
+        this.$emit('reset')
         this.$emit('update:definition', { ...this.definition, namespaceID })
       },
     },
@@ -96,6 +97,7 @@ export default {
       },
 
       set (moduleID) {
+        this.$emit('reset')
         this.$emit('update:definition', { ...this.definition, moduleID })
       },
     },

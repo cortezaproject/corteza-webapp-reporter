@@ -40,6 +40,7 @@ import {
   faBars,
   faAngleUp,
   faAngleDown,
+  faFilter,
 } from '@fortawesome/free-solid-svg-icons'
 
 import {
@@ -94,4 +95,5 @@ library.add(
   faBars,
   faAngleUp,
   faAngleDown,
+  faFilter,
 )

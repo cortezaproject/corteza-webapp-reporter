@@ -3,17 +3,6 @@
     v-if="options"
   >
     <b-form-group
-      label="Datasource"
-      label-class="text-primary"
-    >
-      <b-form-select
-        v-model="options.source"
-        :options="sources"
-        @input="sourceChanged"
-      />
-    </b-form-group>
-
-    <b-form-group
       label="Type"
       label-class="text-primary"
     >
@@ -22,8 +11,6 @@
         :options="chartTypes"
       />
     </b-form-group>
-
-    <hr v-if="options.source">
 
     <div
       v-if="options.source"
@@ -57,42 +44,26 @@
           :columns.sync="options.dataColumns"
         />
       </b-form-group>
-
-      <b-form-group
-        v-if="columns.length"
-        label="Presort order"
-        label-class="text-primary"
-      >
-        <presort
-          :presort="options.sort"
-          :columns="columns"
-          @update="options.sort = $event"
-        />
-      </b-form-group>
     </div>
   </div>
 </template>
 
 <script>
 import base from './base'
-import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
 import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
 
 export default {
-
   components: {
-    Presort,
     ColumnPicker,
   },
+
   extends: base,
 
-  data () {
-    return {
-      columns: [],
-    }
-  },
-
   computed: {
+    mergedColumns () {
+      return [].concat.apply([], this.columns)
+    },
+
     chartTypes () {
       return [
         { value: 'pie', text: 'Pie' },
@@ -102,23 +73,25 @@ export default {
     },
 
     labelColumns () {
+      const columns = this.columns.length ? this.columns[0] : []
       return [
-        ...this.columns.filter(({ kind }) => kind === 'String'),
+        ...columns.filter(({ kind }) => kind === 'String'),
       ].sort((a, b) => a.label.localeCompare(b.label))
     },
 
     dataColumns () {
       return [
-        ...this.columns.filter(({ kind }) => kind === 'Number'),
+        ...this.mergedColumns.filter(({ kind }) => kind === 'Number'),
       ].sort((a, b) => a.label.localeCompare(b.label))
     },
   },
 
-  methods: {
-    sourceChanged () {
-      // Reset columns on user change of source
-      this.options.dataColumns = []
-      this.options.labelColumn = ''
+  watch: {
+    'options.source': {
+      handler () {
+        this.options.dataColumns = []
+        this.options.labelColumn = ''
+      },
     },
   },
 }

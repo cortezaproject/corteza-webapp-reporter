@@ -257,18 +257,18 @@ export default {
   },
 
   created () {
-    let firstField = this.options.sort
+    // let firstField = this.options.sort
 
-    if (firstField.includes(',')) {
-      firstField = this.options.sort.split(',')[0]
-    }
+    // if (firstField.includes(',')) {
+    //   firstField = this.options.sort.split(',')[0]
+    // }
 
-    if (firstField.includes('DESC')) {
-      this.sort.descending = true
-      this.sort.field = firstField.split(' ')[0]
-    } else {
-      this.sort.field = firstField
-    }
+    // if (firstField.includes('DESC')) {
+    //   this.sort.descending = true
+    //   this.sort.field = firstField.split(' ')[0]
+    // } else {
+    //   this.sort.field = firstField
+    // }
   },
 
   methods: {

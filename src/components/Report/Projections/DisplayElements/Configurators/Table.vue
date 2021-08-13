@@ -1,36 +1,15 @@
 <template>
-  <div>
+  <div
+    v-if="options"
+  >
     <b-form-group
-      label="Datasource"
-      label-class="text-primary"
-    >
-      <b-form-select
-        v-model="options.source"
-        :options="sources"
-        @input="sourceChanged"
-      />
-    </b-form-group>
-
-    <b-form-group
-      v-if="options.source && columns.length"
+      v-if="columns.length"
       label="Columns"
       label-class="text-primary"
     >
       <column-picker
-        :all-columns="columns"
+        :all-columns="firstColumns"
         :columns.sync="options.columns"
-      />
-    </b-form-group>
-
-    <b-form-group
-      v-if="options.source && columns.length"
-      label="Presort order"
-      label-class="text-primary"
-    >
-      <presort
-        :presort="options.sort"
-        :columns="columns"
-        @update="options.sort = $event"
       />
     </b-form-group>
 
@@ -142,22 +121,14 @@
 
 <script>
 import base from './base'
-import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
 import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
 
 export default {
-
   components: {
-    Presort,
     ColumnPicker,
   },
-  extends: base,
 
-  data () {
-    return {
-      columns: [],
-    }
-  },
+  extends: base,
 
   computed: {
     tableVariants () {
@@ -173,12 +144,17 @@ export default {
         { value: 'dark', text: 'Dark' },
       ]
     },
+
+    firstColumns () {
+      return this.columns.length ? this.columns[0] : []
+    },
   },
 
-  methods: {
-    sourceChanged () {
-      // Reset columns on user change of source
-      this.options.columns = []
+  watch: {
+    'options.source': {
+      handler () {
+        this.options.columns = []
+      },
     },
   },
 }

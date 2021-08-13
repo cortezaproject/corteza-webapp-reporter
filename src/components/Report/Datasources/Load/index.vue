@@ -45,9 +45,9 @@
 </template>
 
 <script>
-import Prefilter from 'corteza-webapp-reporter/src/components/Common/Prefilter'
 import base from '../base.vue'
 import loader from './loader'
+import Prefilter from 'corteza-webapp-reporter/src/components/Common/Prefilter'
 
 export default {
   components: {

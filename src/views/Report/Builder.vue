@@ -434,7 +434,6 @@ export default {
   methods: {
     async runReport () {
       this.dataframes = []
-
       const frames = []
 
       this.projections.items.forEach(({ elements = [] }) => {
@@ -443,6 +442,7 @@ export default {
 
           if (element && element.kind !== 'Text') {
             const { dataframes = [] } = element.reportDefinitions(this.reportDatasources)
+
             frames.push(...dataframes.filter(({ source }) => source))
           }
         })
@@ -461,6 +461,7 @@ export default {
     updateDataframes (index, { displayElementIndex, definition }) {
       const element = reporter.ElementFactory.Make(this.projections.items[index].elements[displayElementIndex])
       const frames = []
+
       if (element && element.kind !== 'Text') {
         const { dataframes = [] } = element.reportDefinitions(this.reportDatasources, definition)
 

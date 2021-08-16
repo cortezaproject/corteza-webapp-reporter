@@ -846,10 +846,10 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@cortezaproject/corteza-js@^2021.3.0":
-  version "2021.3.4"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2021.3.4.tgz#0f6aec46e1c299ec89a37f23ec13cbd6fd4ffc19"
-  integrity sha512-f8jzrny2PHW2k6Eo0n2JImkSZuv8+zuY0aQZmOpeBeugnxjCpkXYkPbfv+OyqYcrxS+dfNi6lmG0u7xxXtBKZw==
+"@cortezaproject/corteza-js@^2021.9.0-dev.1":
+  version "2021.9.0-dev.2"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2021.9.0-dev.2.tgz#05fac8cc6f11d10c93a3c9ad4357dca667f32299"
+  integrity sha512-7G9RIcn9GYS5RhpWNQxmIw/TwWbU/TV1Ol+P1PBCwzkyXy1lUWEAW54hLk3ZTYcKNQBHw91LDiXgrAijeWnPlQ==
   dependencies:
     axios "^0.21.1"
     chart.js "2.9.3"
@@ -862,24 +862,29 @@
     pino "^5.16.0"
     ts-sinon "^1.0.25"
 
-"@cortezaproject/corteza-vue@^2021.3.0":
-  version "2021.3.4"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-vue/-/corteza-vue-2021.3.4.tgz#80d0f8324534ab36cde6757dad3c8b284725cbe7"
-  integrity sha512-sppAJeuosznknxrXYXmn1sbWwAwNluqdVkkkBFmpFCHFMASkFmwX+ic4xs4oTjoQWHjW+KpkwS5yjqMSD8ASPQ==
+"@cortezaproject/corteza-vue@^2021.9.0-dev.1":
+  version "2021.9.0-dev.2"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-vue/-/corteza-vue-2021.9.0-dev.2.tgz#d9f7f372a0ed4c7725d2773d9f0c88215a2b1a5f"
+  integrity sha512-nL9M16rbzjbipzXosxQiWbMUoi54u6t9Ugws06GBiqthkRQPIPw6nnXbR1MQsoIOgKqQ3XBunGyFywUMqhIEPw==
   dependencies:
-    "@cortezaproject/corteza-js" "^2021.3.0"
+    "@cortezaproject/corteza-js" "^2021.9.0-dev.1"
     "@fortawesome/fontawesome-svg-core" "^1.2.26"
     "@fortawesome/free-solid-svg-icons" "^5.12.0"
     "@fortawesome/vue-fontawesome" "^0.1.9"
     acorn "^7.3.1"
     bootstrap-vue "2.2.2"
+    html-parse-stringify "^3.0.1"
     kind-of "^6.0.3"
     moment "2.25.3"
     pdfjs-dist "2.2.228"
     pino "^5.16.0"
+    portal-vue "^2.1.7"
     qs "^6.9.1"
+    tiptap "^1.26.0"
+    tiptap-extensions "^1.28.4"
     v-photoswipe "^1.0.3-1"
     vue "^2.6.11"
+    vue-swatches "^1.0.4"
     vuex "^3.6.2"
     websocket-extensions "^0.1.4"
 
@@ -10299,7 +10304,7 @@ tiptap-commands@^1.17.1:
     prosemirror-tables "^1.1.1"
     tiptap-utils "^1.13.1"
 
-tiptap-extensions@^1.35.2:
+tiptap-extensions@^1.28.4, tiptap-extensions@^1.35.2:
   version "1.35.2"
   resolved "https://registry.yarnpkg.com/tiptap-extensions/-/tiptap-extensions-1.35.2.tgz#83dd6ee703ae8c83b58c7608f97253fcc4f1a94c"
   integrity sha512-TIMbHVJe0/3aVeTeCmqGbatDkfxduPYFOffNCmuKR+h6oQNzTu6rLVhRzoNqktfxIoi/b44SiDPorTjSN72dCw==
@@ -10325,7 +10330,7 @@ tiptap-utils@^1.13.1:
     prosemirror-state "^1.3.3"
     prosemirror-tables "^1.1.1"
 
-tiptap@^1.32.2:
+tiptap@^1.26.0, tiptap@^1.32.2:
   version "1.32.2"
   resolved "https://registry.yarnpkg.com/tiptap/-/tiptap-1.32.2.tgz#cd6259e853652bfc6860758ff44ebb695d5edd1c"
   integrity sha512-5IwVj8nGo8y5V3jbdtoEd7xNUsi8Q0N6WV2Nfs70olqz3fldXkiImBrDhZJ4Anx8vhyP6PIBttrg0prFVmwIvw==
@@ -10946,6 +10951,11 @@ vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
   dependencies:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
+
+vue-swatches@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/vue-swatches/-/vue-swatches-1.0.4.tgz#0ea933e2594102321e5a561fca2502f595a796aa"
+  integrity sha512-bVzLpmwQU1sYgvQ0sD8jDzhFhAortJyc8KDogr0uC3SxzsPw/osfT0A28rhAQWsKYU1mpPXn6qk4khpbkgpbFw==
 
 vue-swatches@^2.1.1:
   version "2.1.1"

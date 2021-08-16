@@ -12,17 +12,12 @@
           placeholder="Search reports"
         />
 
-        <b-button
-          v-for="report of filteredReports"
-          :key="report.reportID"
-          variant="link"
-          class="w-100 text-left text-dark text-decoration-none pt-2 pr-0 pb-0 nav-item"
-          active-class="nav-active"
-          exact-active-class="nav-active"
-          :to="{ name: 'report.view', params: { reportID: report.reportID }}"
-        >
-          {{ report.meta.name || report.handle }}
-        </b-button>
+        <c-sidebar-nav-items
+          :items="filteredReports"
+          :start-expanded="!!query"
+          default-route-name="report.view"
+          class="overflow-auto h-100"
+        />
       </div>
 
       <h5
@@ -36,7 +31,14 @@
 </template>
 
 <script>
+import { components } from '@cortezaproject/corteza-vue'
+const { CSidebarNavItems } = components
+
 export default {
+  components: {
+    CSidebarNavItems,
+  },
+
   data () {
     return {
       query: '',
@@ -47,14 +49,20 @@ export default {
 
   computed: {
     filteredReports () {
+      let reports = this.reports
       if (this.query) {
-        return this.reports.filter(({ rpeortID, handle, meta: { name = '' } }) => {
-          const reportString = `${rpeortID}${handle}$name}`.toLowerCase().trim()
+        reports = this.reports.filter(({ reportID, handle, meta: { name = '' } }) => {
+          const reportString = `${reportID}${handle}$name}`.toLowerCase().trim()
           return reportString.indexOf(this.query.toLowerCase().trim()) > -1
         })
       }
 
-      return this.reports
+      return reports.map(({ reportID, handle, meta: { name = '' } }) => {
+        return {
+          page: { name: 'report.view', title: handle || name },
+          params: { reportID },
+        }
+      })
     },
   },
 

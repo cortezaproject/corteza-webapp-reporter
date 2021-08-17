@@ -22,3 +22,4 @@ Vue.use(plugins.Auth(), { app: 'reporter' })
 
 Vue.use(plugins.CortezaAPI('system'))
 Vue.use(plugins.CortezaAPI('compose'))
+Vue.use(plugins.Settings, { api: Vue.prototype.$SystemAPI })

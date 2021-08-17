@@ -22,8 +22,9 @@
       <c-sidebar
         :expanded.sync="expanded"
         :pinned.sync="pinned"
-        expand-on-hover
+        :icon="icon"
         :disabled-routes="['report.list']"
+        expand-on-hover
       >
         <template #header-expanded>
           <portal-target name="sidebar-header-expanded" />
@@ -72,6 +73,7 @@
 </template>
 
 <script>
+import icon from '../themes/corteza-base/img/icon.png'
 import { components } from '@cortezaproject/corteza-vue'
 import ReportSidebar from 'corteza-webapp-reporter/src/components/ReportSidebar'
 const { CPermissionsModal, CTopbar, CSidebar } = components
@@ -89,6 +91,12 @@ export default {
       expanded: undefined,
       pinned: undefined,
     }
+  },
+
+  computed: {
+    icon () {
+      return this.$Settings.attachment('ui.iconLogo', icon)
+    },
   },
 
   created () {

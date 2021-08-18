@@ -12,6 +12,7 @@
       Datasources
     </b-button>
     <b-collapse
+      v-if="usesDatasources"
       id="datasources"
       :visible="usesDatasources"
       accordion
@@ -183,7 +184,10 @@ export default {
 
   created () {
     this.currentConfigurableDatasourceIndex = 0
-    this.currentConfigurableDatasourceName = (this.options.datasources[0] || {}).name
+
+    if (this.usesDatasources) {
+      this.currentConfigurableDatasourceName = (this.options.datasources[0] || {}).name
+    }
   },
 
   methods: {

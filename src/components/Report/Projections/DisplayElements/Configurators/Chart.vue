@@ -85,14 +85,5 @@ export default {
       ].sort((a, b) => a.label.localeCompare(b.label))
     },
   },
-
-  watch: {
-    'options.source': {
-      handler () {
-        this.options.dataColumns = []
-        this.options.labelColumn = ''
-      },
-    },
-  },
 }
 </script>

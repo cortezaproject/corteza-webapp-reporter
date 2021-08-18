@@ -149,13 +149,5 @@ export default {
       return this.columns.length ? this.columns[0] : []
     },
   },
-
-  watch: {
-    'options.source': {
-      handler () {
-        this.options.columns = []
-      },
-    },
-  },
 }
 </script>

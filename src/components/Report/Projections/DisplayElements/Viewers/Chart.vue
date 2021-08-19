@@ -7,6 +7,7 @@
 <script>
 import base from './base'
 import Chart from 'chart.js'
+import colorschemes from 'chartjs-plugin-colorschemes'
 
 export default {
   extends: base,
@@ -17,28 +18,40 @@ export default {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+              },
+            }],
+          },
         },
+        plugins: [
+          colorschemes,
+        ],
       },
       chart: undefined,
     }
   },
 
   computed: {
-    // @todo temporary solution; dataframes can have multiple entries, not just one
-    //       you get multiple dataframes when you join data.
-    dataframe () {
+    hasMultipleDataframes () {
+      return this.dataframes.length > 1
+    },
+
+    localDataframe () {
       return this.dataframes[0]
     },
   },
 
   watch: {
-    dataframe: {
+    dataframes: {
       immediate: true,
       deep: true,
-      handler (dataframe) {
-        if (dataframe) {
+      handler (dataframes = []) {
+        if (dataframes.length) {
           this.$nextTick(() => {
-            this.renderChart(dataframe)
+            this.renderChart()
           })
         }
       },
@@ -46,37 +59,44 @@ export default {
   },
 
   methods: {
-    renderChart (dataframe) {
+    renderChart () {
       if (this.chart) {
-        if (this.chart) {
-          this.chart.destroy()
-        }
+        this.chart.destroy()
       }
 
       const ctx = this.$refs.chart.getContext('2d')
-      const { chartType = 'bar', labelColumn = '', dataColumns = [] } = this.options
+      const { chartType = 'bar', colorScheme = '', labelColumn = '', dataColumns = [] } = this.options
 
-      const chartConfig = {
+      this.chartConfig = {
+        ...this.chartConfig,
         type: chartType,
         data: {
-          labels: this.getLabels(labelColumn, dataframe),
-          datasets: this.getChartDatasets(dataColumns, dataframe),
+          labels: this.getLabels(labelColumn),
+          datasets: this.getChartDatasets(dataColumns),
         },
       }
 
-      this.chart = new Chart(ctx, { ...this.chartConfig, ...chartConfig })
+      // Set plugin options
+      this.chartConfig.options.plugins = {
+        colorschemes: {
+          scheme: colorScheme,
+          reverse: true,
+        },
+      }
+
+      this.chart = new Chart(ctx, this.chartConfig)
     },
 
-    getLabels (labelColumn, dataframe) {
+    getLabels (labelColumn) {
       const labels = []
 
-      if (labelColumn && dataframe) {
-        const columnIndex = this.getColIndex(dataframe, labelColumn)
+      if (labelColumn && this.localDataframe) {
+        const columnIndex = this.getColIndex(this.localDataframe, labelColumn)
         if (columnIndex < 0) {
           throw new Error(`Column ${labelColumn} not found`)
         }
 
-        for (const row of dataframe.rows) {
+        for (const row of this.localDataframe.rows) {
           labels.push(row[columnIndex])
         }
       }
@@ -84,40 +104,50 @@ export default {
       return labels
     },
 
-    getChartDatasets (dataColumns, dataframe) {
+    getChartDatasets (dataColumns) {
       const chartDataset = []
 
-      if (dataColumns.length && dataframe) {
-        // Find indexes for all columns we wish to have
-        const columnIndexes = []
-        for (const column of dataColumns) {
-          const columnIndex = this.getColIndex(dataframe, column.name)
+      if (dataColumns.length) {
+        // Create dataset for each dataColumn
+        for (const { name } of dataColumns) {
+          // Assume localDataframe has the dataColumn
+          let columnIndex = this.getColIndex(this.localDataframe, name)
+
+          // If dataColumn is in localDataframe, then set that value
+          const data = this.localDataframe.rows.map(r => {
+            return columnIndex < 0 ? undefined : r[columnIndex]
+          })
+
+          // Otherwise check other dataframes for that columnn
           if (columnIndex < 0) {
-            throw new Error(`Column ${column} not found`)
-          }
-          columnIndexes.push(columnIndex)
-        }
+            this.dataframes.slice(1).forEach(df => {
+              const { relColumn, refValue } = df
 
-        // Now make all of the datasets
-        for (const columnIndex of columnIndexes) {
-          const d = {
-            label: dataframe.columns[columnIndex].name,
-            backgroundColor: [
-              '#48639C',
-              '#4C4C9D',
-              '#712F79',
-              '#976391',
-              '#F7996E',
-              '#DC0073',
-            ],
-            data: [],
+              // Get column that is referenced by relColumn
+              const relColumnIndex = this.getColIndex(this.localDataframe, relColumn)
+              if (relColumnIndex < 0) {
+                throw new Error(`Column ${relColumn} not found`)
+              }
+
+              // Get row index that matches refValue
+              const refRowIndex = this.localDataframe.rows.findIndex(row => row[relColumnIndex] === refValue)
+              if (refRowIndex < 0) {
+                throw new Error(`Row that matches refRowIndex ${refValue} not found`)
+              }
+
+              columnIndex = this.getColIndex(df, name)
+              if (columnIndex < 0) {
+                throw new Error(`Column ${name} not found`)
+              } else {
+                data[refRowIndex] = df.rows[0][columnIndex]
+              }
+            })
           }
 
-          for (const row of dataframe.rows) {
-            d.data.push(row[columnIndex])
-          }
-
-          chartDataset.push(d)
+          chartDataset.push({
+            label: name,
+            data,
+          })
         }
       }
 

@@ -2,15 +2,41 @@
   <div
     v-if="options"
   >
-    <b-form-group
-      label="Type"
-      label-class="text-primary"
-    >
-      <b-form-select
-        v-model="options.chartType"
-        :options="chartTypes"
-      />
-    </b-form-group>
+    <b-row>
+      <b-col>
+        <b-form-group
+          label="Type"
+          label-class="text-primary"
+        >
+          <b-form-select
+            v-model="options.chartType"
+            :options="chartTypes"
+          />
+        </b-form-group>
+      </b-col>
+      <b-col>
+        <b-form-group
+          label="Color scheme"
+          label-class="text-primary"
+        >
+          <vue-select
+            :value="options.colorScheme"
+            :options="colorSchemes"
+            class="h-100 w-100"
+            @input="options.colorScheme = $event.value"
+          >
+            <template #option="option">
+              <div
+                v-for="(color, index) in option.colors"
+                :key="`${option.value}-${index}`"
+                :style="`background: ${color};`"
+                class="d-inline-block color-box mr-1"
+              />
+            </template>
+          </vue-select>
+        </b-form-group>
+      </b-col>
+    </b-row>
 
     <div
       v-if="options.source"
@@ -51,13 +77,22 @@
 <script>
 import base from './base'
 import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
+import colorschemes from 'chartjs-plugin-colorschemes/src/colorschemes'
+import VueSelect from 'vue-select'
 
 export default {
   components: {
+    VueSelect,
     ColumnPicker,
   },
 
   extends: base,
+
+  data () {
+    return {
+      colorSchemes: [],
+    }
+  },
 
   computed: {
     mergedColumns () {
@@ -85,5 +120,38 @@ export default {
       ].sort((a, b) => a.label.localeCompare(b.label))
     },
   },
+
+  created () {
+    const capitalize = w => `${w[0].toUpperCase()}${w.slice(1)}`
+    const splicer = sc => {
+      const rr = (/(\D+)(\d+)$/gi).exec(sc)
+      return {
+        label: rr[1],
+        count: rr[2],
+      }
+    }
+
+    const rr = []
+    for (const g in colorschemes) {
+      for (const sc in colorschemes[g]) {
+        const gn = splicer(sc)
+
+        rr.push({
+          label: `${capitalize(g)}: ${capitalize(gn.label)}`,
+          colors: [...colorschemes[g][sc]].reverse(),
+          value: `${g}.${sc}`,
+        })
+      }
+    }
+
+    this.colorSchemes = rr
+  },
 }
 </script>
+
+<style lang="scss" scoped>
+.color-box {
+  width: 28px;
+  height: 12px;
+}
+</style>

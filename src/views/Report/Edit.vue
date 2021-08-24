@@ -72,7 +72,7 @@
                   <c-permissions-button
                     :title="report.handle"
                     :target="report.handle"
-                    :resource="`system:report:${report.reportID}`"
+                    :resource="`corteza::system:report:${report.reportID}`"
                     button-label="Permissions"
                     button-variant="light"
                     class="btn-lg ml-1"

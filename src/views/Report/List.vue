@@ -29,7 +29,7 @@
                   </b-button>
 
                   <c-permissions-button
-                    resource="system:report:*"
+                    resource="corteza::system:report:*"
                     button-label="Permissions"
                     button-variant="light"
                     class="btn-lg ml-1"
@@ -87,7 +87,7 @@
                   <c-permissions-button
                     :title="r.handle"
                     :target="r.handle"
-                    :resource="'system:report:'+r.reportID"
+                    :resource="'corteza::system:report:'+r.reportID"
                     class="btn px-2"
                     link
                   />

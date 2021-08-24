@@ -21,7 +21,7 @@
     <b-row>
       <b-col cols="6">
         <b-form-group
-          label="Local Source"
+          label="Primary Source"
           label-class="text-primary"
         >
           <b-form-select
@@ -40,7 +40,7 @@
       </b-col>
       <b-col cols="6">
         <b-form-group
-          label="Foreign Source"
+          label="Secondary Source"
           label-class="text-primary"
         >
           <b-form-select

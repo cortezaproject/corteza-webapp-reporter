@@ -7,18 +7,18 @@
     <template #header>
       <div
         v-if="projection.title || projection.description"
-        class="p-2"
+        class="p-3"
       >
-        <h4
+        <h5
           v-if="projection.title"
-          class="text-primary mb-0"
+          class="text-primary text-truncate mb-0"
         >
           {{ projection.title }}
-        </h4>
+        </h5>
 
         <b-card-text
           v-if="projection.description"
-          class="text-dark text-truncate mb-1"
+          class="text-dark text-truncate mt-1"
         >
           {{ projection.description }}
         </b-card-text>

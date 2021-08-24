@@ -4,10 +4,12 @@
     v-bind="$props"
     v-on="$listeners"
   >
-    <template #header>
+    <template
+      v-if="projection.title || projection.description"
+      #header
+    >
       <div
-        v-if="projection.title || projection.description"
-        class="p-3"
+        class="px-3"
       >
         <h5
           v-if="projection.title"

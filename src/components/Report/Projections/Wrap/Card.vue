@@ -6,7 +6,7 @@
     >
       <b-card-header
         v-if="headerSet"
-        class="sticky-top border-0 border-bottom p-0"
+        class="sticky-top border-0 border-bottom px-0"
         header-bg-variant="white"
       >
         <slot

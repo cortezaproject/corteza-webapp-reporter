@@ -73,16 +73,16 @@
                   <b-button
                     variant="light"
                     class="mr-2"
-                    @click="editReport(r)"
+                    :to="{ name: 'report.builder', params: { reportID: r.reportID } }"
                   >
-                    Open Builder
+                    Report Builder
                   </b-button>
                   <b-button
                     variant="link"
                     class="mr-2"
                     :to="{ name: 'report.edit', params: { reportID: r.reportID } }"
                   >
-                    Edit report
+                    Edit
                   </b-button>
                   <c-permissions-button
                     :title="r.handle"
@@ -161,13 +161,6 @@ export default {
     viewReport ({ reportID }) {
       this.$router.push({
         name: 'report.view',
-        params: { reportID },
-      })
-    },
-
-    editReport ({ reportID }) {
-      this.$router.push({
-        name: 'report.builder',
         params: { reportID },
       })
     },

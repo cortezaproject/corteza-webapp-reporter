@@ -91,6 +91,15 @@ export default {
   data () {
     return {
       colorSchemes: [],
+
+      allowedLabelKinds: [
+        'Date',
+        'DateTime',
+        'Select',
+        'Number',
+        'Bool',
+        'String',
+      ],
     }
   },
 
@@ -101,16 +110,18 @@ export default {
 
     chartTypes () {
       return [
-        { value: 'pie', text: 'Pie' },
         { value: 'bar', text: 'Bar' },
         { value: 'line', text: 'Line' },
+        { value: 'pie', text: 'Pie' },
+        { value: 'doughnut', text: 'Doughnut' },
+        { value: 'funnel', text: 'Funnel' },
       ]
     },
 
     labelColumns () {
       const columns = this.columns.length ? this.columns[0] : []
       return [
-        ...columns.filter(({ kind }) => kind === 'String'),
+        ...columns.filter(({ kind }) => this.allowedLabelKinds.includes(kind)),
       ].sort((a, b) => a.label.localeCompare(b.label))
     },
 

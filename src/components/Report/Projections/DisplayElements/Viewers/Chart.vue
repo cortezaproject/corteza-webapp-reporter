@@ -7,6 +7,7 @@
 <script>
 import base from './base'
 import Chart from 'chart.js'
+import Funnel from 'chartjs-plugin-funnel'
 import colorschemes from 'chartjs-plugin-colorschemes'
 
 export default {
@@ -14,6 +15,8 @@ export default {
 
   data () {
     return {
+      chart: undefined,
+
       chartConfig: {
         options: {
           responsive: true,
@@ -27,18 +30,14 @@ export default {
           },
         },
         plugins: [
+          Funnel,
           colorschemes,
         ],
       },
-      chart: undefined,
     }
   },
 
   computed: {
-    hasMultipleDataframes () {
-      return this.dataframes.length > 1
-    },
-
     localDataframe () {
       return this.dataframes[0]
     },
@@ -76,7 +75,7 @@ export default {
         },
       }
 
-      // Set plugin options
+      // Set colorscheme options
       this.chartConfig.options.plugins = {
         colorschemes: {
           scheme: colorScheme,

@@ -53,11 +53,11 @@
           class="h-100 editable-block"
         >
           <div
-            class="add-element d-flex bg-white align-items-center justify-items-between mr-3 mt-3"
+            class="add-element d-flex align-items-center justify-items-between mr-3 mt-3"
           >
             <b-button
               variant="link"
-              class="text-decoration-none"
+              class="text-light"
               @click="openDisplayElementSelector(index)"
             >
               <font-awesome-icon
@@ -67,7 +67,7 @@
             </b-button>
             <b-button
               variant="link"
-              class="text-decoration-none"
+              class="text-light"
               @click="editProjection(index)"
             >
               <font-awesome-icon
@@ -686,10 +686,11 @@ export default {
 <style lang="scss">
 .add-element {
   position: absolute;
+  background-color: #1e2224;
   bottom: 0;
   left: 0;
   z-index: 1021;
-  opacity: 0.7;
+  opacity: 0.5;
   border-top-right-radius: 10px;
 
   &:hover {

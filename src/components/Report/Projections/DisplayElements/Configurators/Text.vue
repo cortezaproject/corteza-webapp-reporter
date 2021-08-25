@@ -1,7 +1,8 @@
 <template>
   <b-form-group>
     <c-rich-text-input
-      v-model="displayElement.value"
+      v-if="options"
+      v-model="options.value"
     />
   </b-form-group>
 </template>

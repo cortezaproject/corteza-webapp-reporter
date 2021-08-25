@@ -1,7 +1,8 @@
 <template>
   <div
+    v-if="options"
     class="p-2"
-    v-html="displayElement.value"
+    v-html="options.value"
   />
 </template>
 

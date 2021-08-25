@@ -438,7 +438,7 @@ export default {
 
       this.projections.items.forEach(({ elements = [] }) => {
         elements.forEach((element) => {
-          element = reporter.ElementFactory.Make(element)
+          element = reporter.DisplayElementMaker(element)
 
           if (element && element.kind !== 'Text') {
             const { dataframes = [] } = element.reportDefinitions(this.reportDatasources)
@@ -459,7 +459,7 @@ export default {
     },
 
     updateDataframes (index, { displayElementIndex, definition }) {
-      const element = reporter.ElementFactory.Make(this.projections.items[index].elements[displayElementIndex])
+      const element = reporter.DisplayElementMaker(this.projections.items[index].elements[displayElementIndex])
       const frames = []
 
       if (element && element.kind !== 'Text') {
@@ -664,7 +664,7 @@ export default {
     addDisplayElement (kind) {
       const name = `${this.projections.items[this.projections.currentIndex].elements.length}_${kind}`
 
-      const newDisplayElement = reporter.ElementFactory.Make({ name, kind })
+      const newDisplayElement = reporter.DisplayElementMaker({ name, kind })
 
       const projectionElements = this.projections.items[this.projections.currentIndex].elements || []
       this.$set(this.projections.items[this.projections.currentIndex], 'elements', [

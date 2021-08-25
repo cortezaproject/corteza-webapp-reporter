@@ -135,7 +135,7 @@ export default {
 
       this.report.projections.forEach(({ elements = [] }) => {
         elements.forEach((element) => {
-          element = reporter.ElementFactory.Make(element)
+          element = reporter.DisplayElementMaker(element)
 
           if (element && element.kind !== 'Text') {
             const { dataframes = [] } = element.reportDefinitions(this.reportDatasources)
@@ -156,7 +156,7 @@ export default {
     },
 
     updateDataframes (index, { displayElementIndex, definition }) {
-      const element = reporter.ElementFactory.Make(this.report.projections[index].elements[displayElementIndex])
+      const element = reporter.DisplayElementMaker(this.report.projections[index].elements[displayElementIndex])
       const frames = []
 
       if (element && element.kind !== 'Text') {

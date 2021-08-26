@@ -3,13 +3,26 @@
     v-if="options"
   >
     <b-form-group
-      v-if="columns.length"
+      v-if="options.datasources.length > 1"
+      label="Joined datasource handling"
+      label-class="text-primary"
+    >
+      <b-form-select
+        v-model="currentConfigurableDatasourceName"
+        :options="options.datasources"
+        text-field="name"
+        value-field="name"
+      />
+    </b-form-group>
+
+    <b-form-group
+      v-if="currentConfigurableDatasourceName && currentColumns.length"
       label="Columns"
       label-class="text-primary"
     >
       <column-picker
-        :all-columns="firstColumns"
-        :columns.sync="options.columns"
+        :all-columns="currentColumns"
+        :columns.sync="currentSelectedColumns"
       />
     </b-form-group>
 
@@ -130,6 +143,12 @@ export default {
 
   extends: base,
 
+  data () {
+    return {
+      currentConfigurableDatasourceName: undefined,
+    }
+  },
+
   computed: {
     tableVariants () {
       return [
@@ -145,8 +164,40 @@ export default {
       ]
     },
 
-    firstColumns () {
-      return this.columns.length ? this.columns[0] : []
+    currentColumns () {
+      if (this.currentConfigurableDatasourceName && this.columns) {
+        const datasourceIndex = this.options.datasources.findIndex(ds => ds.name === this.currentConfigurableDatasourceName)
+        if (datasourceIndex >= 0) {
+          return this.columns[datasourceIndex] || []
+        }
+      }
+
+      return []
+    },
+
+    currentSelectedColumns: {
+      get () {
+        return this.currentConfigurableDatasourceName ? this.options.columns[this.currentConfigurableDatasourceName] : []
+      },
+
+      set (columns) {
+        if (this.currentConfigurableDatasourceName) {
+          this.$set(this.displayElement.options.columns, this.currentConfigurableDatasourceName, columns || [])
+        }
+      },
+    },
+  },
+
+  watch: {
+    'options.datasources': {
+      immediate: true,
+      handler (datasources) {
+        datasources.forEach(({ name }) => {
+          this.$set(this.displayElement.options.columns, name, this.options.columns[name] || [])
+        })
+
+        this.currentConfigurableDatasourceName = (datasources[0] || {}).name
+      },
     },
   },
 }

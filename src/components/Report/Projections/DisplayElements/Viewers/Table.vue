@@ -32,7 +32,9 @@
     <b-thead
       :head-variant="options.headVariant"
     >
-      <b-tr>
+      <b-tr
+        v-if="dataframes.length > 1"
+      >
         <b-th
           v-for="(c, i) in tabelify.header"
           :key="i"
@@ -95,6 +97,10 @@ export default {
   },
 
   computed: {
+    localDataframe () {
+      return this.dataframes[0]
+    },
+
     // indexFrames groups frames based on the related DS identifiers
     // for easier work.
     indexFrames () {
@@ -117,11 +123,11 @@ export default {
     },
 
     tabelify () {
-      if (!this.dataframes) {
-        return
+      if (!this.dataframes.length) {
+        return {}
       }
 
-      return this.tabelifyFrame(this.localFrame())
+      return this.tabelifyFrame(this.localDataframe)
     },
   },
 
@@ -144,10 +150,6 @@ export default {
       return keys
     },
 
-    localFrame () {
-      return this.dataframes[0]
-    },
-
     getForeignFrames (frame) {
       return this.indexFrames[frame.ref]
     },
@@ -166,7 +168,17 @@ export default {
     tabelifyFrame (frame, maxSize = 1) {
       const outRows = []
 
-      const outHeader = [...frame.columns]
+      const displayedColumnIndexes = (this.options.columns[frame.ref] || []).map(({ name }) => {
+        return frame.columns.findIndex(fc => fc.name === name)
+      })
+
+      let outHeader = [...frame.columns]
+
+      if (this.dataframes.length === 1) {
+        outHeader = outHeader.filter((c, index) => {
+          return displayedColumnIndexes.includes(index)
+        })
+      }
       const hSeanFrames = {}
 
       const relFrames = this.getForeignFrames(frame)
@@ -187,6 +199,10 @@ export default {
 
           // Tabelify related frames
           for (const rf of relFrame || []) {
+            // const refColumnIndexes = (this.options.columns[rf.ref] || []).map(({ name }) => {
+            //   return frame.columns.findIndex(fc => fc.name === name)
+            // })
+
             const aux = this.tabelifyFrame(rf, Math.max(rf.rows.length, maxSize))
 
             // Optionally append header
@@ -223,6 +239,12 @@ export default {
           outRows.push(...merged.slice(1))
         } else {
           outRows.push(row)
+        }
+
+        if (this.dataframes.length === 1) {
+          outRows[outRows.length - 1] = outRows[outRows.length - 1].filter((c, index) => {
+            return displayedColumnIndexes.includes(index)
+          })
         }
       }
 

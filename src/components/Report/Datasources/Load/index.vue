@@ -21,7 +21,7 @@
       <b-form-select
         v-model="step.load.source"
         :options="supportedSources"
-        @input="reset"
+        @change="reset"
       />
     </b-form-group>
 

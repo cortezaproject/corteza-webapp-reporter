@@ -24,7 +24,7 @@
         <b-form-select
           v-model="options.source"
           :options="sources"
-          @input="setConfigurableSources"
+          @change="setConfigurableSources"
         />
       </b-form-group>
 
@@ -41,7 +41,7 @@
             :options="options.datasources"
             text-field="name"
             value-field="name"
-            @input="configurableDatasourceChanged"
+            @change="configurableDatasourceChanged"
           />
         </b-form-group>
 

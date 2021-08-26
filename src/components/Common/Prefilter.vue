@@ -21,7 +21,7 @@
               v-model="group.args[0].ref"
               :options="conditions"
               class="w-auto"
-              @input="reRender()"
+              @change="reRender()"
             />
             <h6
               v-else
@@ -76,7 +76,7 @@
                   text-field="label"
                   value-field="name"
                   style="max-width: 25%;"
-                  @input="setType(groupIndex, argIndex)"
+                  @change="setType(groupIndex, argIndex)"
                 >
                   <template #first>
                     <b-form-select-option
@@ -147,7 +147,7 @@
               v-model="filter.ref"
               :options="conditions"
               class="w-auto"
-              @input="reRender()"
+              @change="reRender()"
             />
 
             <b-button

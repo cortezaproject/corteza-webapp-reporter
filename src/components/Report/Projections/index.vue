@@ -45,7 +45,7 @@
         >
           <display-element
             :display-element="element"
-            :dataframes="mock"
+            :dataframes="getFrames(element.name)"
             @update="$emit('update', { displayElementIndex, definition: $event })"
           />
         </split-area>
@@ -58,7 +58,6 @@
 import Wrap from './Wrap'
 import { Split, SplitArea } from 'vue-split-panel'
 import DisplayElement from './DisplayElements/Viewers'
-import mock from './mock-rsp.json'
 
 export default {
   name: 'Projection',
@@ -90,7 +89,6 @@ export default {
   data () {
     return {
       showDisplayElements: false,
-      mock,
     }
   },
 

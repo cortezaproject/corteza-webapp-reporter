@@ -1,0 +1,861 @@
+[
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231606572145",
+        "aa_01",
+        "aa :: 01"
+      ],
+      [
+        "246055231606637681",
+        "aa_02",
+        "aa :: 02"
+      ],
+      [
+        "246055231622759537",
+        "aa_03",
+        "aa :: 03"
+      ],
+      [
+        "246055231622825073",
+        "aa_04",
+        "aa :: 04"
+      ],
+      [
+        "246055231622890609",
+        "aa_05",
+        "aa :: 05"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": null
+  },
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "bb",
+    "refValue": "aa_01",
+    "relColumn": "pk",
+    "relSource": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "fk_a",
+        "label": "fk_a label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231623218289",
+        "bb_01",
+        "aa_01",
+        "bb :: 01"
+      ],
+      [
+        "246055231623283825",
+        "bb_02",
+        "aa_01",
+        "bb :: 02"
+      ],
+      [
+        "246055231623349361",
+        "bb_03",
+        "aa_01",
+        "bb :: 03"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": {
+      "ref": "group",
+      "args": [
+        {
+          "ref": "or",
+          "args": [
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_01" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_02" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_03" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_04" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_05" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "bb",
+    "refValue": "aa_02",
+    "relColumn": "pk",
+    "relSource": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "fk_a",
+        "label": "fk_a label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231639536753",
+        "bb_04",
+        "aa_02",
+        "bb :: 04"
+      ],
+      [
+        "246055231639602289",
+        "bb_05",
+        "aa_02",
+        "bb :: 05"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": {
+      "ref": "group",
+      "args": [
+        {
+          "ref": "or",
+          "args": [
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_01" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_02" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_03" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_04" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_05" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "bb",
+    "refValue": "aa_03",
+    "relColumn": "pk",
+    "relSource": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "fk_a",
+        "label": "fk_a label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231639667825",
+        "bb_06",
+        "aa_03",
+        "bb :: 06"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": {
+      "ref": "group",
+      "args": [
+        {
+          "ref": "or",
+          "args": [
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_01" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_02" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_03" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_04" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_05" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "bb",
+    "refValue": "aa_04",
+    "relColumn": "pk",
+    "relSource": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "fk_a",
+        "label": "fk_a label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231639733361",
+        "bb_07",
+        "aa_04",
+        "bb :: 07"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": {
+      "ref": "group",
+      "args": [
+        {
+          "ref": "or",
+          "args": [
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_01" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_02" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_03" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_04" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_05" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "bb",
+    "refValue": "aa_05",
+    "relColumn": "pk",
+    "relSource": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "fk_a",
+        "label": "fk_a label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231639798897",
+        "bb_08",
+        "aa_05",
+        "bb :: 08"
+      ],
+      [
+        "246055231639864433",
+        "bb_09",
+        "aa_05",
+        "bb :: 09"
+      ],
+      [
+        "246055231639929969",
+        "bb_10",
+        "aa_05",
+        "bb :: 10"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": {
+      "ref": "group",
+      "args": [
+        {
+          "ref": "or",
+          "args": [
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_01" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_02" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_03" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_04" } }
+              ]
+            },
+            {
+              "ref": "eq",
+              "args": [
+                { "symbol": "fk_a" },
+                { "value": { "@type": "String", "@value": "aa_05" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "cc",
+    "refValue": "aa_01",
+    "relColumn": "pk",
+    "relSource": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "fk_a",
+        "label": "fk_a label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231656576113",
+        "cc_01",
+        "aa_01",
+        "cc :: 01"
+      ],
+      [
+        "246055231656641649",
+        "cc_02",
+        "aa_01",
+        "cc :: 02"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": null
+  },
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "cc",
+    "refValue": "aa_02",
+    "relColumn": "pk",
+    "relSource": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "fk_a",
+        "label": "fk_a label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231656707185",
+        "cc_03",
+        "aa_02",
+        "cc :: 03"
+      ],
+      [
+        "246055231656772721",
+        "cc_04",
+        "aa_02",
+        "cc :: 04"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": null
+  },
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "cc",
+    "refValue": "aa_03",
+    "relColumn": "pk",
+    "relSource": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "fk_a",
+        "label": "fk_a label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231656838257",
+        "cc_05",
+        "aa_03",
+        "cc :: 05"
+      ],
+      [
+        "246055231656903793",
+        "cc_06",
+        "aa_03",
+        "cc :: 06"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": null
+  },
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "cc",
+    "refValue": "aa_04",
+    "relColumn": "pk",
+    "relSource": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "fk_a",
+        "label": "fk_a label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231673091185",
+        "cc_07",
+        "aa_04",
+        "cc :: 07"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": null
+  },
+  {
+    "name": "result",
+    "source": "joined",
+    "ref": "cc",
+    "refValue": "aa_05",
+    "relColumn": "pk",
+    "relSource": "aa",
+    "columns": [
+      {
+        "name": "id",
+        "label": "Record ID",
+        "kind": "Record",
+        "primary": true,
+        "unique": true,
+        "system": true
+      },
+      {
+        "name": "pk",
+        "label": "pk label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "fk_a",
+        "label": "fk_a label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      },
+      {
+        "name": "label",
+        "label": "label label",
+        "kind": "String",
+        "primary": false,
+        "unique": false,
+        "system": false
+      }
+    ],
+    "rows": [
+      [
+        "246055231673156721",
+        "cc_08",
+        "aa_05",
+        "cc :: 08"
+      ]
+    ],
+    "paging": null,
+    "sort": "",
+    "filter": null
+  }
+]

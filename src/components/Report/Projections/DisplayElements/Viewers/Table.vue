@@ -14,69 +14,66 @@
     sticky-header
     class="mh-100 mb-0"
   >
+    <colgroup
+      class="local"
+      span="3"
+    />
+
+    <colgroup
+      class="foreign"
+      span="4"
+    />
+
+    <colgroup
+      class="foreign"
+      span="4"
+    />
+
     <b-thead
       :head-variant="options.headVariant"
     >
-      <b-tr
-        v-for="(h, i) of tabelify.columns"
-        :key="i"
-      >
+      <b-tr>
         <b-th
-          v-for="(c, j) of h"
-          :key="j"
-          v-bind="c.attrs"
-          class="pointer"
-          @click="handleSort(c.name)"
+          v-for="(c, i) in tabelify.header"
+          :key="i"
+          v-bind="c.attrs || {}"
+          class="border-0"
         >
-          <div
-            class="d-flex align-items-center"
+          <p
+            v-if="c.sourceName"
+            class="m-0"
           >
-            <div
-              class="d-flex text-nowrap"
-            >
-              {{ c.label }}
-            </div>
-
-            <font-awesome-layers
-              class="ml-2"
-            >
-              <font-awesome-icon
-                :icon="['fas', 'angle-up']"
-                class="mb-1"
-                :style="{
-                  color: sort.field === c.name && !sort.descending ? 'black' : 'grey',
-                }"
-              />
-              <font-awesome-icon
-                :icon="['fas', 'angle-down']"
-                class="mt-1"
-                :style="{
-                  color: sort.field === c.name && sort.descending ? 'black' : 'grey',
-                }"
-              />
-            </font-awesome-layers>
-          </div>
+            {{ c.sourceName }}
+          </p>
+        </b-th>
+      </b-tr>
+      <b-tr>
+        <b-th
+          v-for="(c, i) in tabelify.header"
+          :key="i"
+          class="border-0"
+        >
+          {{ c.label }}
         </b-th>
       </b-tr>
     </b-thead>
+
     <b-tbody>
       <b-tr
-        v-for="(r, i) of tabelify.rows"
+        v-for="(r, i) in tabelify.rows"
         :key="i"
+
+        :class="{
+          separator: !!r[0].separator,
+        }"
       >
-        <component
-          :is="c.slot === 'header' ? 'b-th' : 'b-td'"
-          v-for="(c, j) of r"
+        <b-td
+          v-for="(c, j) in r"
           :key="j"
           v-bind="c.attrs || {}"
         >
-          <template v-if="c.slot === 'header'">
-            {{ c.label }}
-          </template>
-          <template v-else>
-            {{ c.value }}
-          </template>
-        </component>
+          {{ c.value }}
+        </b-td>
       </b-tr>
     </b-tbody>
   </b-table-simple>
@@ -98,204 +95,188 @@ export default {
   },
 
   computed: {
-    localFrame () {
-      return this.dataframes[0] || { rows: [] }
-    },
-    localColumns () {
-      return (this.localFrame || {}).columns || []
-    },
-
-    foreignFrames () {
-      return this.dataframes.slice(1)
-    },
-    hasForeignFrames () {
-      return !!this.foreignFrames.length
-    },
-    foreignColumns () {
-      if (!this.hasForeignFrames) {
-        return undefined
-      }
-
-      return this.foreignFrames[0].columns
-    },
-    foreignLocalCol () {
-      if (!this.hasForeignFrames) {
-        return
-      }
-
-      // they are all the same, so this is ok
-      return this.foreignFrames[0].relColumn
-    },
-
-    localColIndex () {
-      if (!this.hasForeignFrames) {
-        return -1
-      }
-
-      for (let i = 0; i < this.localColumns.length; i++) {
-        const c = this.localColumns[i]
-        if (c.name === this.foreignLocalCol) {
-          return i
-        }
-      }
-
-      return -1
-    },
-    foreignFramesIndexed () {
-      if (!this.hasForeignFrames) {
-        return
-      }
-
-      const i = {}
-      for (const f of this.foreignFrames) {
-        i[f.refValue] = f
-      }
-
-      return i
-    },
-
-    tabelify () {
-      const tableConfiguration = {
-        columns: this.tabelifyColumns,
-        rows: this.tabelifyRows,
-      }
-
-      if (!this.hasForeignFrames) {
-        let { columns = [] } = tableConfiguration
-
-        if (columns.length && this.options.columns.length) {
-          columns = columns[0] || []
-          // Get selected column indexes
-          const columnIndexes = this.options.columns.map(({ name }) => {
-            return columns.findIndex(c => name === c.name)
-          })
-
-          tableConfiguration.columns = [this.options.columns]
-
-          tableConfiguration.rows = tableConfiguration.rows.map(values => {
-            const rowValues = []
-            columnIndexes.forEach(i => {
-              rowValues.push(values[i])
-            })
-
-            return rowValues
-          })
-        }
-      }
-
-      return tableConfiguration
-    },
-
-    tabelifyColumns () {
-      const columns = []
-      if (this.hasForeignFrames) {
-        // the first header row is for local columns
-        const aux = this.localColumns.map(c => ({ ...c }))
-        for (const c of aux.slice(0, this.localColIndex)) {
-          c.attrs = { rowspan: 2 }
-        }
-
-        aux[this.localColIndex].attrs = { colspan: this.foreignColumns.length }
-
-        for (const c of aux.slice(this.localColIndex + 1)) {
-          c.attrs = { rowspan: 2 }
-        }
-
-        columns.push(aux, this.foreignColumns)
-      } else {
-        columns.push(this.localColumns.map(c => ({ ...c })))
-      }
-
-      return columns
-    },
-
-    // TabelifyRows returns a list of local rows with nested foreign rows.
-    // The data is shaped with colspans and rowspans.
-    tabelifyRows () {
-      const rows = []
-
-      // nothing special todo
-      if (!this.hasForeignFrames) {
-        return this.localFrame.rows.map(r => r.map(c => ({ value: c, attrs: {} })))
-      }
-
-      for (const r of this.localFrame.rows) {
-        const out = []
-        rows.push(out)
-
-        const c = r[this.localColIndex]
-        const ff = this.foreignFramesIndexed[c]
-
-        out.push(...r.map(c => ({ value: c, attrs: {} })))
-
-        // no foreign; nothing to do
-        if (!ff) {
+    // indexFrames groups frames based on the related DS identifiers
+    // for easier work.
+    indexFrames () {
+      const ix = {}
+      for (const df of this.dataframes || []) {
+        if (!df.relSource) {
           continue
         }
 
-        // give local cell rowspan
-        for (const c of out.slice(0, this.localColIndex)) {
-          c.attrs = {
-            rowspan: ff.rows.length + 1,
-          }
+        if (!ix[df.relSource]) {
+          ix[df.relSource] = {}
         }
-        for (const c of out.slice(this.localColIndex + 1)) {
-          c.attrs = {
-            rowspan: ff.rows.length + 1,
-          }
+        if (!ix[df.relSource][df.refValue]) {
+          ix[df.relSource][df.refValue] = []
         }
-
-        // replace local column with foreign header
-        out.splice(this.localColIndex, 1, ...this.foreignColumns.map(c => ({ ...c, slot: 'header' })))
-
-        // add foreign rows
-        rows.push(...ff.rows.map(r => r.map(c => ({ value: c, attrs: {} }))))
+        ix[df.relSource][df.refValue].push(df)
       }
 
-      return rows
+      return ix
     },
-  },
 
-  created () {
-    // let firstField = this.options.sort
+    tabelify () {
+      if (!this.dataframes) {
+        return
+      }
 
-    // if (firstField.includes(',')) {
-    //   firstField = this.options.sort.split(',')[0]
-    // }
-
-    // if (firstField.includes('DESC')) {
-    //   this.sort.descending = true
-    //   this.sort.field = firstField.split(' ')[0]
-    // } else {
-    //   this.sort.field = firstField
-    // }
+      return this.tabelifyFrame(this.localFrame())
+    },
   },
 
   methods: {
-    updateDefinition () {
-      const { field, descending } = this.sort
-      if (field) {
-        // Generate sort string
-        const sort = descending ? `${field} DESC` : field
-
-        this.$emit('update', { sort })
+    // keyColumns returns all of the key columns with indexes for all of the
+    // columns that are used in joins.
+    keyColumns (frame) {
+      const foreignFrames = this.getForeignFrames(frame)
+      const keys = {}
+      if (foreignFrames === undefined) {
+        return keys
       }
-    },
 
-    handleSort (fieldName) {
-      if (fieldName) {
-        const { field, descending } = this.sort
-
-        if (fieldName === field) {
-          this.sort.descending = !descending
-        } else {
-          this.sort.field = fieldName
-          this.sort.descending = false
+      for (const ff of Object.values(foreignFrames)) {
+        for (const f of ff) {
+          keys[f.relColumn] = f.columns.findIndex(({ name }) => name === f.relColumn)
         }
       }
 
-      this.updateDefinition()
+      return keys
+    },
+
+    localFrame () {
+      return this.dataframes[0]
+    },
+
+    getForeignFrames (frame) {
+      return this.indexFrames[frame.ref]
+    },
+
+    // tabelifyFrame returns a set of rows and columns that should be shown
+    // for this frame.
+    //
+    // maxSize is used to calculate the rowSpan that should be applied to joined
+    // frames with fewer rows then the other.
+    //
+    // Flow outline:
+    //  * for each row of the frame:
+    //  ** find all foreign frames
+    //  ** tabelify foreign frames
+    //  ** merge with the current tabelified result
+    tabelifyFrame (frame, maxSize = 1) {
+      const outRows = []
+
+      const outHeader = [...frame.columns]
+      const hSeanFrames = {}
+
+      const relFrames = this.getForeignFrames(frame)
+      const usedKeys = this.keyColumns(frame)
+
+      for (const r of frame.rows) {
+        maxSize = 1
+
+        const row = this.tabelifyRow(r)
+        const auxRows = []
+        for (const colIndex of Object.values(usedKeys)) {
+          const relFrame = relFrames[r[colIndex]]
+
+          // Determine the largest frame so our maxSize will match
+          for (const rf of relFrame || []) {
+            maxSize = Math.max(maxSize, rf.rows.length)
+          }
+
+          // Tabelify related frames
+          for (const rf of relFrame || []) {
+            const aux = this.tabelifyFrame(rf, Math.max(rf.rows.length, maxSize))
+
+            // Optionally append header
+            if (!hSeanFrames[rf.ref]) {
+              const x = [...aux.header]
+              x[0].sourceName = rf.ref
+              outHeader.push(...x)
+              hSeanFrames[rf.ref] = true
+            }
+
+            // Rowspan smaller frames so the table is nice and aligned
+            if (aux.rows.length < maxSize) {
+              for (const col of aux.rows[aux.rows.length - 1]) {
+                col.attrs = { rowspan: (maxSize - aux.rows.length) + 1 }
+              }
+            }
+
+            auxRows.push(aux.rows)
+          }
+        }
+
+        // Merge the original row with joined rows
+        // - the forst row of the merged row gets joined with the original row
+        // - the rest are appended to the list (they are offsetted by rowspan)
+        if (auxRows.length > 0) {
+          for (const c of row) {
+            c.attrs = { rowspan: maxSize }
+          }
+          row[0].separator = true
+
+          const merged = this.mergeRows(auxRows).pop()
+          row.push(...merged[0])
+          outRows.push(row)
+          outRows.push(...merged.slice(1))
+        } else {
+          outRows.push(row)
+        }
+      }
+
+      return { rows: outRows, maxSize, header: outHeader }
+    },
+
+    mergeRows (auxRows, maxSize) {
+      if (auxRows.length <= 1) {
+        return auxRows
+      }
+
+      const a = auxRows[auxRows.length - 2]
+      const b = auxRows[auxRows.length - 1]
+
+      const tmpRows = []
+      for (let i = 0; i < a.length; i++) {
+        const row = a[i]
+        if (i >= b.length) {
+          tmpRows.push(row)
+          continue
+        }
+        row.push(...b[i])
+        tmpRows.push(row)
+      }
+
+      if (b.length > a.length) {
+        tmpRows.push(...b.slice(a.length))
+      }
+
+      auxRows.splice(auxRows.length - 2, 2, tmpRows)
+      return this.mergeRows(auxRows)
+    },
+
+    tabelifyRow (row) {
+      const out = []
+      for (let i = 0; i < row.length; i++) {
+        out.push({ value: row[i] })
+      }
+
+      return out
     },
   },
 }
 </script>
+
+<style scoped lang="scss">
+.foreign {
+  border: 1px solid rgba($dark, 0.8);
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.separator {
+  border-top: 2px solid rgba($dark, 0.5);
+}
+
+</style>

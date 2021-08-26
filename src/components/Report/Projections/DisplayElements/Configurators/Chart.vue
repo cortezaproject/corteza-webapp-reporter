@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="options"
+    v-if="displayElement && options"
   >
     <b-row>
       <b-col>
@@ -9,8 +9,9 @@
           label-class="text-primary"
         >
           <b-form-select
-            v-model="options.chartType"
+            v-model="displayElement.options.type"
             :options="chartTypes"
+            @change="typeChanged"
           />
         </b-form-group>
       </b-col>
@@ -20,10 +21,10 @@
           label-class="text-primary"
         >
           <vue-select
-            :value="options.colorScheme"
+            :value="displayElement.options.colorScheme"
             :options="colorSchemes"
             class="h-100 w-100"
-            @input="options.colorScheme = $event.value"
+            @input="displayElement.options.colorScheme = $event.value"
           >
             <template #option="option">
               <div
@@ -42,11 +43,12 @@
       v-if="options.source"
     >
       <b-form-group
+        v-if="options.labelColumn !== undefined"
         label="Label column"
         label-class="text-primary"
       >
         <b-form-select
-          v-model="options.labelColumn"
+          v-model="displayElement.options.labelColumn"
           :options="labelColumns"
           text-field="label"
           value-field="name"
@@ -62,12 +64,13 @@
       </b-form-group>
 
       <b-form-group
+        v-if="options.dataColumns"
         label="Data columns"
         label-class="text-primary"
       >
         <column-picker
           :all-columns="dataColumns"
-          :columns.sync="options.dataColumns"
+          :columns.sync="displayElement.options.dataColumns"
         />
       </b-form-group>
     </div>
@@ -79,6 +82,7 @@ import base from './base'
 import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
 import colorschemes from 'chartjs-plugin-colorschemes/src/colorschemes'
 import VueSelect from 'vue-select'
+import { reporter } from '@cortezaproject/corteza-js'
 
 export default {
   components: {
@@ -156,6 +160,12 @@ export default {
     }
 
     this.colorSchemes = rr
+  },
+
+  methods: {
+    typeChanged () {
+      this.displayElement.options = reporter.ChartOptionsMaker(this.options)
+    },
   },
 }
 </script>

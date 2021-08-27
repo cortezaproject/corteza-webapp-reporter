@@ -441,7 +441,7 @@ export default {
           element = reporter.DisplayElementMaker(element)
 
           if (element && element.kind !== 'Text') {
-            const { dataframes = [] } = element.reportDefinitions(this.reportDatasources)
+            const { dataframes = [] } = element.reportDefinitions()
 
             frames.push(...dataframes.filter(({ source }) => source))
           }
@@ -463,7 +463,7 @@ export default {
       const frames = []
 
       if (element && element.kind !== 'Text') {
-        const { dataframes = [] } = element.reportDefinitions(this.reportDatasources, definition)
+        const { dataframes = [] } = element.reportDefinitions(definition)
 
         frames.push(...dataframes.filter(({ source }) => source))
 

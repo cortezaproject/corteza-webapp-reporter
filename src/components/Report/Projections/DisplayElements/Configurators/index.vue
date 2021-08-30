@@ -70,6 +70,16 @@
               @update="options.datasources[currentConfigurableDatasourceIndex].sort = $event"
             />
           </b-form-group>
+
+          <b-form-group
+            label="Limit"
+            label-class="text-primary"
+          >
+            <b-form-input
+              v-model="pagingLimit"
+              type="number"
+            />
+          </b-form-group>
         </div>
       </div>
     </b-collapse>
@@ -170,6 +180,18 @@ export default {
       }
 
       return undefined
+    },
+
+    pagingLimit: {
+      get () {
+        return this.options.datasources[this.currentConfigurableDatasourceIndex].paging?.limit || 0
+      },
+      set (v) {
+        if (!this.options.datasources[this.currentConfigurableDatasourceIndex].paging) {
+          this.options.datasources[this.currentConfigurableDatasourceIndex].paging = {}
+        }
+        this.options.datasources[this.currentConfigurableDatasourceIndex].paging.limit = v
+      },
     },
   },
 

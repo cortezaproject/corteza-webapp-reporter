@@ -36,6 +36,9 @@ import {
   faAlignRight,
   faAlignCenter,
   faAlignJustify,
+  faAngleRight,
+  faAngleLeft,
+  faAngleDoubleLeft,
   faLink,
   faBars,
   faAngleUp,
@@ -96,4 +99,7 @@ library.add(
   faAngleUp,
   faAngleDown,
   faFilter,
+  faAngleRight,
+  faAngleLeft,
+  faAngleDoubleLeft,
 )

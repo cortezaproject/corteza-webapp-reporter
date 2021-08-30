@@ -1,84 +1,137 @@
 <template>
-  <b-table-simple
-    :table-variant="options.tableVariant"
-    :dark="options.dark"
-    :bordered="options.bordered"
-    :borderless="options.borderless"
-    :outlined="options.outlined"
-    :striped="options.striped"
-    :responsive="options.responsive"
-    :fixed="options.fixed"
-    :hover="options.hover"
-    :small="options.small"
-    :no-border-collapse="options.noCollapse"
-    sticky-header
-    class="mh-100 mb-0"
-  >
-    <colgroup
-      class="local"
-      span="3"
-    />
-
-    <colgroup
-      class="foreign"
-      span="4"
-    />
-
-    <colgroup
-      class="foreign"
-      span="4"
-    />
-
-    <b-thead
-      :head-variant="options.headVariant"
+  <div>
+    <b-table-simple
+      :table-variant="options.tableVariant"
+      :dark="options.dark"
+      :bordered="options.bordered"
+      :borderless="options.borderless"
+      :outlined="options.outlined"
+      :striped="options.striped"
+      :responsive="options.responsive"
+      :fixed="options.fixed"
+      :hover="options.hover"
+      :small="options.small"
+      :no-border-collapse="options.noCollapse"
+      sticky-header
+      class="mh-100 mb-0"
     >
-      <b-tr
-        v-if="dataframes.length > 1"
-      >
-        <b-th
-          v-for="(c, i) in tabelify.header"
-          :key="i"
-          v-bind="c.attrs || {}"
-          class="border-0"
-        >
-          <p
-            v-if="c.sourceName"
-            class="m-0"
-          >
-            {{ c.sourceName }}
-          </p>
-        </b-th>
-      </b-tr>
-      <b-tr>
-        <b-th
-          v-for="(c, i) in tabelify.header"
-          :key="i"
-          class="border-0"
-        >
-          {{ c.label }}
-        </b-th>
-      </b-tr>
-    </b-thead>
-
-    <b-tbody>
-      <b-tr
-        v-for="(r, i) in tabelify.rows"
+      <colgroup
+        v-for="(cg, i) in tabelify.colgroups"
         :key="i"
+        :class="{ local: cg.isLocal, foreign: !cg.isLocal }"
+        :span="cg.size"
+      />
 
-        :class="{
-          separator: !!r[0].separator,
-        }"
+      <b-thead
+        :head-variant="options.headVariant"
       >
-        <b-td
-          v-for="(c, j) in r"
-          :key="j"
-          v-bind="c.attrs || {}"
+        <b-tr
+          v-if="dataframes.length > 1"
         >
-          {{ c.value }}
-        </b-td>
-      </b-tr>
-    </b-tbody>
-  </b-table-simple>
+          <b-th
+            v-for="(c, i) in tabelify.header"
+            :key="i"
+            v-bind="c.column.attrs || {}"
+            class="border-0"
+          >
+            <p
+              v-if="c.sourceName"
+              class="m-0"
+            >
+              {{ c.sourceName }}
+            </p>
+          </b-th>
+        </b-tr>
+        <b-tr>
+          <b-th
+            v-for="(c, i) in tabelify.header"
+            :key="i"
+            class="border-0 pointer"
+            @click="handleSort(c.meta.sortKey)"
+          >
+            <div
+              class="d-flex align-items-center"
+            >
+              <div
+                class="d-flex text-nowrap"
+              >
+                {{ c.column.label }}
+              </div>
+
+              <font-awesome-layers
+                class="ml-2"
+              >
+                <font-awesome-icon
+                  :icon="['fas', 'angle-up']"
+                  class="mb-1"
+                  :style="{
+                    color: sort.field === c.meta.sortKey && !sort.descending ? 'black' : 'grey',
+                  }"
+                />
+                <font-awesome-icon
+                  :icon="['fas', 'angle-down']"
+                  class="mt-1"
+                  :style="{
+                    color: sort.field === c.meta.sortKey && sort.descending ? 'black' : 'grey',
+                  }"
+                />
+              </font-awesome-layers>
+            </div>
+          </b-th>
+        </b-tr>
+      </b-thead>
+
+      <b-tbody>
+        <b-tr
+          v-for="(r, i) in tabelify.rows"
+          :key="i"
+
+          :class="{
+            separator: !!r[0].separator,
+          }"
+        >
+          <b-td
+            v-for="(c, j) in r"
+            :key="j"
+            v-bind="c.attrs || {}"
+          >
+            {{ c.value }}
+          </b-td>
+        </b-tr>
+      </b-tbody>
+    </b-table-simple>
+
+    <div>
+      <b-button-group>
+        <b-button
+          :disabled="!hasPrevPage"
+          variant="link"
+          class="text-dark"
+          @click="goToPage()"
+        >
+          <font-awesome-icon :icon="['fas', 'angle-double-left']" />
+        </b-button>
+        <b-button
+          :disabled="!hasPrevPage"
+          variant="link"
+          class="text-dark"
+          @click="goToPage('prevPage')"
+        >
+          <font-awesome-icon :icon="['fas', 'angle-left']" />
+          Previous
+        </b-button>
+        <b-button
+          :disabled="!hasNextPage"
+          variant="link"
+          class="text-dark"
+          @click="goToPage('nextPage')"
+        >
+          Next
+          <font-awesome-icon :icon="['fas', 'angle-right']" />
+        </b-button>
+      </b-button-group>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -93,6 +146,9 @@ export default {
         field: '',
         descending: false,
       },
+
+      cursors: [],
+      cursor: undefined,
     }
   },
 
@@ -128,6 +184,18 @@ export default {
       }
 
       return this.tabelifyFrame(this.localDataframe)
+    },
+
+    hasPrevPage () {
+      return !!this.cursors.length
+    },
+
+    nextPage () {
+      return this.localDataframe?.paging?.nextPage
+    },
+
+    hasNextPage () {
+      return !!this.nextPage
     },
   },
 
@@ -167,19 +235,24 @@ export default {
     //  ** merge with the current tabelified result
     tabelifyFrame (frame, maxSize = 1) {
       const outRows = []
+      const isLocal = frame.ref === this.localDataframe.ref
 
       const displayedColumnIndexes = (this.options.columns[frame.ref] || []).map(({ name }) => {
         return frame.columns.findIndex(fc => fc.name === name)
       })
 
-      let outHeader = [...frame.columns]
-
-      if (this.dataframes.length === 1) {
-        outHeader = outHeader.filter((c, index) => {
-          return displayedColumnIndexes.includes(index)
-        })
+      // Index selected columns
+      const selectedCols = new Set()
+      for (const c of this.options.columns[frame.ref] || []) {
+        selectedCols.add(frame.columns.findIndex(({ name }) => name === c.name))
       }
+
       const hSeanFrames = {}
+      const outHeader = frame.columns
+        .filter((c, i) => selectedCols.has(i))
+        .map(column => ({ column, meta: { ref: frame.ref, sortKey: isLocal ? column.name : `${frame.ref}.${column.name}` } }))
+
+      const outColgroups = [{ size: outHeader.length, isLocal: isLocal }]
 
       const relFrames = this.getForeignFrames(frame)
       const usedKeys = this.keyColumns(frame)
@@ -187,7 +260,8 @@ export default {
       for (const r of frame.rows) {
         maxSize = 1
 
-        const row = this.tabelifyRow(r)
+        const row = this.tabelifyRow(r, selectedCols)
+
         const auxRows = []
         for (const colIndex of Object.values(usedKeys)) {
           const relFrame = relFrames[r[colIndex]]
@@ -211,6 +285,7 @@ export default {
               x[0].sourceName = rf.ref
               outHeader.push(...x)
               hSeanFrames[rf.ref] = true
+              outColgroups.push(...aux.colgroups)
             }
 
             // Rowspan smaller frames so the table is nice and aligned
@@ -248,7 +323,7 @@ export default {
         }
       }
 
-      return { rows: outRows, maxSize, header: outHeader }
+      return { rows: outRows, maxSize, header: outHeader, colgroups: outColgroups }
     },
 
     mergeRows (auxRows, maxSize) {
@@ -278,13 +353,77 @@ export default {
       return this.mergeRows(auxRows)
     },
 
-    tabelifyRow (row) {
+    tabelifyRow (row, selectedCols) {
       const out = []
       for (let i = 0; i < row.length; i++) {
+        if (!selectedCols.has(i)) {
+          continue
+        }
+
         out.push({ value: row[i] })
       }
 
       return out
+    },
+
+    // Sorting
+    handleSort (fieldName) {
+      if (fieldName) {
+        const { field, descending } = this.sort
+        if (fieldName === field) {
+          this.sort.descending = !descending
+        } else {
+          this.sort.field = fieldName
+          this.sort.descending = false
+        }
+      }
+
+      this.updateDefinition()
+    },
+
+    goToPage (dir) {
+      switch (dir) {
+        case 'nextPage':
+          if (!this.cursors.length) {
+            this.cursors.push(undefined)
+          }
+          this.cursors.push(this.nextPage)
+          this.cursor = this.nextPage
+          break
+
+        case 'prevPage':
+          this.cursors.pop()
+          this.cursor = this.cursors.pop()
+          break
+
+        default:
+          this.cursor = undefined
+          this.cursors = []
+      }
+
+      this.updateDefinition()
+    },
+
+    // Meta
+    updateDefinition () {
+      const def = {
+        ref: this.localDataframe.ref,
+      }
+
+      // Sorting
+      const { field, descending } = this.sort
+      if (field) {
+        // Generate sort string
+        const sort = descending ? `${field} DESC` : field
+        def.sort = sort
+      }
+
+      // Paging
+      if (this.cursor) {
+        def.paging = { cursor: this.cursor }
+      }
+
+      this.$emit('update', def)
     },
   },
 }

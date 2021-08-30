@@ -169,11 +169,18 @@ export default {
 
           this.$SystemAPI.reportRunFresh({ steps, frames })
             .then(({ frames = [] }) => {
-              const dataframeIndex = this.dataframes.findIndex(({ name }) => name === element.name)
+              let from = -1
+              let to = -1
+              this.dataframes.forEach((f, i) => {
+                if (f.name === element.name) {
+                  if (from === -1) {
+                    from = i
+                  }
+                  to = i + 1
+                }
+              })
 
-              if (dataframeIndex >= 0) {
-                this.$set(this.dataframes, dataframeIndex, frames.find(({ name }) => name === element.name))
-              }
+              this.dataframes.splice(from, to - from, ...frames)
             })
         }
       }

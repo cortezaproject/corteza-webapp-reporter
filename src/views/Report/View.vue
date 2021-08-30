@@ -43,7 +43,7 @@
           :index="index"
           :projection="block"
           :datasources="reportDatasources"
-          :dataframes="dataframes"
+          :dataframes="dataframes.filter(({ name }) => name.split('-')[0] === `${index}`)"
           @update="updateDataframes(index, $event)"
         />
       </template>
@@ -130,17 +130,19 @@ export default {
 
     async runReport () {
       this.dataframes = []
-
       const frames = []
 
-      this.report.projections.forEach(({ elements = [] }) => {
+      this.report.projections.forEach(({ elements = [] }, index) => {
         elements.forEach((element) => {
           element = reporter.DisplayElementMaker(element)
 
           if (element && element.kind !== 'Text') {
             const { dataframes = [] } = element.reportDefinitions()
 
-            frames.push(...dataframes.filter(({ source }) => source))
+            frames.push(...dataframes.filter(({ source }) => source).map(df => {
+              df.name = `${index}-${df.name}`
+              return df
+            }))
           }
         })
       })
@@ -162,7 +164,10 @@ export default {
       if (element && element.kind !== 'Text') {
         const { dataframes = [] } = element.reportDefinitions(definition)
 
-        frames.push(...dataframes.filter(({ source }) => source))
+        frames.push(...dataframes.filter(({ source }) => source).map(df => {
+          df.name = `${index}-${df.name}`
+          return df
+        }))
 
         if (frames.length) {
           const steps = this.reportDatasources.map(({ step }) => step)

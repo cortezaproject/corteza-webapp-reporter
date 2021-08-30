@@ -120,7 +120,7 @@ export default {
   methods: {
     getFrames (displayElementName) {
       if (this.dataframes) {
-        return this.dataframes.filter(({ name }) => name === displayElementName) || {}
+        return this.dataframes.filter(({ name }) => name.split('-')[1] === displayElementName) || {}
       }
 
       return []

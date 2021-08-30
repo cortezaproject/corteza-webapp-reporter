@@ -87,7 +87,7 @@
             v-if="block"
             :index="index"
             :projection="block"
-            :dataframes="dataframes"
+            :dataframes="dataframes.filter(({ name }) => name.split('-')[0] === `${index}`)"
             @update="updateDataframes(index, $event)"
           />
         </div>
@@ -436,14 +436,17 @@ export default {
       this.dataframes = []
       const frames = []
 
-      this.projections.items.forEach(({ elements = [] }) => {
+      this.projections.items.forEach(({ elements = [] }, index) => {
         elements.forEach((element) => {
           element = reporter.DisplayElementMaker(element)
 
           if (element && element.kind !== 'Text') {
             const { dataframes = [] } = element.reportDefinitions()
 
-            frames.push(...dataframes.filter(({ source }) => source))
+            frames.push(...dataframes.filter(({ source }) => source).map(df => {
+              df.name = `${index}-${df.name}`
+              return df
+            }))
           }
         })
       })
@@ -465,7 +468,10 @@ export default {
       if (element && element.kind !== 'Text') {
         const { dataframes = [] } = element.reportDefinitions(definition)
 
-        frames.push(...dataframes.filter(({ source }) => source))
+        frames.push(...dataframes.filter(({ source }) => source).map(df => {
+          df.name = `${index}-${df.name}`
+          return df
+        }))
 
         if (frames.length) {
           const steps = this.reportDatasources.map(({ step }) => step)

@@ -135,7 +135,7 @@ export default {
 
       this.datasources.forEach(({ step }, index) => {
         Object.entries(step).forEach(([kind, { name }]) => {
-          if (kind === 'load') {
+          if (['load', 'group'].includes(kind)) {
             options.push({ value: name || `${index}`, text: name || `${index}` })
           }
         })
@@ -178,7 +178,7 @@ export default {
         const sourceType = this.step.join[`${source}Source`]
 
         if (sourceType) {
-          const steps = this.datasources.filter(({ step }) => step.load).map(({ step }) => step)
+          const steps = this.datasources.filter(({ step }) => step.load || step.group).map(({ step }) => step)
           const describe = [sourceType]
 
           if (steps.length && describe.length) {

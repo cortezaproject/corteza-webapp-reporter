@@ -557,6 +557,9 @@ export default {
             step = reporter.StepFactory({
               group: {
                 name: 'Group',
+                keys: [],
+                columns: [],
+                filter: {},
               },
             })
             break

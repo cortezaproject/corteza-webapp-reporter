@@ -237,10 +237,6 @@ export default {
       const outRows = []
       const isLocal = frame.ref === this.localDataframe.ref
 
-      const displayedColumnIndexes = (this.options.columns[frame.ref] || []).map(({ name }) => {
-        return frame.columns.findIndex(fc => fc.name === name)
-      })
-
       // Index selected columns
       const selectedCols = new Set()
       for (const c of this.options.columns[frame.ref] || []) {
@@ -315,12 +311,6 @@ export default {
         } else {
           outRows.push(row)
         }
-
-        if (this.dataframes.length === 1) {
-          outRows[outRows.length - 1] = outRows[outRows.length - 1].filter((c, index) => {
-            return displayedColumnIndexes.includes(index)
-          })
-        }
       }
 
       return { rows: outRows, maxSize, header: outHeader, colgroups: outColgroups }
@@ -359,7 +349,6 @@ export default {
         if (!selectedCols.has(i)) {
           continue
         }
-
         out.push({ value: row[i] })
       }
 

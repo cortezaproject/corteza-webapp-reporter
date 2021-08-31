@@ -177,7 +177,7 @@ export default {
               let from = -1
               let to = -1
               this.dataframes.forEach((f, i) => {
-                if (f.name === element.name) {
+                if (f.name === `${index}-${element.name}`) {
                   if (from === -1) {
                     from = i
                   }

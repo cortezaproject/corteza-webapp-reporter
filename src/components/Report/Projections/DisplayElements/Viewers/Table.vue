@@ -409,7 +409,10 @@ export default {
 
       // Paging
       if (this.cursor) {
-        def.paging = { cursor: this.cursor }
+        def.paging = {
+          cursor: this.cursor,
+          limit: this.localDataframe?.paging?.limit || this.options.datasources[0]?.paging?.limit || 20,
+        }
       }
 
       this.$emit('update', def)

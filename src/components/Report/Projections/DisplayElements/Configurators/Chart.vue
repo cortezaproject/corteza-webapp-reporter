@@ -9,7 +9,7 @@
           label-class="text-primary"
         >
           <b-form-select
-            v-model="displayElement.options.type"
+            v-model="options.type"
             :options="chartTypes"
             @change="typeChanged"
           />
@@ -19,12 +19,17 @@
         <b-form-group
           label="Color scheme"
           label-class="text-primary"
+          class="mb-0"
         >
           <vue-select
-            :value="displayElement.options.colorScheme"
+            v-model="options.colorScheme"
             :options="colorSchemes"
+            :reduce="cs => cs.value"
+            label="label"
+            option-text="label"
+            option-value="value"
+            :clearable="true"
             class="h-100 w-100"
-            @input="displayElement.options.colorScheme = $event.value"
           >
             <template #option="option">
               <div
@@ -35,6 +40,16 @@
               />
             </template>
           </vue-select>
+          <template
+            v-if="currentColorScheme"
+          >
+            <div
+              v-for="(color, index) in currentColorScheme.colors"
+              :key="`${currentColorScheme.value}-${index}`"
+              :style="`background: ${color};`"
+              class="d-inline-block color-box mr-1"
+            />
+          </template>
         </b-form-group>
       </b-col>
     </b-row>
@@ -48,7 +63,7 @@
         label-class="text-primary"
       >
         <b-form-select
-          v-model="displayElement.options.labelColumn"
+          v-model="options.labelColumn"
           :options="labelColumns"
           text-field="label"
           value-field="name"
@@ -70,7 +85,7 @@
       >
         <column-picker
           :all-columns="dataColumns"
-          :columns.sync="displayElement.options.dataColumns"
+          :columns.sync="options.dataColumns"
         />
       </b-form-group>
     </div>
@@ -134,6 +149,10 @@ export default {
         ...this.mergedColumns.filter(({ kind }) => kind === 'Number'),
       ].sort((a, b) => a.label.localeCompare(b.label))
     },
+
+    currentColorScheme () {
+      return this.colorSchemes.find(({ value }) => value === this.options.colorScheme)
+    },
   },
 
   created () {
@@ -163,8 +182,12 @@ export default {
   },
 
   methods: {
+    setColorscheme (colorscheme) {
+      this.options.colorScheme = (colorscheme || {}).value || ''
+    },
+
     typeChanged () {
-      this.displayElement.options = reporter.ChartOptionsMaker(this.options)
+      this.options = reporter.ChartOptionsMaker(this.options)
     },
   },
 }

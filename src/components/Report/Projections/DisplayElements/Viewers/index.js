@@ -4,6 +4,7 @@ import { capitalize } from 'lodash'
 import Text from './Text'
 import Chart from './Chart'
 import Table from './Table'
+import Metric from './Metric'
 
 /**
  * List of all known display element components
@@ -13,6 +14,7 @@ const Registry = {
   Text,
   Chart,
   Table,
+  Metric,
 }
 
 function GetComponent ({ displayElement }) {

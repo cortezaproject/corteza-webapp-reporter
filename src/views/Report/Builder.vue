@@ -329,6 +329,11 @@ export default {
             value: displayElementThumbnails.Text,
           },
           {
+            label: 'Metric',
+            kind: 'Metric',
+            value: displayElementThumbnails.Metric,
+          },
+          {
             label: 'Table',
             kind: 'Table',
             value: displayElementThumbnails.Table,

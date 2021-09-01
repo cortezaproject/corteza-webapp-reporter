@@ -72,6 +72,7 @@
           </b-form-group>
 
           <b-form-group
+            v-if="displayElement.kind === 'Table'"
             label="Limit"
             label-class="text-primary"
           >

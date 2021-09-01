@@ -13,8 +13,14 @@ export default {
   },
 
   computed: {
-    options () {
-      return this.displayElement.options || undefined
+    options: {
+      get () {
+        return this.displayElement.options || undefined
+      },
+
+      set (options) {
+        this.$emit('update:displayElement', { ...this.displayElement, options })
+      },
     },
   },
 }

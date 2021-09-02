@@ -118,48 +118,44 @@ export default {
   },
 
   watch: {
+    presort: {
+      immediate: true,
+      handler (presort) {
+        if (presort) {
+          const sort = presort.includes(',') ? presort.split(',') : [presort]
+
+          this.items = sort.map(value => {
+            let field = ''
+            let descending = false
+
+            if (value.includes('DESC')) {
+              descending = true
+              field = value.split(' ')[0]
+            } else {
+              field = value
+            }
+
+            return {
+              field,
+              descending: !!descending,
+            }
+          })
+        } else {
+          this.items = []
+        }
+      },
+    },
+
     items: {
       deep: true,
       handler (items = [], oldItems = undefined) {
         if (oldItems) {
           this.$emit('update', items.filter(({ field }) => field).map(({ field, descending }) => {
             return descending ? `${field} DESC` : field
-          }).join(','),
-          )
+          }).join(','))
         }
       },
     },
-  },
-
-  created () {
-    if (this.presort) {
-      let sort = []
-
-      if (this.presort.includes(',')) {
-        sort = this.presort.split(',')
-      } else {
-        sort = [this.presort]
-      }
-
-      this.items = sort.map(value => {
-        let field = ''
-        let descending = false
-
-        if (value.includes('DESC')) {
-          descending = true
-          field = value.split(' ')[0]
-        } else {
-          field = value
-        }
-
-        return {
-          field,
-          descending: !!descending,
-        }
-      })
-    } else {
-      this.items = []
-    }
   },
 }
 </script>

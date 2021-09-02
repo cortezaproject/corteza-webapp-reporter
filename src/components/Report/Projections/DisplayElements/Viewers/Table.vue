@@ -49,7 +49,8 @@
           <b-th
             v-for="(c, i) in tabelify.header"
             :key="i"
-            class="border-0 pointer"
+            class="border-0"
+            :class="{ 'pointer': !c.meta.sortKey.includes('.') }"
             @click="handleSort(c.meta.sortKey)"
           >
             <div
@@ -62,6 +63,7 @@
               </div>
 
               <font-awesome-layers
+                v-if="!c.meta.sortKey.includes('.')"
                 class="ml-2"
               >
                 <font-awesome-icon
@@ -213,6 +215,23 @@ export default {
 
     hasNextPage () {
       return !!this.nextPage
+    },
+  },
+
+  watch: {
+    localDataframe: {
+      handler (dataframe, oldDataframe) {
+        if (dataframe && !oldDataframe) {
+          const firstField = dataframe.sort.includes(',') ? dataframe.sort.split(',')[0] : dataframe.sort
+
+          if (firstField.includes('DESC')) {
+            this.sort.descending = true
+            this.sort.field = firstField.split(' ')[0]
+          } else {
+            this.sort.field = firstField
+          }
+        }
+      },
     },
   },
 
@@ -374,6 +393,12 @@ export default {
 
     // Sorting
     handleSort (fieldName) {
+      let relatedDatasource
+      if (fieldName.includes('.')) {
+        [relatedDatasource, fieldName] = fieldName.split('.')
+        return // Uncomment this when foreign frame sorting is implemented
+      }
+
       if (fieldName) {
         const { field, descending } = this.sort
         if (fieldName === field) {
@@ -384,7 +409,7 @@ export default {
         }
       }
 
-      this.updateDefinition()
+      this.updateDefinition(relatedDatasource)
     },
 
     goToPage (dir) {
@@ -411,28 +436,37 @@ export default {
     },
 
     // Meta
-    updateDefinition () {
-      const def = {
-        ref: this.localDataframe.ref,
+    updateDefinition (updatedDatasource) {
+      // Get related datasource
+      let ref = this.localDataframe.ref
+
+      if (updatedDatasource) {
+        ref = (this.dataframes.find(({ ref }) => ref === updatedDatasource) || {}).ref
       }
 
-      // Sorting
-      const { field, descending } = this.sort
-      if (field) {
-        // Generate sort string
-        const sort = descending ? `${field} DESC` : field
-        def.sort = sort
-      }
-
-      // Paging
-      if (this.cursor) {
-        def.paging = {
-          cursor: this.cursor,
-          limit: this.localDataframe?.paging?.limit || this.options.datasources[0]?.paging?.limit || 20,
+      if (ref) {
+        const def = {
+          ref,
         }
-      }
 
-      this.$emit('update', def)
+        // Sorting
+        const { field, descending } = this.sort
+        if (field) {
+          // Generate sort string
+          const sort = descending ? `${field} DESC` : field
+          def.sort = sort
+        }
+
+        // Paging
+        if (this.cursor) {
+          def.paging = {
+            cursor: this.cursor,
+            limit: this.localDataframe?.paging?.limit || this.options.datasources[0]?.paging?.limit || 20,
+          }
+        }
+
+        this.$emit('update', def)
+      }
     },
   },
 }

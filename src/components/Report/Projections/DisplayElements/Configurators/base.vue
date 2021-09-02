@@ -10,6 +10,11 @@ export default {
       type: Array,
       required: true,
     },
+
+    datasource: {
+      type: Object,
+      default: undefined,
+    },
   },
 
   computed: {

@@ -104,6 +104,7 @@
         :display-element="displayElement"
         :options.sync="options"
         :columns="columns"
+        :datasource="currentDatasource"
       />
     </b-collapse>
   </div>

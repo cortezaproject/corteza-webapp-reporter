@@ -128,13 +128,18 @@ export default {
     },
 
     chartTypes () {
-      return [
+      const types = [
         { value: 'bar', text: 'Bar' },
         { value: 'line', text: 'Line' },
         { value: 'pie', text: 'Pie' },
         { value: 'doughnut', text: 'Doughnut' },
-        { value: 'funnel', text: 'Funnel' },
       ]
+
+      if (this.datasource && this.datasource.step.group) {
+        types.push({ value: 'funnel', text: 'Funnel' })
+      }
+
+      return types
     },
 
     labelColumns () {

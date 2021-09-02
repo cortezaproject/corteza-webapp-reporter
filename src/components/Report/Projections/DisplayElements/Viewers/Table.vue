@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <b-card
+    no-body
+    class="h-100 rounded-0"
+  >
     <b-table-simple
       :table-variant="options.tableVariant"
       :dark="options.dark"
@@ -13,7 +16,7 @@
       :small="options.small"
       :no-border-collapse="options.noCollapse"
       sticky-header
-      class="mh-100 mb-0"
+      class="flex-grow-1 mh-100 mb-0"
     >
       <colgroup
         v-for="(cg, i) in tabelify.colgroups"
@@ -81,7 +84,9 @@
         </b-tr>
       </b-thead>
 
-      <b-tbody>
+      <b-tbody
+        class="h-100"
+      >
         <b-tr
           v-for="(r, i) in tabelify.rows"
           :key="i"
@@ -101,37 +106,49 @@
       </b-tbody>
     </b-table-simple>
 
-    <div>
-      <b-button-group>
+    <b-card-footer
+      class="d-flex p-1 rounded-0"
+    >
+      <b-button-group
+        class="ml-auto"
+      >
         <b-button
           :disabled="!hasPrevPage"
           variant="link"
-          class="text-dark"
+          class="d-flex align-items-center text-dark px-1"
           @click="goToPage()"
         >
-          <font-awesome-icon :icon="['fas', 'angle-double-left']" />
+          <font-awesome-icon
+            :icon="['fas', 'angle-double-left']"
+          />
         </b-button>
         <b-button
           :disabled="!hasPrevPage"
           variant="link"
-          class="text-dark"
+          class="d-flex align-items-center text-dark"
           @click="goToPage('prevPage')"
         >
-          <font-awesome-icon :icon="['fas', 'angle-left']" />
+          <font-awesome-icon
+            :icon="['fas', 'angle-left']"
+            class="mr-1"
+          />
           Previous
         </b-button>
         <b-button
           :disabled="!hasNextPage"
           variant="link"
-          class="text-dark"
+          class="d-flex align-items-center text-dark"
           @click="goToPage('nextPage')"
         >
           Next
-          <font-awesome-icon :icon="['fas', 'angle-right']" />
+          <font-awesome-icon
+            :icon="['fas', 'angle-right']"
+            class="ml-1"
+          />
         </b-button>
       </b-button-group>
-    </div>
-  </div>
+    </b-card-footer>
+  </b-card>
 </template>
 
 <script>
@@ -432,4 +449,7 @@ export default {
   border-top: 2px solid rgba($dark, 0.5);
 }
 
+.card-rounded {
+  border-radius: 1rem 1rem 0 0;
+}
 </style>

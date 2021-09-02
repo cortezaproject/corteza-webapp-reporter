@@ -5,8 +5,7 @@
       class="h-100 border-0 shadow-sm"
     >
       <b-card-header
-        v-if="headerSet"
-        class="sticky-top border-0 border-bottom px-0"
+        class="sticky-top border-0 border-bottom p-0"
         header-bg-variant="white"
       >
         <slot
@@ -29,21 +28,9 @@
 <script>
 export default {
   computed: {
-    headerSet () {
-      return !!this.$scopedSlots.header
-    },
-
     bodySet () {
       return !!this.$scopedSlots.default
-    },
-
-    footerSet () {
-      return !!this.$scopedSlots.footer
     },
   },
 }
 </script>
-
-<style>
-
-</style>

@@ -5,11 +5,12 @@
     v-on="$listeners"
   >
     <template
-      v-if="projection.title || projection.description"
       #header
     >
       <div
+        v-if="projection.title || projection.description"
         class="px-3"
+        style="padding-top: 0.75rem; padding-bottom: 0.75rem;"
       >
         <h5
           v-if="projection.title"
@@ -20,7 +21,8 @@
 
         <b-card-text
           v-if="projection.description"
-          class="text-dark text-truncate mt-1"
+          class="text-dark text-truncate"
+          :class="{ 'mt-1': projection.title }"
         >
           {{ projection.description }}
         </b-card-text>
@@ -41,7 +43,10 @@
           :key="displayElementIndex"
           :size="element.meta.size"
           :min-size="0"
-          class="overflow-auto"
+          :class="{
+            'overflow-hidden h-100': element.kind !== 'Text',
+            'w-100': projection.elements.length === 1
+          }"
         >
           <display-element
             :display-element="element"

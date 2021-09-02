@@ -65,9 +65,8 @@
             label-class="text-primary"
           >
             <presort
-              :presort="options.datasources[currentConfigurableDatasourceIndex].sort"
+              :presort.sync="options.datasources[currentConfigurableDatasourceIndex].sort"
               :columns="columns[currentConfigurableDatasourceIndex]"
-              @update="options.datasources[currentConfigurableDatasourceIndex].sort = $event"
             />
           </b-form-group>
 

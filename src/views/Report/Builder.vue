@@ -571,6 +571,7 @@ export default {
                 keys: [],
                 columns: [],
                 filter: {},
+                sort: '',
               },
             })
             break
@@ -590,6 +591,7 @@ export default {
                 source: 'composeRecords',
                 definition: {},
                 filter: {},
+                sort: '',
               },
             })
         }

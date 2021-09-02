@@ -33,11 +33,23 @@
     />
 
     <b-form-group
+      v-if="columns.length"
       label="Prefilter"
       label-class="text-primary"
     >
       <prefilter
         :filter.sync="step.load.filter"
+        :columns="columns"
+      />
+    </b-form-group>
+
+    <b-form-group
+      v-if="columns.length"
+      label="Presort order"
+      label-class="text-primary"
+    >
+      <presort
+        :presort.sync="step.load.sort"
         :columns="columns"
       />
     </b-form-group>
@@ -48,10 +60,12 @@
 import base from '../base.vue'
 import loader from './loader'
 import Prefilter from 'corteza-webapp-reporter/src/components/Common/Prefilter'
+import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
 
 export default {
   components: {
     Prefilter,
+    Presort,
   },
 
   extends: base,
@@ -117,7 +131,7 @@ export default {
 
     reset () {
       this.step.load.filter = {}
-      this.step.load.sort = {}
+      this.step.load.sort = ''
     },
   },
 }

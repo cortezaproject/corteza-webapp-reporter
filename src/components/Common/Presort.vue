@@ -150,7 +150,7 @@ export default {
       deep: true,
       handler (items = [], oldItems = undefined) {
         if (oldItems) {
-          this.$emit('update', items.filter(({ field }) => field).map(({ field, descending }) => {
+          this.$emit('update:presort', items.filter(({ field }) => field).map(({ field, descending }) => {
             return descending ? `${field} DESC` : field
           }).join(','))
         }
@@ -159,7 +159,3 @@ export default {
   },
 }
 </script>
-
-<style>
-
-</style>

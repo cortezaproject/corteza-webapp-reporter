@@ -55,12 +55,23 @@
       </b-form-group>
 
       <b-form-group
-        v-if="step.group.source"
+        v-if="columns.length"
         label="Prefilter"
         label-class="text-primary"
       >
         <prefilter
           :filter.sync="step.group.filter"
+          :columns="columns"
+        />
+      </b-form-group>
+
+      <b-form-group
+        v-if="columns.length"
+        label="Presort order"
+        label-class="text-primary"
+      >
+        <presort
+          :presort.sync="step.group.sort"
           :columns="columns"
         />
       </b-form-group>
@@ -73,12 +84,14 @@ import base from '../base.vue'
 import GroupBy from './GroupBy'
 import Aggregate from './Aggregate'
 import Prefilter from 'corteza-webapp-reporter/src/components/Common/Prefilter'
+import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
 
 export default {
   components: {
     GroupBy,
     Aggregate,
     Prefilter,
+    Presort,
   },
 
   extends: base,
@@ -114,6 +127,13 @@ export default {
   },
 
   watch: {
+    'step.group.source': {
+      immediate: true,
+      handler () {
+        this.getSourceColumns()
+      },
+    },
+
     'step.group.keys': {
       deep: true,
       handler () {
@@ -131,7 +151,8 @@ export default {
 
   methods: {
     async getSourceColumns () {
-      const steps = [this.step]
+      const steps = this.datasources.filter(({ step }) => step.load).map(({ step }) => step)
+      steps.push(this.step)
       const describe = [this.step.group.name]
 
       if (steps.length && describe.length) {
@@ -145,6 +166,7 @@ export default {
 
     reset () {
       this.step.group.filter = {}
+      this.step.group.sort = ''
       this.step.group.keys = []
       this.step.group.columns = []
     },

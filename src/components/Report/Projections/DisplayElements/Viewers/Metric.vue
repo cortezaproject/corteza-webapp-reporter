@@ -2,7 +2,7 @@
   <div
     v-if="options"
     :style="style"
-    class="d-flex align-items-center justify-content-center overflow-hidden h-100 px-2"
+    class="d-flex align-items-center justify-content-center overflow-hidden h-100 px-2 rounded"
   >
     <svg
       :viewBox="viewbox"
@@ -18,7 +18,7 @@
         dominant-baseline="central"
         text-rendering="geometricPrecision"
       >
-        {{ options.prefix }} {{ value }} {{ options.suffix }}
+        {{ displayedMetric }}
       </text>
     </svg>
   </div>
@@ -60,6 +60,16 @@ export default {
           }
         }
       }
+      return ''
+    },
+
+    displayedMetric () {
+      const { prefix = '', suffix = '' } = this.options
+
+      if (this.value) {
+        return `${prefix}${this.value}${suffix}`
+      }
+
       return ''
     },
   },

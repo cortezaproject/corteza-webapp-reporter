@@ -65,7 +65,7 @@
         />
       </b-form-group>
 
-      <b-form-group
+      <!-- <b-form-group
         v-if="columns.length"
         label="Presort order"
         label-class="text-primary"
@@ -74,7 +74,7 @@
           :presort.sync="step.group.sort"
           :columns="columns"
         />
-      </b-form-group>
+      </b-form-group> -->
     </div>
   </div>
 </template>
@@ -84,14 +84,14 @@ import base from '../base.vue'
 import GroupBy from './GroupBy'
 import Aggregate from './Aggregate'
 import Prefilter from 'corteza-webapp-reporter/src/components/Common/Prefilter'
-import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
+// import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
 
 export default {
   components: {
     GroupBy,
     Aggregate,
     Prefilter,
-    Presort,
+    // Presort,
   },
 
   extends: base,

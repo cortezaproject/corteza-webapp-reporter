@@ -29,6 +29,17 @@
     <b-row no-gutters>
       <b-col class="pr-3">
         <b-form-group
+          label="Table Variant"
+          label-class="text-primary"
+        >
+          <b-form-select
+            v-model="options.tableVariant"
+            :options="tableVariants"
+          />
+        </b-form-group>
+      </b-col>
+      <b-col>
+        <b-form-group
           label="Head Variant"
           label-class="text-primary"
         >
@@ -55,17 +66,6 @@
               Dark
             </b-form-radio>
           </b-form-radio-group>
-        </b-form-group>
-      </b-col>
-      <b-col>
-        <b-form-group
-          label="Table Variant"
-          label-class="text-primary"
-        >
-          <b-form-select
-            v-model="options.tableVariant"
-            :options="tableVariants"
-          />
         </b-form-group>
       </b-col>
     </b-row>

@@ -29,7 +29,6 @@
       :is="sourceTypeComponent(step.load.source)"
       v-if="step.load.source"
       :definition.sync="stepDefinition"
-      @reset="reset"
     />
 
     <b-form-group

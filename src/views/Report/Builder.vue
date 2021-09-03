@@ -96,7 +96,7 @@
 
     <b-modal
       v-model="projections.showConfigurator"
-      title="Projection configurator"
+      title="Block configuraton"
       ok-title="Save Projection"
       ok-variant="primary"
       cancel-variant="link"
@@ -153,7 +153,7 @@
 
         <b-tab
           :active="!!projections.current.elements.length"
-          title="Display elements"
+          title="Elements"
         >
           <configurator
             :items="currentDisplayElements"
@@ -264,7 +264,7 @@
           size="lg"
           @click="createProjection"
         >
-          New Projection
+          + Add block
         </b-button>
       </editor-toolbar>
     </portal>

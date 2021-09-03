@@ -91,7 +91,7 @@
       variant="primary"
       class="mb-2"
     >
-      Display
+      Element
     </b-button>
     <b-collapse
       id="display"

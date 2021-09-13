@@ -3,6 +3,10 @@
     <c-rich-text-input
       v-if="options"
       v-model="options.value"
+      :labels="{
+        urlPlaceholder: $t('label.urlPlaceholder'),
+        ok: $t('label.ok'),
+      }"
     />
   </b-form-group>
 </template>
@@ -13,6 +17,10 @@ import { components } from '@cortezaproject/corteza-vue'
 const { CRichTextInput } = components
 
 export default {
+  i18nOptions: {
+    namespaces: 'general',
+  },
+
   components: {
     CRichTextInput,
   },

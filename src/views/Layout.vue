@@ -23,6 +23,7 @@
         :expanded.sync="expanded"
         :pinned.sync="pinned"
         :icon="icon"
+        :logo="logo"
         :disabled-routes="['report.list']"
         expand-on-hover
       >
@@ -74,6 +75,7 @@
 
 <script>
 import icon from '../themes/corteza-base/img/icon.png'
+import logo from '../themes/corteza-base/img/logo.png'
 import { components } from '@cortezaproject/corteza-vue'
 import ReportSidebar from 'corteza-webapp-reporter/src/components/ReportSidebar'
 const { CPermissionsModal, CTopbar, CSidebar } = components
@@ -96,6 +98,22 @@ export default {
   computed: {
     icon () {
       return this.$Settings.attachment('ui.iconLogo', icon)
+    },
+
+    logo () {
+      return this.$Settings.attachment('ui.mainLogo', logo)
+    },
+  },
+
+  watch: {
+    icon: {
+      immediate: true,
+      handler (icon) {
+        if (icon) {
+          const favicon = document.getElementById('favicon')
+          favicon.href = icon
+        }
+      },
     },
   },
 

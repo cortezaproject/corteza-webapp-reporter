@@ -7,10 +7,11 @@
           class="text-primary"
         >
           <b-form-select
-            v-model="namespace"
+            :value="namespace"
             :options="namespaces"
             text-field="name"
             value-field="namespaceID"
+            @change="selectNamespace"
           >
             <template #first>
               <b-form-select-option
@@ -29,10 +30,11 @@
           class="text-primary"
         >
           <b-form-select
-            v-model="module"
+            :value="module"
             :options="modules"
             text-field="name"
             value-field="moduleID"
+            @change="module = $event"
           >
             <template #first>
               <b-form-select-option
@@ -124,8 +126,6 @@ export default {
   watch: {
     namespace: {
       handler (namespaceID) {
-        this.module = undefined
-
         if (namespaceID) {
           this.processing = true
 
@@ -155,6 +155,11 @@ export default {
   },
 
   methods: {
+    selectNamespace (namespace) {
+      this.namespace = namespace
+      this.module = undefined
+    },
+
     fetchNamespaces () {
       return this.$ComposeAPI.namespaceList({ sort: 'name' }).then(({ set = [] }) => {
         this.namespaces = set

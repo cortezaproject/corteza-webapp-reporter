@@ -158,42 +158,6 @@ export default {
           })
       }
     },
-
-    updateDataframes (index, { displayElementIndex, definition }) {
-      const element = reporter.DisplayElementMaker(this.report.projections[index].elements[displayElementIndex])
-      const frames = []
-
-      if (element && element.kind !== 'Text') {
-        const { dataframes = [] } = element.reportDefinitions(definition)
-
-        frames.push(...dataframes.filter(({ source }) => source).map(df => {
-          df.name = `${index}-${df.name}`
-          return df
-        }))
-
-        if (frames.length) {
-          const steps = this.reportDatasources.map(({ step }) => step)
-
-          this.$SystemAPI.reportRunFresh({ steps, frames })
-            .then(({ frames = [] }) => {
-              let from = -1
-              let to = -1
-              this.dataframes.forEach((f, i) => {
-                if (f.name === `${index}-${element.name}`) {
-                  if (from === -1) {
-                    from = i
-                  }
-                  to = i + 1
-                }
-              })
-
-              this.dataframes.splice(from, to - from, ...frames)
-            }).catch((e) => {
-              this.toastErrorHandler('Failed to run report')(e)
-            })
-        }
-      }
-    },
   },
 }
 </script>

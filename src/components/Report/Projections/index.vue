@@ -51,7 +51,7 @@
           <display-element
             :display-element="element"
             :dataframes="getFrames(element.name)"
-            @update="$emit('update', { displayElementIndex, definition: $event })"
+            @update="updateDataframes({ displayElementIndex, definition: $event })"
           />
         </split-area>
       </split>
@@ -63,6 +63,7 @@
 import Wrap from './Wrap'
 import { Split, SplitArea } from 'vue-split-panel'
 import DisplayElement from './DisplayElements/Viewers'
+import { reporter } from '@cortezaproject/corteza-js'
 
 export default {
   name: 'Projection',
@@ -135,6 +136,31 @@ export default {
       sizes.forEach((size, index) => {
         this.projection.elements[index].meta.size = size
       })
+    },
+
+    updateDataframes ({ displayElementIndex, definition }) {
+      const element = reporter.DisplayElementMaker(this.projection.elements[displayElementIndex])
+      const frames = []
+
+      if (element && element.kind !== 'Text') {
+        const { dataframes = [] } = element.reportDefinitions(definition)
+
+        frames.push(...dataframes.filter(({ source }) => source).map(df => {
+          df.name = `${this.index}-${df.name}`
+          return df
+        }))
+
+        if (frames.length) {
+          const steps = this.$attrs.datasources.map(({ step }) => step)
+
+          this.$SystemAPI.reportRunFresh({ steps, frames })
+            .then(({ frames = [] }) => {
+              this.dataframes = frames
+            }).catch((e) => {
+              this.toastErrorHandler('Failed to run report')(e)
+            })
+        }
+      }
     },
   },
 }

@@ -8,7 +8,7 @@ import './mixins'
 import './components'
 import store from './store'
 
-import i18n from './i18n'
+import { i18n } from '@cortezaproject/corteza-vue'
 
 import router from './router'
 
@@ -16,11 +16,19 @@ export default (options = {}) => {
   options = {
     el: '#app',
     name: 'reporter',
-    template: '<div v-if="loaded" class="h-100"><router-view/></div>',
 
-    data: () => ({ loaded: false }),
+    template: '<div v-if="loaded && i18nLoaded" class="h-100"><router-view/></div>',
+
+    data: () => ({
+      loaded: false,
+      i18nLoaded: false,
+    }),
 
     async created () {
+      this.$i18n.i18next.on('loaded', () => {
+        this.i18nLoaded = true
+      })
+
       this.$auth.handle().then(({ accessTokenFn, user }) => {
         // Load effective permissions
         this.$store.dispatch('rbac/load')
@@ -55,8 +63,16 @@ export default (options = {}) => {
 
     router,
     store,
-    i18n: i18n(),
-
+    i18n: i18n(Vue,
+      { app: 'corteza-webapp-reporter' },
+      'create',
+      'edit',
+      'list',
+      'general',
+      'navigation',
+      'notification',
+      'permissions',
+    ),
     // Any additional options we want to merge
     ...options,
   }

@@ -19,7 +19,7 @@
             :icon="['fas', 'chevron-left']"
             class="back-icon mr-1"
           />
-          {{ $t('general.label.back') }}
+          {{ $t('general:label.back') }}
         </b-button>
       </b-col>
 
@@ -41,7 +41,7 @@
           :borderless="false"
           @confirmed="$emit('delete')"
         >
-          {{ $t('general.label.delete') }}
+          {{ $t('general:label.delete') }}
         </c-input-confirm>
         <b-button
           variant="primary"
@@ -49,7 +49,7 @@
           :disabled="saveDisabled"
           @click="$emit('save')"
         >
-          {{ $t('general.label.save') }}
+          {{ $t('general:label.save') }}
         </b-button>
       </b-col>
     </b-row>

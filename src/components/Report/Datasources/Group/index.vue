@@ -129,8 +129,10 @@ export default {
   watch: {
     'step.group.source': {
       immediate: true,
-      handler () {
-        this.getSourceColumns()
+      handler (source) {
+        if (source) {
+          this.getSourceColumns()
+        }
       },
     },
 
@@ -160,6 +162,8 @@ export default {
           .then((frames = []) => {
             const { columns = [] } = frames.find(({ source }) => describe.includes(source)) || {}
             this.columns = columns
+          }).catch((e) => {
+            this.toastErrorHandler('Failed to describe datasource')(e)
           })
       }
     },

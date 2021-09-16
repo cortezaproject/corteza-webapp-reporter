@@ -106,8 +106,10 @@ export default {
     stepDefinition: {
       immediate: true,
       deep: true,
-      handler () {
-        this.getSourceColumns()
+      handler ({ moduleID, namespaceID }) {
+        if (moduleID && namespaceID) {
+          this.getSourceColumns()
+        }
       },
     },
   },
@@ -124,6 +126,8 @@ export default {
           .then((frames = []) => {
             const { columns = [] } = frames.find(({ source }) => describe.includes(source)) || {}
             this.columns = columns
+          }).catch((e) => {
+            this.toastErrorHandler('Failed to describe datasource')(e)
           })
       }
     },

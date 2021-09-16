@@ -130,9 +130,7 @@ export default {
           this.processing = true
 
           this.fetchModules(namespaceID)
-            .then(modules => {
-              this.modules = modules
-            }).finally(() => {
+            .finally(() => {
               this.processing = false
             })
         }
@@ -144,14 +142,10 @@ export default {
     this.processing = true
 
     this.fetchNamespaces()
-      .then(namespaces => {
-        this.namespaces = namespaces
-
+      .then(() => {
         if (this.namespace) {
           this.fetchModules(this.namespace)
-            .then(modules => {
-              this.modules = modules
-            }).finally(() => {
+            .finally(() => {
               this.processing = false
             })
         }
@@ -163,13 +157,17 @@ export default {
   methods: {
     fetchNamespaces () {
       return this.$ComposeAPI.namespaceList({ sort: 'name' }).then(({ set = [] }) => {
-        return set
+        this.namespaces = set
+      }).catch((e) => {
+        this.toastErrorHandler('Failed to fetch namespaces')(e)
       })
     },
 
     fetchModules (namespaceID) {
       return this.$ComposeAPI.moduleList({ namespaceID, sort: 'name' }).then(({ set = [] }) => {
-        return set
+        this.modules = set
+      }).catch((e) => {
+        this.toastErrorHandler('Failed to fetch modules')(e)
       })
     },
   },

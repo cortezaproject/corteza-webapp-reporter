@@ -153,6 +153,8 @@ export default {
         this.$SystemAPI.reportRunFresh({ steps, frames })
           .then(({ frames = [] }) => {
             this.dataframes = frames
+          }).catch((e) => {
+            this.toastErrorHandler('Failed to run report')(e)
           })
       }
     },
@@ -186,6 +188,8 @@ export default {
               })
 
               this.dataframes.splice(from, to - from, ...frames)
+            }).catch((e) => {
+              this.toastErrorHandler('Failed to run report')(e)
             })
         }
       }

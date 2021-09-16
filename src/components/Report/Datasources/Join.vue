@@ -186,6 +186,8 @@ export default {
               .then((frames = []) => {
                 const { columns = [] } = frames.find(({ source }) => describe.includes(source)) || {}
                 this[`${source}Columns`] = columns
+              }).catch((e) => {
+                this.toastErrorHandler('Failed to describe datasource')(e)
               })
           }
         }

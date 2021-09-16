@@ -222,6 +222,8 @@ export default {
         this.$SystemAPI.reportDescribe({ steps, describe: [this.options.source] })
           .then((frames = []) => {
             this.columns = frames.filter(({ source }) => source === this.options.source).map(({ columns = [] }) => columns.sort((a, b) => a.label.localeCompare(b.label))) || []
+          }).catch((e) => {
+            this.toastErrorHandler('Failed to describe datasource')(e)
           })
       }
     },

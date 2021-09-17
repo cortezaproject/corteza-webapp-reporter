@@ -42,7 +42,7 @@
     </portal>
 
     <grid
-      v-if="report"
+      v-if="report && showReport"
       :blocks.sync="projections.items"
       editable
     >
@@ -87,8 +87,7 @@
             v-if="block"
             :index="index"
             :projection="block"
-            :dataframes="dataframes.filter(({ name }) => name.split('-')[0] === `${index}`)"
-            @update="updateDataframes(index, $event)"
+            :datasources="reportDatasources"
           />
         </div>
       </template>
@@ -193,7 +192,7 @@
       ok-variant="primary"
       title="Datasources"
       body-class="py-3"
-      @ok="runReport()"
+      @ok="refreshReport()"
     >
       <configurator
         v-if="report"
@@ -302,6 +301,7 @@ export default {
   data () {
     return {
       processing: false,
+      showReport: true,
 
       report: undefined,
 
@@ -430,90 +430,25 @@ export default {
       immediate: true,
       handler (reportID) {
         if (reportID) {
-          this.refresh()
+          this.processing = true
+
+          this.fetchReport(this.reportID)
+            .then(() => {
+              this.mapProjections()
+            }).finally(() => {
+              this.processing = false
+            })
         }
       },
     },
   },
 
   methods: {
-    async runReport () {
-      this.dataframes = []
-      const frames = []
-
-      this.projections.items.forEach(({ elements = [] }, index) => {
-        elements.forEach((element) => {
-          element = reporter.DisplayElementMaker(element)
-
-          if (element && element.kind !== 'Text') {
-            const { dataframes = [] } = element.reportDefinitions()
-
-            frames.push(...dataframes.filter(({ source }) => source).map(df => {
-              df.name = `${index}-${df.name}`
-              return df
-            }))
-          }
-        })
-      })
-
-      if (frames.length) {
-        const steps = this.reportDatasources.map(({ step }) => step)
-
-        this.$SystemAPI.reportRunFresh({ steps, frames })
-          .then(({ frames = [] }) => {
-            this.dataframes = frames
-          }).catch((e) => {
-            this.toastErrorHandler('Failed to run report')(e)
-          })
-      }
-    },
-
-    updateDataframes (index, { displayElementIndex, definition }) {
-      const element = reporter.DisplayElementMaker(this.projections.items[index].elements[displayElementIndex])
-      const frames = []
-
-      if (element && element.kind !== 'Text') {
-        const { dataframes = [] } = element.reportDefinitions(definition)
-
-        frames.push(...dataframes.filter(({ source }) => source).map(df => {
-          df.name = `${index}-${df.name}`
-          return df
-        }))
-
-        if (frames.length) {
-          const steps = this.reportDatasources.map(({ step }) => step)
-
-          this.$SystemAPI.reportRunFresh({ steps, frames })
-            .then(({ frames = [] }) => {
-              let from = -1
-              let to = -1
-              this.dataframes.forEach((f, i) => {
-                if (f.name === `${index}-${element.name}`) {
-                  if (from === -1) {
-                    from = i
-                  }
-                  to = i + 1
-                }
-              })
-
-              this.dataframes.splice(from, to - from, ...frames)
-            }).catch((e) => {
-              this.toastErrorHandler('Failed to run report')(e)
-            })
-        }
-      }
-    },
-
-    refresh () {
-      this.processing = true
-
-      this.fetchReport(this.reportID)
-        .then(() => {
-          this.mapProjections()
-          this.runReport()
-        }).finally(() => {
-          this.processing = false
-        })
+    refreshReport () {
+      this.showReport = false
+      return setTimeout(() => {
+        this.showReport = true
+      }, 50)
     },
 
     // If projection is added/reordered or deleted, vue-grid-layout needs fresh indexes to work properly
@@ -656,8 +591,14 @@ export default {
     },
 
     updateProjection () {
-      this.projections.items.splice(this.projections.currentIndex, 1, this.projections.current)
-      this.runReport()
+      if (this.projections.current) {
+        const elements = this.projections.current.elements
+
+        this.projections.items.splice(this.projections.currentIndex, 1, { ...this.projections.current, elements: [] })
+        setTimeout(() => {
+          this.projections.items.splice(this.projections.currentIndex, 1, { ...this.projections.current, elements })
+        }, 50)
+      }
     },
 
     editProjection (index = undefined) {

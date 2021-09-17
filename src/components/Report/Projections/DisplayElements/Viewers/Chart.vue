@@ -28,11 +28,14 @@ export default {
     localDataframe () {
       return this.dataframes[0]
     },
+
+    size () {
+      return this.displayElement ? this.displayElement.meta.size || 100 : 100
+    },
   },
 
   watch: {
     dataframes: {
-      immediate: true,
       deep: true,
       handler (dataframes = []) {
         if (dataframes.length) {
@@ -40,6 +43,16 @@ export default {
             this.renderChart()
           })
         }
+      },
+    },
+
+    size: {
+      immediate: true,
+      deep: true,
+      handler () {
+        this.$nextTick(() => {
+          this.renderChart()
+        })
       },
     },
   },

@@ -47,18 +47,6 @@
         </b-form-group>
       </b-col>
     </b-row>
-    <!-- <b-row>
-      <b-col>
-        <b-form-group
-          label="Presort"
-          label-class="text-primary"
-        >
-          <b-form-input
-            v-model="sort"
-          />
-        </b-form-group>
-      </b-col>
-    </b-row> -->
   </div>
 </template>
 
@@ -123,31 +111,13 @@ export default {
     },
   },
 
-  watch: {
-    namespace: {
-      handler (namespaceID) {
-        if (namespaceID) {
-          this.processing = true
-
-          this.fetchModules(namespaceID)
-            .finally(() => {
-              this.processing = false
-            })
-        }
-      },
-    },
-  },
-
   created () {
     this.processing = true
 
     this.fetchNamespaces()
       .then(() => {
         if (this.namespace) {
-          this.fetchModules(this.namespace)
-            .finally(() => {
-              this.processing = false
-            })
+          return this.fetchModules(this.namespace)
         }
       }).finally(() => {
         this.processing = false
@@ -157,7 +127,16 @@ export default {
   methods: {
     selectNamespace (namespace) {
       this.namespace = namespace
-      this.module = undefined
+
+      if (namespace) {
+        this.processing = true
+
+        this.fetchModules(namespace)
+          .finally(() => {
+            this.module = undefined
+            this.processing = false
+          })
+      }
     },
 
     fetchNamespaces () {

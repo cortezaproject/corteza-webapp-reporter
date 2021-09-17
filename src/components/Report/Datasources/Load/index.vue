@@ -98,6 +98,7 @@ export default {
 
       set (definition) {
         this.step.load.definition = definition
+        this.$emit('update:step', this.step)
       },
     },
   },

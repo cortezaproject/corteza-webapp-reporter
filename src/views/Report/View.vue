@@ -43,8 +43,6 @@
           :index="index"
           :projection="block"
           :datasources="reportDatasources"
-          :dataframes="dataframes.filter(({ name }) => name.split('-')[0] === `${index}`)"
-          @update="updateDataframes(index, $event)"
         />
       </template>
     </grid>
@@ -54,7 +52,7 @@
 <script>
 import Grid from 'corteza-webapp-reporter/src/components/Report/Grid'
 import Projection from 'corteza-webapp-reporter/src/components/Report/Projections'
-import { system, reporter } from '@cortezaproject/corteza-js'
+import { system } from '@cortezaproject/corteza-js'
 
 export default {
   name: 'ReportView',
@@ -119,44 +117,11 @@ export default {
             const [x, y, w, h] = xywh
             return { ...p, x, y, w, h, i }
           })
-
-          this.runReport()
         })
-        .catch(this.toastErrorHandler(this.$t('notification.report.fetchFailed')))
+        .catch(this.toastErrorHandler(this.$t('notification:report.fetchFailed')))
         .finally(() => {
           this.processing = false
         })
-    },
-
-    async runReport () {
-      this.dataframes = []
-      const frames = []
-
-      this.report.projections.forEach(({ elements = [] }, index) => {
-        elements.forEach((element) => {
-          element = reporter.DisplayElementMaker(element)
-
-          if (element && element.kind !== 'Text') {
-            const { dataframes = [] } = element.reportDefinitions()
-
-            frames.push(...dataframes.filter(({ source }) => source).map(df => {
-              df.name = `${index}-${df.name}`
-              return df
-            }))
-          }
-        })
-      })
-
-      if (frames.length) {
-        const steps = this.reportDatasources.map(({ step }) => step)
-
-        this.$SystemAPI.reportRunFresh({ steps, frames })
-          .then(({ frames = [] }) => {
-            this.dataframes = frames
-          }).catch((e) => {
-            this.toastErrorHandler('Failed to run report')(e)
-          })
-      }
     },
   },
 }

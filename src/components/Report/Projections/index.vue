@@ -48,9 +48,16 @@
             'w-100': projection.elements.length === 1
           }"
         >
+          <div
+            v-if="processing"
+            class="d-flex align-items-center justify-content-center h-100"
+          >
+            <b-spinner />
+          </div>
+
           <display-element
+            v-else
             :display-element="element"
-            :dataframes="getFrames(element.name)"
             @update="updateDataframes({ displayElementIndex, definition: $event })"
           />
         </split-area>
@@ -85,15 +92,14 @@ export default {
       type: Object,
       required: true,
     },
-
-    dataframes: {
-      type: Array,
-      required: true,
-    },
   },
 
   data () {
     return {
+      processing: false,
+
+      dataframes: {},
+
       showDisplayElements: false,
     }
   },
@@ -113,6 +119,8 @@ export default {
             return e
           })
 
+          this.runReport()
+
           // Hack around split not rerendering
           this.showDisplayElements = false
           this.$nextTick().then(() => {
@@ -124,18 +132,47 @@ export default {
   },
 
   methods: {
-    getFrames (displayElementName) {
-      if (this.dataframes) {
-        return this.dataframes.filter(({ name }) => name.split('-')[1] === displayElementName) || {}
-      }
-
-      return []
-    },
-
     setDisplayElementSizes (sizes = []) {
       sizes.forEach((size, index) => {
         this.projection.elements[index].meta.size = size
       })
+    },
+
+    runReport () {
+      this.processing = true
+      this.dataframes = {}
+      const frames = []
+
+      this.projection.elements.forEach((element) => {
+        element = reporter.DisplayElementMaker(element)
+
+        if (element && element.kind !== 'Text') {
+          const { dataframes = [] } = element.reportDefinitions()
+
+          frames.push(...dataframes.filter(({ source }) => source).map(df => {
+            df.name = `${this.index}-${df.name}`
+            return df
+          }))
+        }
+      })
+
+      if (frames.length) {
+        const steps = this.$attrs.datasources.map(({ step }) => step)
+
+        this.$SystemAPI.reportRunFresh({ steps, frames })
+          .then(({ frames = [] }) => {
+            this.projection.elements = this.projection.elements.map(element => {
+              const dataframes = frames.filter(({ name }) => name.split('-')[1] === element.name)
+              return { ...element, dataframes }
+            })
+          }).catch((e) => {
+            this.toastErrorHandler('Failed to run report')(e)
+          }).finally(() => {
+            this.processing = false
+          })
+      } else {
+        this.processing = false
+      }
     },
 
     updateDataframes ({ displayElementIndex, definition }) {
@@ -155,7 +192,12 @@ export default {
 
           this.$SystemAPI.reportRunFresh({ steps, frames })
             .then(({ frames = [] }) => {
-              this.dataframes = frames
+              this.projection.elements.find(({ name }) => name === element.name).dataframes = frames
+
+              // this.projection.elements = this.projection.elements.map(element => {
+              //   const dataframes = frames.filter(({ name }) => name.split('-')[1] === element.name)
+              //   return { ...element, dataframes }
+              // })
             }).catch((e) => {
               this.toastErrorHandler('Failed to run report')(e)
             })

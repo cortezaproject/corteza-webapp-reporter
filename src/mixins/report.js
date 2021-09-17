@@ -16,7 +16,7 @@ export default {
         .then(report => {
           this.report = new system.Report(report)
         })
-        .catch(this.toastErrorHandler(this.$t('notification.report.fetchFailed')))
+        .catch(this.toastErrorHandler(this.$t('notification:report.fetchFailed')))
         .finally(() => {
           this.processing = false
         })
@@ -30,10 +30,10 @@ export default {
         return this.$SystemAPI.reportCreate(this.report)
           .then(report => {
             this.report = new system.Report(report)
-            this.toastSuccess(this.$t('notification.report.created'))
+            this.toastSuccess(this.$t('notification:report.created'))
             this.$router.push({ name: 'report.edit', params: { reportID: report.reportID } })
           })
-          .catch(this.toastErrorHandler(this.$t('notification.report.createFailed')))
+          .catch(this.toastErrorHandler(this.$t('notification:report.createFailed')))
           .finally(() => {
             this.processing = false
           })
@@ -41,9 +41,9 @@ export default {
         return this.$SystemAPI.reportUpdate(this.report)
           .then(report => {
             this.report = new system.Report(report)
-            this.toastSuccess(this.$t('notification.report.updated'))
+            this.toastSuccess(this.$t('notification:report.updated'))
           })
-          .catch(this.toastErrorHandler(this.$t('notification.report.updateFailed')))
+          .catch(this.toastErrorHandler(this.$t('notification:report.updateFailed')))
           .finally(() => {
             this.processing = false
           })
@@ -55,10 +55,10 @@ export default {
 
       return this.$SystemAPI.reportDelete(this.report)
         .then(() => {
-          this.toastSuccess(this.$t('notification.report.deleted'))
+          this.toastSuccess(this.$t('notification:report.deleted'))
           this.$router.push({ name: 'report.list' })
         })
-        .catch(this.toastErrorHandler(this.$t('notification.report.deleteFailed')))
+        .catch(this.toastErrorHandler(this.$t('notification:report.deleteFailed')))
         .finally(() => {
           this.processing = false
         })

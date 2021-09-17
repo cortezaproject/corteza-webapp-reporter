@@ -71,7 +71,7 @@ export default {
       .then(({ set = [] }) => {
         this.reports = set
       })
-      .catch(this.toastErrorHandler(this.$t('notification.report.listFetchFailed')))
+      .catch(this.toastErrorHandler(this.$t('notification:report.listFetchFailed')))
   },
 }
 </script>

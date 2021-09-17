@@ -55,7 +55,7 @@
           class="d-flex"
           @confirmed="$emit('delete')"
         >
-          {{ $t('general.label.delete') }}
+          {{ $t('general:label.delete') }}
         </c-input-confirm>
       </b-col>
     </b-row>

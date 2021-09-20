@@ -563,6 +563,7 @@ export default {
       this.handleSave()
         .then(() => {
           this.mapProjections()
+          this.refreshReport()
         })
     },
 

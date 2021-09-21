@@ -63,7 +63,7 @@
       <b-col cols="6">
         <b-form-group
           v-if="step.join.localSource"
-          label="Local Column"
+          label="Primary Column"
           label-class="text-primary"
         >
           <b-form-select
@@ -85,7 +85,7 @@
       <b-col cols="6">
         <b-form-group
           v-if="step.join.foreignSource"
-          label="Foreign Column"
+          label="Secondary Column"
           label-class="text-primary"
         >
           <b-form-select

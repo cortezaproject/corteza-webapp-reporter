@@ -54,7 +54,7 @@
         />
       </b-form-group>
 
-      <b-form-group
+      <!-- <b-form-group
         v-if="columns.length"
         label="Prefilter"
         label-class="text-primary"
@@ -63,7 +63,7 @@
           :filter.sync="step.group.filter"
           :columns="columns"
         />
-      </b-form-group>
+      </b-form-group> -->
 
       <!-- <b-form-group
         v-if="columns.length"
@@ -83,14 +83,14 @@
 import base from '../base.vue'
 import GroupBy from './GroupBy'
 import Aggregate from './Aggregate'
-import Prefilter from 'corteza-webapp-reporter/src/components/Common/Prefilter'
+// import Prefilter from 'corteza-webapp-reporter/src/components/Common/Prefilter'
 // import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
 
 export default {
   components: {
     GroupBy,
     Aggregate,
-    Prefilter,
+    // Prefilter,
     // Presort,
   },
 
@@ -123,31 +123,6 @@ export default {
       })
 
       return options
-    },
-  },
-
-  watch: {
-    'step.group.source': {
-      immediate: true,
-      handler (source) {
-        if (source) {
-          this.getSourceColumns()
-        }
-      },
-    },
-
-    'step.group.keys': {
-      deep: true,
-      handler () {
-        this.getSourceColumns()
-      },
-    },
-
-    'step.group.columns': {
-      deep: true,
-      handler () {
-        this.getSourceColumns()
-      },
     },
   },
 

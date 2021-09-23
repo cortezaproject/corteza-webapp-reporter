@@ -220,6 +220,7 @@ export default {
 
   watch: {
     localDataframe: {
+      immediate: true,
       handler (dataframe, oldDataframe) {
         if (dataframe && !oldDataframe) {
           const firstField = dataframe.sort.includes(',') ? dataframe.sort.split(',')[0] : dataframe.sort
@@ -401,6 +402,12 @@ export default {
 
       if (fieldName) {
         const { field, descending } = this.sort
+
+        if (this.cursor) {
+          this.cursor = undefined
+          this.cursors = []
+        }
+
         if (fieldName === field) {
           this.sort.descending = !descending
         } else {

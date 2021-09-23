@@ -356,17 +356,17 @@ export default {
           {
             label: 'Load',
             kind: 'Load',
-            value: 'Load step description',
+            value: 'Loads data from a specified resource, such as Compose records',
           },
           {
             label: 'Join',
             kind: 'Join',
-            value: 'Join step description',
+            value: 'Joins two Load datasources with a unique column that links them together, such as a Compose record selector',
           },
           {
             label: 'Group',
             kind: 'Group',
-            value: 'Group step description',
+            value: 'Groups data from a load datasource based on a column value and aggregates it, such as counting the number of Accounts with the same status',
           },
         ],
       },

@@ -30,7 +30,6 @@
 
         <p
           v-else-if="displayMode === 'text'"
-          class="h6"
         >
           {{ currentValue }}
         </p>

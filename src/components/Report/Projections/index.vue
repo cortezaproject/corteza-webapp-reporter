@@ -92,6 +92,12 @@ export default {
       type: Object,
       required: true,
     },
+
+    reportID: {
+      type: String,
+      required: false,
+      default: '0',
+    },
   },
 
   data () {
@@ -157,9 +163,7 @@ export default {
       })
 
       if (frames.length) {
-        const steps = this.$attrs.datasources.map(({ step }) => step)
-
-        this.$SystemAPI.reportRunFresh({ steps, frames })
+        this.$SystemAPI.reportRun({ frames, reportID: this.reportID })
           .then(({ frames = [] }) => {
             this.projection.elements = this.projection.elements.map(element => {
               const dataframes = frames.filter(({ name }) => name.split('-')[1] === element.name)
@@ -188,9 +192,7 @@ export default {
         }))
 
         if (frames.length) {
-          const steps = this.$attrs.datasources.map(({ step }) => step)
-
-          this.$SystemAPI.reportRunFresh({ steps, frames })
+          this.$SystemAPI.reportRun({ frames, reportID: this.reportID })
             .then(({ frames = [] }) => {
               this.projection.elements.find(({ name }) => name === element.name).dataframes = frames
 

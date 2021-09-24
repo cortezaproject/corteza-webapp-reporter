@@ -88,6 +88,7 @@
             :index="index"
             :projection="block"
             :datasources="reportDatasources"
+            :report-i-d="reportID"
           />
         </div>
       </template>

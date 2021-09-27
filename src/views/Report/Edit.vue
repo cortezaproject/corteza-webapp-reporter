@@ -62,13 +62,6 @@
                     New Report
                   </b-button>
 
-                  <b-button
-                    variant="light"
-                    size="lg"
-                  >
-                    Export
-                  </b-button>
-
                   <c-permissions-button
                     :title="report.handle"
                     :target="report.handle"

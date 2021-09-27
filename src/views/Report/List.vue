@@ -40,7 +40,7 @@
                   <b-input-group>
                     <b-input
                       v-model.trim="query"
-                      :placeholder="$t('list.searchPlaceholder')"
+                      :placeholder="$t('searchPlaceholder')"
                     />
                     <b-input-group-append>
                       <b-input-group-text class="text-primary bg-white">
@@ -104,6 +104,10 @@
 <script>
 export default {
   name: 'ReportList',
+
+  i18nOptions: {
+    namespaces: 'list',
+  },
 
   data () {
     return {

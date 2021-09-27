@@ -35,6 +35,14 @@
       </grid-item>
     </grid-layout>
   </div>
+  <div
+    v-else
+    class="d-flex align-items-center justify-content-center h-50 w-100"
+  >
+    <h4>
+      No blocks added yet
+    </h4>
+  </div>
 </template>
 
 <script>

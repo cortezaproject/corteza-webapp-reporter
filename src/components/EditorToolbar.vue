@@ -38,6 +38,7 @@
           size="lg"
           size-confirm="lg"
           variant="danger"
+          :disabled="processing"
           :borderless="false"
           @confirmed="$emit('delete')"
         >
@@ -46,7 +47,7 @@
         <b-button
           variant="primary"
           size="lg"
-          :disabled="saveDisabled"
+          :disabled="saveDisabled || processing"
           @click="$emit('save')"
         >
           {{ $t('general:label.save') }}
@@ -76,6 +77,10 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    processing: {
+      type: Boolean,
+      required: false,
     },
   },
 }

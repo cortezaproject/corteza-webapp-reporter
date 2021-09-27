@@ -145,6 +145,7 @@
         :back-link="{ name: 'report.list' }"
         :hide-delete="isNew"
         :save-disabled="!canSave"
+        :processing="processing"
         @delete="handleDelete"
         @save="handleSave"
       />

@@ -256,6 +256,7 @@
     <portal to="report-toolbar">
       <editor-toolbar
         :back-link="{ name: 'report.list' }"
+        :processing="processing"
         @delete="handleDelete"
         @save="handleReportSave"
       >

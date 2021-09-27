@@ -34,7 +34,7 @@
         :pinned.sync="pinned"
         :icon="icon"
         :logo="logo"
-        :disabled-routes="['report.list']"
+        :disabled-routes="['report.list', 'report.create', 'report.edit']"
         expand-on-hover
       >
         <template #header-expanded>

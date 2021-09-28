@@ -43,7 +43,7 @@
 
     <grid
       v-if="report && showReport"
-      :blocks.sync="projections.items"
+      :blocks.sync="blocks.items"
       editable
     >
       <template
@@ -68,7 +68,7 @@
             <b-button
               variant="link"
               class="text-light"
-              @click="editProjection(index)"
+              @click="editBlock(index)"
             >
               <font-awesome-icon
                 :icon="['far', 'edit']"
@@ -79,14 +79,14 @@
             <c-input-confirm
               size="md"
               variant="link text-danger"
-              @confirmed="deleteProjection(index)"
+              @confirmed="deleteBlock(index)"
             />
           </div>
 
-          <projection
+          <block
             v-if="block"
             :index="index"
-            :projection="block"
+            :block="block"
             :datasources="reportDatasources"
             :report-i-d="reportID"
           />
@@ -95,19 +95,19 @@
     </grid>
 
     <b-modal
-      v-model="projections.showConfigurator"
+      v-model="blocks.showConfigurator"
       title="Block configuraton"
-      ok-title="Save Projection"
+      ok-title="Save Block"
       ok-variant="primary"
       cancel-variant="link"
       scrollable
       size="xl"
       body-class="p-0 border-top-0"
       header-class="pb-0 px-3 pt-3 border-bottom-0"
-      @ok="updateProjection()"
+      @ok="updateBlock()"
     >
       <b-tabs
-        v-if="projections.current"
+        v-if="blocks.current"
         active-nav-item-class="bg-grey"
         nav-wrapper-class="bg-white border-bottom"
         active-tab-class="tab-content h-auto overflow-auto"
@@ -122,9 +122,9 @@
             label-class="text-primary"
           >
             <b-form-input
-              v-model="projections.current.title"
+              v-model="blocks.current.title"
               type="text"
-              placeholder="Projection title"
+              placeholder="Block title"
             />
           </b-form-group>
 
@@ -133,8 +133,8 @@
             label-class="text-primary"
           >
             <b-form-textarea
-              v-model="projections.current.description"
-              placeholder="Projection description"
+              v-model="blocks.current.description"
+              placeholder="Block description"
             />
           </b-form-group>
 
@@ -143,8 +143,8 @@
             label-class="text-primary"
           >
             <b-form-radio-group
-              v-model="projections.current.layout"
-              :options="projectionLayoutOptions"
+              v-model="blocks.current.layout"
+              :options="blockLayoutOptions"
               buttons
               button-variant="outline-primary"
             />
@@ -152,7 +152,7 @@
         </b-tab>
 
         <b-tab
-          :active="!!projections.current.elements.length"
+          :active="!!blocks.current.elements.length"
           title="Elements"
         >
           <configurator
@@ -160,7 +160,7 @@
             :current-index="currentDisplayElementIndex"
             draggable
             @select="setCurrentDisplayElement"
-            @add="openDisplayElementSelector(projections.currentIndex)"
+            @add="openDisplayElementSelector(blocks.currentIndex)"
             @delete="deleteCurrentDisplayElement"
           >
             <template v-slot:label="{ item: { kind, name } }">
@@ -175,7 +175,7 @@
               <display-element-configurator
                 v-if="currentDisplayElement"
                 :display-element="currentDisplayElement"
-                :projection="projections.current"
+                :block="blocks.current"
                 :datasources="reportDatasources"
                 class="pr-2"
               />
@@ -263,7 +263,7 @@
         <b-button
           variant="light"
           size="lg"
-          @click="createProjection"
+          @click="createBlock"
         >
           + Add block
         </b-button>
@@ -276,12 +276,12 @@
 import { reporter } from '@cortezaproject/corteza-js'
 import report from 'corteza-webapp-reporter/src/mixins/report'
 import Grid from 'corteza-webapp-reporter/src/components/Report/Grid'
-import Projection from 'corteza-webapp-reporter/src/components/Report/Projections'
+import Block from 'corteza-webapp-reporter/src/components/Report/Blocks'
 import datasources from 'corteza-webapp-reporter/src/components/Report/Datasources/loader'
 import Configurator from 'corteza-webapp-reporter/src/components/Common/Configurator'
 import Selector from 'corteza-webapp-reporter/src/components/Common/Selector'
 import EditorToolbar from 'corteza-webapp-reporter/src/components/EditorToolbar'
-import DisplayElementConfigurator from 'corteza-webapp-reporter/src/components/Report/Projections/DisplayElements/Configurators'
+import DisplayElementConfigurator from 'corteza-webapp-reporter/src/components/Report/Blocks/DisplayElements/Configurators'
 import * as displayElementThumbnails from 'corteza-webapp-reporter/src/assets/DisplayElements'
 
 export default {
@@ -291,7 +291,7 @@ export default {
     Grid,
     Selector,
     Configurator,
-    Projection,
+    Block,
     DisplayElementConfigurator,
     EditorToolbar,
   },
@@ -312,7 +312,7 @@ export default {
       currentDisplayElementIndex: undefined,
       currentDisplayElement: undefined,
 
-      projections: {
+      blocks: {
         showConfigurator: false,
 
         currentIndex: undefined,
@@ -386,7 +386,7 @@ export default {
     },
 
     currentDisplayElements () {
-      return this.projections.current ? this.projections.current.elements : []
+      return this.blocks.current ? this.blocks.current.elements : []
     },
 
     reportDatasources: {
@@ -419,7 +419,7 @@ export default {
       return this.report ? { name: 'report.edit', params: { reportID: this.report.reportID } } : undefined
     },
 
-    projectionLayoutOptions () {
+    blockLayoutOptions () {
       return [
         { text: 'Horizontal', value: 'horizontal' },
         { text: 'Vertical', value: 'vertical' },
@@ -436,7 +436,7 @@ export default {
 
           this.fetchReport(this.reportID)
             .then(() => {
-              this.mapProjections()
+              this.mapBlocks()
             }).finally(() => {
               this.processing = false
             })
@@ -453,10 +453,10 @@ export default {
       }, 50)
     },
 
-    // If projection is added/reordered or deleted, vue-grid-layout needs fresh indexes to work properly
-    reindexProjections (projections = this.projections.items || []) {
-      this.projections.items = projections.map((projection, i) => {
-        return { ...projection, i }
+    // If block is added/reordered or deleted, vue-grid-layout needs fresh indexes to work properly
+    reindexBlocks (blocks = this.blocks.items || []) {
+      this.blocks.items = blocks.map((block, i) => {
+        return { ...block, i }
       })
     },
 
@@ -551,9 +551,9 @@ export default {
       this.datasources.showConfigurator = true
     },
 
-    // Projections
+    // Blocks
     handleReportSave () {
-      this.report.projections = this.projections.items.map(({ moved, x, y, w, h, i, ...p }) => {
+      this.report.blocks = this.blocks.items.map(({ moved, x, y, w, h, i, ...p }) => {
         p.elements = p.elements.map((e, index) => {
           e.name = `${index}_${e.kind}`
           return e
@@ -564,60 +564,60 @@ export default {
 
       this.handleSave()
         .then(() => {
-          this.mapProjections()
+          this.mapBlocks()
           this.refreshReport()
         })
     },
 
-    mapProjections () {
-      this.projections.items = this.report.projections.map(({ xywh, ...p }, i) => {
+    mapBlocks () {
+      this.blocks.items = this.report.blocks.map(({ xywh, ...p }, i) => {
         const [x, y, w, h] = xywh
         return { ...p, x, y, w, h, i }
       })
     },
 
-    createProjection () {
-      let newProjection = {
-        ...new reporter.Projection(),
+    createBlock () {
+      let newBlock = {
+        ...new reporter.Block(),
       }
 
-      const [x, y, w, h] = newProjection.xywh
-      newProjection = {
-        ...newProjection,
+      const [x, y, w, h] = newBlock.xywh
+      newBlock = {
+        ...newBlock,
         x,
         y,
         w,
         h,
       }
 
-      this.reindexProjections([...this.projections.items, newProjection])
+      this.reindexBlocks([...this.blocks.items, newBlock])
     },
 
-    updateProjection () {
-      if (this.projections.current) {
-        const elements = this.projections.current.elements
+    updateBlock () {
+      if (this.blocks.current) {
+        const elements = this.blocks.current.elements
 
-        this.projections.items.splice(this.projections.currentIndex, 1, { ...this.projections.current, elements: [] })
+        this.blocks.items.splice(this.blocks.currentIndex, 1, { ...this.blocks.current, elements: [] })
         setTimeout(() => {
-          this.projections.items.splice(this.projections.currentIndex, 1, { ...this.projections.current, elements })
+          this.blocks.items.splice(this.blocks.currentIndex, 1, { ...this.blocks.current, elements })
         }, 50)
       }
     },
 
-    editProjection (index = undefined) {
-      this.projections.currentIndex = index
-      this.projections.current = index !== undefined ? { ...this.projections.items[index] } : undefined
-      this.setCurrentDisplayElement(this.projections.current.elements.length ? 0 : undefined)
-      this.projections.showConfigurator = true
+    editBlock (index = undefined) {
+      this.blocks.currentIndex = index
+      this.blocks.current = index !== undefined ? { ...this.blocks.items[index] } : undefined
+      this.setCurrentDisplayElement(this.blocks.current.elements.length ? 0 : undefined)
+      this.blocks.showConfigurator = true
     },
 
-    deleteProjection (index = undefined) {
-      this.reindexProjections(this.projections.items.filter((p, i) => index !== i))
+    deleteBlock (index = undefined) {
+      this.reindexBlocks(this.blocks.items.filter((p, i) => index !== i))
     },
 
     // Display elements
     openDisplayElementSelector (index) {
-      this.projections.currentIndex = index
+      this.blocks.currentIndex = index
       this.displayElements.showSelector = true
     },
 
@@ -627,19 +627,19 @@ export default {
     },
 
     deleteCurrentDisplayElement () {
-      this.projections.current.elements.splice(this.currentDisplayElementIndex, 1)
-      this.currentDisplayElementIndex = this.projections.current.elements.length ? 0 : undefined
+      this.blocks.current.elements.splice(this.currentDisplayElementIndex, 1)
+      this.currentDisplayElementIndex = this.blocks.current.elements.length ? 0 : undefined
       this.setCurrentDisplayElement(this.currentDisplayElementIndex)
     },
 
     addDisplayElement (kind) {
-      const name = `${this.projections.items[this.projections.currentIndex].elements.length}_${kind}`
+      const name = `${this.blocks.items[this.blocks.currentIndex].elements.length}_${kind}`
 
       const newDisplayElement = reporter.DisplayElementMaker({ name, kind })
 
-      const projectionElements = this.projections.items[this.projections.currentIndex].elements || []
-      this.$set(this.projections.items[this.projections.currentIndex], 'elements', [
-        ...projectionElements,
+      const blockElements = this.blocks.items[this.blocks.currentIndex].elements || []
+      this.$set(this.blocks.items[this.blocks.currentIndex], 'elements', [
+        ...blockElements,
         newDisplayElement,
       ])
 
@@ -647,8 +647,8 @@ export default {
 
       this.displayElements.showSelector = false
 
-      this.editProjection(this.projections.currentIndex)
-      this.setCurrentDisplayElement(this.projections.current.elements.length - 1)
+      this.editBlock(this.blocks.currentIndex)
+      this.setCurrentDisplayElement(this.blocks.current.elements.length - 1)
     },
   },
 }

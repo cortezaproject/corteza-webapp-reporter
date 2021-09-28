@@ -10,10 +10,10 @@ const Registry = {
 const defaultWrap = 'Card'
 
 /**
- * @param projection {reporter.Projection}
+ * @param block {reporter.Block}
  * @returns component
  */
-function GetWrapComponent ({ projection, wrap = defaultWrap }) {
+function GetWrapComponent ({ block, wrap = defaultWrap }) {
   const cmpName = capitalize(wrap)
   if (Object.hasOwnProperty.call(Registry, cmpName)) {
     return Registry[capitalize(cmpName)]
@@ -25,7 +25,7 @@ function GetWrapComponent ({ projection, wrap = defaultWrap }) {
 /**
  * Wraps page block with one of the configured (on page block options) components
  */
-export default Vue.component('projection', {
+export default Vue.component('block', {
   functional: true,
 
   render (ce, ctx) {

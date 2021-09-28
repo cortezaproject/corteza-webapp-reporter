@@ -126,7 +126,7 @@ export default {
       required: true,
     },
 
-    projection: {
+    block: {
       type: Object,
       required: true,
     },

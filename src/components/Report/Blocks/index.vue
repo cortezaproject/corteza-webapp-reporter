@@ -1,6 +1,6 @@
 <template>
   <wrap
-    v-if="projection"
+    v-if="block"
     v-bind="$props"
     v-on="$listeners"
   >
@@ -8,23 +8,23 @@
       #header
     >
       <div
-        v-if="projection.title || projection.description"
+        v-if="block.title || block.description"
         class="px-3"
         style="padding-top: 0.75rem; padding-bottom: 0.75rem;"
       >
         <h5
-          v-if="projection.title"
+          v-if="block.title"
           class="text-primary text-truncate mb-0"
         >
-          {{ projection.title }}
+          {{ block.title }}
         </h5>
 
         <b-card-text
-          v-if="projection.description"
+          v-if="block.description"
           class="text-dark text-truncate"
-          :class="{ 'mt-1': projection.title }"
+          :class="{ 'mt-1': block.title }"
         >
-          {{ projection.description }}
+          {{ block.description }}
         </b-card-text>
       </div>
     </template>
@@ -33,19 +33,19 @@
       <split
         v-if="showDisplayElements"
         ref="split"
-        :direction="projection.layout"
+        :direction="block.layout"
         :gutter-size="12"
         class="h-100"
         @onDragEnd="setDisplayElementSizes"
       >
         <split-area
-          v-for="(element, displayElementIndex) in projection.elements"
+          v-for="(element, displayElementIndex) in block.elements"
           :key="displayElementIndex"
           :size="element.meta.size"
           :min-size="0"
           :class="{
             'overflow-hidden h-100': element.kind !== 'Text',
-            'w-100': projection.elements.length === 1
+            'w-100': block.elements.length === 1
           }"
         >
           <div
@@ -73,7 +73,7 @@ import DisplayElement from './DisplayElements/Viewers'
 import { reporter } from '@cortezaproject/corteza-js'
 
 export default {
-  name: 'Projection',
+  name: 'Block',
 
   components: {
     Split,
@@ -88,7 +88,7 @@ export default {
       default: () => -1,
     },
 
-    projection: {
+    block: {
       type: Object,
       required: true,
     },
@@ -111,7 +111,7 @@ export default {
   },
 
   watch: {
-    'projection.elements.length': {
+    'block.elements.length': {
       immediate: true,
       handler (length, oldLength) {
         if (length) {
@@ -120,7 +120,7 @@ export default {
           // Reset sizes to default if element was added or removed
           const addedOrRemoved = length !== oldLength && oldLength !== undefined
 
-          this.projection.elements = this.projection.elements.map(e => {
+          this.block.elements = this.block.elements.map(e => {
             e.meta.size = !addedOrRemoved && e.meta.size ? e.meta.size : defaultSize
             return e
           })
@@ -140,7 +140,7 @@ export default {
   methods: {
     setDisplayElementSizes (sizes = []) {
       sizes.forEach((size, index) => {
-        this.projection.elements[index].meta.size = size
+        this.block.elements[index].meta.size = size
       })
     },
 
@@ -149,7 +149,7 @@ export default {
       this.dataframes = {}
       const frames = []
 
-      this.projection.elements.forEach((element) => {
+      this.block.elements.forEach((element) => {
         element = reporter.DisplayElementMaker(element)
 
         if (element && element.kind !== 'Text') {
@@ -165,7 +165,7 @@ export default {
       if (frames.length) {
         this.$SystemAPI.reportRun({ frames, reportID: this.reportID })
           .then(({ frames = [] }) => {
-            this.projection.elements = this.projection.elements.map(element => {
+            this.block.elements = this.block.elements.map(element => {
               const dataframes = frames.filter(({ name }) => name.split('-')[1] === element.name)
               return { ...element, dataframes }
             })
@@ -180,7 +180,7 @@ export default {
     },
 
     updateDataframes ({ displayElementIndex, definition }) {
-      const element = reporter.DisplayElementMaker(this.projection.elements[displayElementIndex])
+      const element = reporter.DisplayElementMaker(this.block.elements[displayElementIndex])
       const frames = []
 
       if (element && element.kind !== 'Text') {
@@ -194,9 +194,9 @@ export default {
         if (frames.length) {
           this.$SystemAPI.reportRun({ frames, reportID: this.reportID })
             .then(({ frames = [] }) => {
-              this.projection.elements.find(({ name }) => name === element.name).dataframes = frames
+              this.block.elements.find(({ name }) => name === element.name).dataframes = frames
 
-              // this.projection.elements = this.projection.elements.map(element => {
+              // this.block.elements = this.block.elements.map(element => {
               //   const dataframes = frames.filter(({ name }) => name.split('-')[1] === element.name)
               //   return { ...element, dataframes }
               // })

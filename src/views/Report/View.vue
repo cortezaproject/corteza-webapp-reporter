@@ -34,14 +34,14 @@
 
     <grid
       v-if="report"
-      :blocks.sync="report.projections"
+      :blocks.sync="report.blocks"
     >
       <template
         slot-scope="{ block, index }"
       >
-        <projection
+        <block
           :index="index"
-          :projection="block"
+          :block="block"
           :datasources="reportDatasources"
           :report-i-d="reportID"
         />
@@ -52,7 +52,7 @@
 
 <script>
 import Grid from 'corteza-webapp-reporter/src/components/Report/Grid'
-import Projection from 'corteza-webapp-reporter/src/components/Report/Projections'
+import Block from 'corteza-webapp-reporter/src/components/Report/Blocks'
 import { system } from '@cortezaproject/corteza-js'
 
 export default {
@@ -60,7 +60,7 @@ export default {
 
   components: {
     Grid,
-    Projection,
+    Block,
   },
 
   data () {
@@ -114,7 +114,7 @@ export default {
         .then(report => {
           this.report = new system.Report(report)
 
-          this.report.projections = this.report.projections.map(({ xywh, ...p }, i) => {
+          this.report.blocks = this.report.blocks.map(({ xywh, ...p }, i) => {
             const [x, y, w, h] = xywh
             return { ...p, x, y, w, h, i }
           })

@@ -63,6 +63,7 @@
                   </b-button>
 
                   <c-permissions-button
+                    v-if="canGrant"
                     :title="report.handle"
                     :target="report.handle"
                     :resource="`corteza::system:report/${report.reportID}`"
@@ -157,6 +158,7 @@
 import { system } from '@cortezaproject/corteza-js'
 import report from 'corteza-webapp-reporter/src/mixins/report'
 import EditorToolbar from 'corteza-webapp-reporter/src/components/EditorToolbar'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'EditReport',
@@ -178,6 +180,14 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      can: 'rbac/can',
+    }),
+
+    canGrant () {
+      return this.can('system/', 'grant')
+    },
+
     reportID () {
       return this.$route.params.reportID
     },

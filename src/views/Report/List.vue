@@ -29,6 +29,7 @@
                   </b-button>
 
                   <c-permissions-button
+                    v-if="canGrant"
                     resource="corteza::system:report/*"
                     button-label="Permissions"
                     button-variant="light"
@@ -85,6 +86,7 @@
                     Edit
                   </b-button>
                   <c-permissions-button
+                    v-if="canGrant"
                     :title="r.handle"
                     :target="r.handle"
                     resource="corteza::system:report/*"
@@ -102,6 +104,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'ReportList',
 
@@ -117,6 +121,14 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      can: 'rbac/can',
+    }),
+
+    canGrant () {
+      return this.can('system/', 'grant')
+    },
+
     tableFields () {
       return [
         {

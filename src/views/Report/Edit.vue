@@ -127,14 +127,14 @@
                 />
               </b-form-group>
 
-              <b-form-group
+              <!-- <b-form-group
                 label="Tags"
                 class="text-primary"
               >
                 <b-form-tags
                   v-model="report.meta.tags"
                 />
-              </b-form-group>
+              </b-form-group> -->
             </b-container>
           </b-card>
         </b-col>

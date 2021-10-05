@@ -55,7 +55,7 @@ export default {
 
       return this.$SystemAPI.reportDelete(this.report)
         .then(() => {
-          this.toastSuccess(this.$t('notification:report.deleted'))
+          this.toastSuccess(this.$t('notification:report.delete'))
           this.$router.push({ name: 'report.list' })
         })
         .catch(this.toastErrorHandler(this.$t('notification:report.deleteFailed')))

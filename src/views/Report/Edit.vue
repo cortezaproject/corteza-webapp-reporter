@@ -54,6 +54,7 @@
               >
                 <div>
                   <b-button
+                    v-if="canCreate"
                     variant="primary"
                     size="lg"
                     class="mr-1"
@@ -186,6 +187,10 @@ export default {
 
     canGrant () {
       return this.can('system/', 'grant')
+    },
+
+    canCreate () {
+      return this.can('system/', 'report.create')
     },
 
     reportID () {

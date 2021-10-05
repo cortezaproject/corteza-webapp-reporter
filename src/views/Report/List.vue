@@ -21,6 +21,7 @@
               >
                 <b-col>
                   <b-button
+                    v-if="canCreate"
                     variant="primary"
                     size="lg"
                     :to="{ name: 'report.create' }"
@@ -127,6 +128,10 @@ export default {
 
     canGrant () {
       return this.can('system/', 'grant')
+    },
+
+    canCreate () {
+      return this.can('system/', 'report.create')
     },
 
     tableFields () {

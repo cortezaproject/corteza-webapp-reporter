@@ -42,7 +42,7 @@
       />
     </b-form-group>
 
-    <b-form-group
+    <!-- <b-form-group
       v-if="columns.length"
       label="Presort order"
       label-class="text-primary"
@@ -51,7 +51,7 @@
         :presort.sync="step.load.sort"
         :columns="columns"
       />
-    </b-form-group>
+    </b-form-group> -->
   </div>
 </template>
 

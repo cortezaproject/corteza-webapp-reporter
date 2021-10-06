@@ -38,7 +38,7 @@
           size="lg"
           size-confirm="lg"
           variant="danger"
-          :disabled="processing"
+          :disabled="deleteDisabled || processing"
           :borderless="false"
           @confirmed="$emit('delete')"
         >
@@ -66,6 +66,10 @@ export default {
       default: () => ({ name: 'root' }),
     },
     hideDelete: {
+      type: Boolean,
+      required: false,
+    },
+    deleteDisabled: {
       type: Boolean,
       required: false,
     },

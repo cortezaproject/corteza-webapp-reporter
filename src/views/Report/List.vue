@@ -73,6 +73,7 @@
                 </template>
                 <template v-slot:cell(actions)="{ item: r }">
                   <b-button
+                    v-if="r.canUpdateReport"
                     variant="light"
                     class="mr-2"
                     :to="{ name: 'report.builder', params: { reportID: r.reportID } }"
@@ -80,6 +81,7 @@
                     Report Builder
                   </b-button>
                   <b-button
+                    v-if="r.canUpdateReport"
                     variant="link"
                     class="mr-2"
                     :to="{ name: 'report.edit', params: { reportID: r.reportID } }"
@@ -87,7 +89,7 @@
                     Edit
                   </b-button>
                   <c-permissions-button
-                    v-if="canGrant"
+                    v-if="r.canGrant"
                     :title="r.handle"
                     :target="r.handle"
                     resource="corteza::system:report/*"
@@ -179,11 +181,17 @@ export default {
         .catch(this.toastErrorHandler(this.$t('notification:report.listFetchFailed')))
     },
 
-    viewReport ({ reportID }) {
-      this.$router.push({
-        name: 'report.view',
-        params: { reportID },
-      })
+    viewReport ({ reportID, canReadReport = false }) {
+      if (reportID) {
+        if (canReadReport) {
+          this.$router.push({
+            name: 'report.view',
+            params: { reportID },
+          })
+        } else {
+          this.toastDanger(this.$t('notification:report.notAllowed.read'))
+        }
+      }
     },
   },
 }

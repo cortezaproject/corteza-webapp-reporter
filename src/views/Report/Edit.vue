@@ -10,13 +10,14 @@
 
     <portal to="topbar-tools">
       <b-button-group
-        v-if="!isNew"
+        v-if="report && !isNew"
         size="sm"
         class="mr-1"
       >
         <b-button
           variant="primary"
           style="margin-right:2px;"
+          :disabled="!report.canUpdateReport"
           :to="reportBuilder"
         >
           <font-awesome-icon
@@ -26,6 +27,7 @@
         </b-button>
         <b-button
           variant="primary"
+          :disabled="!canRead"
           :to="reportViewer"
         >
           <font-awesome-icon
@@ -146,6 +148,7 @@
       <editor-toolbar
         :back-link="{ name: 'report.list' }"
         :hide-delete="isNew"
+        :delete-disabled="!canDelete"
         :save-disabled="!canSave"
         :processing="processing"
         @delete="handleDelete"
@@ -193,6 +196,18 @@ export default {
       return this.can('system/', 'report.create')
     },
 
+    canRead () {
+      return this.report ? this.report.canReadReport : false
+    },
+
+    canDelete () {
+      return this.report ? this.report.canDeleteReport : false
+    },
+
+    canUpdate () {
+      return this.isNew ? this.canCreate : this.report.canUpdateReport || false
+    },
+
     reportID () {
       return this.$route.params.reportID
     },
@@ -231,7 +246,7 @@ export default {
     },
 
     canSave () {
-      return this.nameState && this.handleState
+      return this.canUpdate && this.nameState && this.handleState
     },
   },
 

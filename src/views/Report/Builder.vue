@@ -8,6 +8,7 @@
 
     <portal to="topbar-tools">
       <b-button
+        :disabled="!canUpdate"
         variant="secondary"
         size="sm"
         class="mr-1"
@@ -23,6 +24,7 @@
         <b-button
           variant="primary"
           style="margin-right:2px;"
+          :disabled="!canRead"
           :to="reportViewer"
         >
           <font-awesome-icon
@@ -32,6 +34,7 @@
         </b-button>
         <b-button
           variant="primary"
+          :disabled="!canUpdate"
           :to="reportEditor"
         >
           <font-awesome-icon
@@ -256,6 +259,8 @@
     <portal to="report-toolbar">
       <editor-toolbar
         :back-link="{ name: 'report.list' }"
+        :delete-disabled="!canDelete"
+        :save-disabled="!canUpdate"
         :processing="processing"
         @delete="handleDelete"
         @save="handleReportSave"
@@ -383,6 +388,18 @@ export default {
     pageTitle () {
       const title = this.report ? (this.report.meta.name || this.report.handle) : ''
       return `Report Builder - '${title}'` || 'Report Builder'
+    },
+
+    canRead () {
+      return this.report ? this.report.canReadReport : false
+    },
+
+    canDelete () {
+      return this.report ? this.report.canDeleteReport : false
+    },
+
+    canUpdate () {
+      return this.report ? this.report.canUpdateReport : false
     },
 
     currentDisplayElements () {

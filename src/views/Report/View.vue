@@ -8,6 +8,7 @@
 
     <portal to="topbar-tools">
       <b-button-group
+        v-if="canUpdate"
         size="sm"
         class="mr-1"
       >
@@ -33,7 +34,7 @@
     </portal>
 
     <grid
-      v-if="report"
+      v-if="report && canRead"
       :blocks.sync="report.blocks"
     >
       <template
@@ -80,6 +81,14 @@ export default {
     pageTitle () {
       const title = this.report ? (this.report.meta.name || this.report.handle) : ''
       return title || 'Report View'
+    },
+
+    canRead () {
+      return this.report ? this.report.canReadReport : false
+    },
+
+    canUpdate () {
+      return this.isNew ? this.canCreate : this.report.canUpdateReport || false
     },
 
     reportBuilder () {

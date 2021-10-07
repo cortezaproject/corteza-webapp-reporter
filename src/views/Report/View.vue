@@ -88,7 +88,7 @@ export default {
     },
 
     canUpdate () {
-      return this.isNew ? this.canCreate : this.report.canUpdateReport || false
+      return this.isNew ? this.canCreate : (this.report && this.report.canUpdateReport) || false
     },
 
     reportBuilder () {

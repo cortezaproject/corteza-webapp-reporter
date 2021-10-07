@@ -16,32 +16,40 @@
               class="py-3"
             >
               <b-row
-                class="align-items-center justify-content-between"
+                class="justify-content-between wrap-with-vertical-gutters"
                 no-gutters
               >
-                <b-col>
-                  <b-button
-                    v-if="canCreate"
-                    variant="primary"
-                    size="lg"
-                    :to="{ name: 'report.create' }"
+                <div class="flex-grow-1">
+                  <div
+                    class="wrap-with-vertical-gutters"
                   >
-                    New Report
-                  </b-button>
+                    <b-button
+                      v-if="canCreate"
+                      variant="primary"
+                      size="lg"
+                      class="mr-1"
+                      :to="{ name: 'report.create' }"
+                    >
+                      New Report
+                    </b-button>
 
-                  <c-permissions-button
-                    v-if="canGrant"
-                    resource="corteza::system:report/*"
-                    button-label="Permissions"
-                    button-variant="light"
-                    class="btn-lg ml-1"
-                  />
-                </b-col>
+                    <c-permissions-button
+                      v-if="canGrant"
+                      resource="corteza::system:report/*"
+                      button-label="Permissions"
+                      button-variant="light"
+                      class="btn-lg"
+                    />
+                  </div>
+                </div>
 
-                <b-col>
-                  <b-input-group>
+                <div class="flex-grow-1">
+                  <b-input-group
+                    class="h-100 mw-100"
+                  >
                     <b-input
                       v-model.trim="query"
+                      class="h-100 mw-100"
                       :placeholder="$t('searchPlaceholder')"
                     />
                     <b-input-group-append>
@@ -52,7 +60,7 @@
                       </b-input-group-text>
                     </b-input-group-append>
                   </b-input-group>
-                </b-col>
+                </div>
               </b-row>
             </b-card-header>
             <b-card-body class="p-0">

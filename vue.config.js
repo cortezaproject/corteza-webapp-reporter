@@ -1,7 +1,7 @@
 const buildVueConfig = require('./vue.config-builder')
 
 module.exports = buildVueConfig({
-  appFlavour: 'Corteza Reporter',
+  appFlavour: 'Reporter',
   appName: 'reporter',
   appLabel: 'Corteza Reporter Editor',
   theme: 'corteza-base',

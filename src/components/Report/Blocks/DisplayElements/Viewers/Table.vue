@@ -281,9 +281,16 @@ export default {
       }
 
       const hSeanFrames = {}
-      const outHeader = frame.columns
-        .filter((c, i) => selectedCols.has(i))
-        .map(column => ({ column, meta: { ref: frame.ref, sortKey: isLocal ? column.name : `${frame.ref}.${column.name}` } }))
+      const outHeader = [...selectedCols].map(index => {
+        const column = frame.columns[index]
+        return {
+          column,
+          meta: {
+            ref: frame.ref,
+            sortKey: isLocal ? column.name : `${frame.ref}.${column.name}`,
+          },
+        }
+      })
 
       const outColgroups = [{ size: outHeader.length, isLocal: isLocal }]
 
@@ -293,7 +300,7 @@ export default {
       for (const r of frame.rows) {
         maxSize = 1
 
-        const row = this.tabelifyRow(r, selectedCols)
+        const row = this.tabelifyRow(r, [...selectedCols])
 
         const auxRows = []
         for (const colIndex of Object.values(usedKeys)) {
@@ -380,14 +387,12 @@ export default {
       return this.mergeRows(auxRows)
     },
 
-    tabelifyRow (row, selectedCols) {
+    tabelifyRow (row, selectedCols = []) {
       const out = []
-      for (let i = 0; i < row.length; i++) {
-        if (!selectedCols.has(i)) {
-          continue
-        }
-        out.push({ value: row[i] })
-      }
+
+      selectedCols.forEach(index => {
+        out.push({ value: row[index] })
+      })
 
       return out
     },

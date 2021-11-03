@@ -7,6 +7,19 @@
     </portal>
 
     <portal to="topbar-tools">
+      <div
+        v-if="scenarioOptions.length"
+        class="d-inline-block mr-2"
+      >
+        <vue-select
+          v-model="scenarios.selected"
+          :options="scenarioOptions"
+          placeholder="Pick a scenario"
+          class="h-100 bg-white"
+          @input="refreshReport()"
+        />
+      </div>
+
       <b-button-group
         v-if="canUpdate"
         size="sm"
@@ -34,7 +47,7 @@
     </portal>
 
     <grid
-      v-if="report && canRead"
+      v-if="report && canRead && showReport"
       :blocks.sync="report.blocks"
     >
       <template
@@ -43,7 +56,7 @@
         <block
           :index="index"
           :block="block"
-          :datasources="reportDatasources"
+          :scenario="currentSelectedScenario"
           :report-i-d="reportID"
         />
       </template>
@@ -52,9 +65,10 @@
 </template>
 
 <script>
+import { system } from '@cortezaproject/corteza-js'
 import Grid from 'corteza-webapp-reporter/src/components/Report/Grid'
 import Block from 'corteza-webapp-reporter/src/components/Report/Blocks'
-import { system } from '@cortezaproject/corteza-js'
+import VueSelect from 'vue-select'
 
 export default {
   name: 'ReportView',
@@ -62,14 +76,20 @@ export default {
   components: {
     Grid,
     Block,
+    VueSelect,
   },
 
   data () {
     return {
       processing: false,
+      showReport: true,
 
       report: undefined,
       dataframes: [],
+
+      scenarios: {
+        selected: undefined,
+      },
     }
   },
 
@@ -102,12 +122,26 @@ export default {
     reportDatasources () {
       return this.report ? this.report.sources : []
     },
+
+    reportScenarios () {
+      return this.report ? this.report.scenarios : []
+    },
+
+    scenarioOptions () {
+      return this.report ? this.reportScenarios.map(({ label }) => label) : []
+    },
+
+    currentSelectedScenario () {
+      return this.scenarios.selected ? this.reportScenarios.find(({ label }) => label === this.scenarios.selected) : undefined
+    },
   },
 
   watch: {
     reportID: {
       immediate: true,
       handler (reportID) {
+        this.scenarios.selected = undefined
+
         if (reportID) {
           this.fetchReport(reportID)
         }
@@ -116,6 +150,13 @@ export default {
   },
 
   methods: {
+    refreshReport () {
+      this.showReport = false
+      return setTimeout(() => {
+        this.showReport = true
+      }, 50)
+    },
+
     async fetchReport (reportID) {
       this.processing = true
 

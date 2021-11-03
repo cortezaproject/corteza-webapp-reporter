@@ -28,7 +28,7 @@
             label="label"
             option-text="label"
             option-value="value"
-            :clearable="true"
+            clearable
             class="h-100 w-100"
           >
             <template #option="option">

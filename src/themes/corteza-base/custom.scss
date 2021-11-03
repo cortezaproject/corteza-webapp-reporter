@@ -64,6 +64,10 @@ th {
 
   .vs__search {
     margin: 0;
+
+    &:focus {
+      margin: 0;
+    }
   }
 }
 

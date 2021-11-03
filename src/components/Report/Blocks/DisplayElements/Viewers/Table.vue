@@ -477,7 +477,10 @@ export default {
           }
         }
 
-        this.$emit('update', def)
+        const definition = {}
+        definition[ref] = def
+
+        this.$emit('update', definition)
       }
     },
   },

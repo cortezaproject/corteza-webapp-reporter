@@ -11,6 +11,7 @@
     >
       Datasources
     </b-button>
+
     <b-collapse
       v-if="usesDatasources"
       id="datasources"
@@ -93,6 +94,7 @@
     >
       Element
     </b-button>
+
     <b-collapse
       id="display"
       :visible="showDisplayElementConfigurator"
@@ -100,8 +102,7 @@
     >
       <component
         :is="displayElementConfigurator"
-        :display-element="displayElement"
-        :options.sync="options"
+        :display-element.sync="displayElement"
         :columns="columns"
         :datasource="currentDatasource"
       />
@@ -171,10 +172,6 @@ export default {
       return options
     },
 
-    options () {
-      return this.displayElement.options || undefined
-    },
-
     currentDatasource () {
       if (this.options.source) {
         return this.datasources.find(({ step: { load = {}, join = {}, group = {} } }) => [load.name, join.name, group.name].includes(this.options.source))
@@ -183,15 +180,38 @@ export default {
       return undefined
     },
 
+    options: {
+      get () {
+        return this.displayElement ? this.displayElement.options : undefined
+      },
+
+      set (options = {}) {
+        if (this.displayElement) {
+          this.$emit('update:displayElement', { ...this.displayElement, options })
+        }
+      },
+    },
+
     pagingLimit: {
       get () {
-        return this.options.datasources[this.currentConfigurableDatasourceIndex].paging?.limit || 0
-      },
-      set (v) {
-        if (!this.options.datasources[this.currentConfigurableDatasourceIndex].paging) {
-          this.options.datasources[this.currentConfigurableDatasourceIndex].paging = {}
+        let limit = 0
+
+        if (this.currentConfigurableDatasourceIndex >= 0) {
+          const { paging = {} } = this.options.datasources[this.currentConfigurableDatasourceIndex] || {}
+          limit = paging.limit || 0
         }
-        this.options.datasources[this.currentConfigurableDatasourceIndex].paging.limit = v
+
+        return limit
+      },
+
+      set (limit = 0) {
+        if (this.currentConfigurableDatasourceIndex >= 0) {
+          if (!this.options.datasources[this.currentConfigurableDatasourceIndex].paging) {
+            this.options.datasources[this.currentConfigurableDatasourceIndex].paging = {}
+          }
+
+          this.options.datasources[this.currentConfigurableDatasourceIndex].paging.limit = limit
+        }
       },
     },
   },
@@ -203,14 +223,16 @@ export default {
         this.describeReport(source)
       },
     },
-  },
 
-  created () {
-    this.currentConfigurableDatasourceIndex = 0
-
-    if (this.usesDatasources) {
-      this.currentConfigurableDatasourceName = (this.options.datasources[0] || {}).name
-    }
+    'displayElement.name': {
+      immediate: true,
+      handler () {
+        this.currentConfigurableDatasourceIndex = this.datasources.length ? 0 : -1
+        if (this.usesDatasources) {
+          this.currentConfigurableDatasourceName = (this.options.datasources[0] || {}).name
+        }
+      },
+    },
   },
 
   methods: {

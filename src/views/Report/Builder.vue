@@ -7,6 +7,34 @@
     </portal>
 
     <portal to="topbar-tools">
+      <div
+        class="d-inline-block mr-2"
+      >
+        <b-input-group
+          size="sm"
+        >
+          <vue-select
+            v-model="scenarios.selected"
+            :options="scenarioOptions"
+            placeholder="Pick a scenario"
+            class="h-100 bg-white"
+            @input="refreshReport()"
+          />
+
+          <b-input-group-append>
+            <b-button
+              variant="secondary"
+              :disabled="!canUpdate"
+              @click="openScenarioConfigurator"
+            >
+              <font-awesome-icon
+                :icon="['fas', 'cog']"
+              />
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
+      </div>
+
       <b-button
         :disabled="!canUpdate"
         variant="secondary"
@@ -45,8 +73,8 @@
     </portal>
 
     <grid
-      v-if="report && showReport"
-      :blocks.sync="blocks.items"
+      v-if="report && canRead &&showReport"
+      :blocks.sync="reportBlocks"
       editable
     >
       <template
@@ -90,7 +118,7 @@
             v-if="block"
             :index="index"
             :block="block"
-            :datasources="reportDatasources"
+            :scenario="currentSelectedScenario"
             :report-i-d="reportID"
           />
         </div>
@@ -110,7 +138,7 @@
       @ok="updateBlock()"
     >
       <b-tabs
-        v-if="blocks.current"
+        v-if="currentBlock"
         active-nav-item-class="bg-grey"
         nav-wrapper-class="bg-white border-bottom"
         active-tab-class="tab-content h-auto overflow-auto"
@@ -125,7 +153,7 @@
             label-class="text-primary"
           >
             <b-form-input
-              v-model="blocks.current.title"
+              v-model="currentBlock.title"
               type="text"
               placeholder="Block title"
             />
@@ -136,7 +164,7 @@
             label-class="text-primary"
           >
             <b-form-textarea
-              v-model="blocks.current.description"
+              v-model="currentBlock.description"
               placeholder="Block description"
             />
           </b-form-group>
@@ -146,7 +174,7 @@
             label-class="text-primary"
           >
             <b-form-radio-group
-              v-model="blocks.current.layout"
+              v-model="currentBlock.layout"
               :options="blockLayoutOptions"
               buttons
               button-variant="outline-primary"
@@ -155,12 +183,12 @@
         </b-tab>
 
         <b-tab
-          :active="!!blocks.current.elements.length"
+          :active="!!currentBlock.elements.length"
           title="Elements"
         >
           <configurator
             :items="currentDisplayElements"
-            :current-index="currentDisplayElementIndex"
+            :current-index="displayElements.currentIndex"
             draggable
             @select="setCurrentDisplayElement"
             @add="openDisplayElementSelector(blocks.currentIndex)"
@@ -177,8 +205,8 @@
             <template #configurator>
               <display-element-configurator
                 v-if="currentDisplayElement"
-                :display-element="currentDisplayElement"
-                :block="blocks.current"
+                :display-element.sync="currentDisplayElement"
+                :block="currentBlock"
                 :datasources="reportDatasources"
                 class="pr-2"
               />
@@ -220,7 +248,6 @@
             :is="getDatasourceComponent(reportDatasources[datasources.currentIndex])"
             v-if="currentDatasourceStep"
             :datasources="reportDatasources"
-            :index="datasources.currentIndex"
             :step.sync="currentDatasourceStep"
           />
         </template>
@@ -256,6 +283,43 @@
       />
     </b-modal>
 
+    <b-modal
+      v-model="scenarios.showConfigurator"
+      size="xl"
+      scrollable
+      ok-title="Save Scenarios"
+      ok-variant="primary"
+      title="Scenarios"
+      body-class="py-3"
+    >
+      <configurator
+        v-if="report"
+        :items="reportScenarios"
+        :current-index="scenarios.currentIndex"
+        draggable
+        @select="setCurrentScenario"
+        @add="addScenario()"
+        @delete="deleteCurrentScenario()"
+      >
+        <template v-slot:label="{ item: { label } }">
+          <span
+            class="d-inline-block text-truncate"
+          >
+            {{ label }}
+          </span>
+        </template>
+
+        <template #configurator>
+          <scenario-configurator
+            v-if="currentScenario"
+            :current-index="scenarios.currentIndex"
+            :datasources="reportDatasources"
+            :scenario.sync="currentScenario"
+          />
+        </template>
+      </configurator>
+    </b-modal>
+
     <portal to="report-toolbar">
       <editor-toolbar
         :back-link="{ name: 'report.list' }"
@@ -287,7 +351,10 @@ import Configurator from 'corteza-webapp-reporter/src/components/Common/Configur
 import Selector from 'corteza-webapp-reporter/src/components/Common/Selector'
 import EditorToolbar from 'corteza-webapp-reporter/src/components/EditorToolbar'
 import DisplayElementConfigurator from 'corteza-webapp-reporter/src/components/Report/Blocks/DisplayElements/Configurators'
+import ScenarioConfigurator from 'corteza-webapp-reporter/src/components/Report/Scenarios'
 import * as displayElementThumbnails from 'corteza-webapp-reporter/src/assets/DisplayElements'
+import VueSelect from 'vue-select'
+import Prefilter from 'corteza-webapp-reporter/src/components/Common/Prefilter'
 
 export default {
   name: 'ReportBuilder',
@@ -298,7 +365,10 @@ export default {
     Configurator,
     Block,
     DisplayElementConfigurator,
+    ScenarioConfigurator,
     EditorToolbar,
+    VueSelect,
+    Prefilter,
   },
 
   mixins: [
@@ -314,20 +384,18 @@ export default {
 
       dataframes: [],
 
-      currentDisplayElementIndex: undefined,
-      currentDisplayElement: undefined,
-
       blocks: {
         showConfigurator: false,
 
         currentIndex: undefined,
-        current: undefined,
 
         items: [],
       },
 
       displayElements: {
         showSelector: false,
+
+        currentIndex: undefined,
 
         types: [
           {
@@ -377,6 +445,14 @@ export default {
           },
         ],
       },
+
+      scenarios: {
+        showConfigurator: false,
+
+        currentIndex: undefined,
+
+        selected: undefined,
+      },
     }
   },
 
@@ -403,7 +479,7 @@ export default {
     },
 
     currentDisplayElements () {
-      return this.blocks.current ? this.blocks.current.elements : []
+      return this.currentBlock ? this.currentBlock.elements : []
     },
 
     reportDatasources: {
@@ -428,6 +504,70 @@ export default {
       },
     },
 
+    reportBlocks: {
+      get () {
+        return this.blocks.items ? this.blocks.items : []
+      },
+
+      set (blocks) {
+        this.blocks.items = blocks
+      },
+    },
+
+    currentBlock: {
+      get () {
+        return this.blocks.currentIndex !== undefined ? this.reportBlocks[this.blocks.currentIndex] : undefined
+      },
+
+      set (block) {
+        if (this.blocks.currentIndex !== undefined) {
+          this.reportBlocks[this.blocks.currentIndex] = block
+        }
+      },
+    },
+
+    currentDisplayElement: {
+      get () {
+        return this.displayElements.currentIndex !== undefined ? this.currentDisplayElements[this.displayElements.currentIndex] : undefined
+      },
+
+      set (element) {
+        if (this.displayElements.currentIndex !== undefined) {
+          this.currentDisplayElements[this.displayElements.currentIndex] = element
+        }
+      },
+    },
+
+    reportScenarios: {
+      get () {
+        return this.report ? this.report.scenarios : []
+      },
+
+      set (scenarios) {
+        this.report.scenarios = scenarios
+      },
+    },
+
+    currentScenario: {
+      get () {
+        return this.scenarios.currentIndex !== undefined ? this.reportScenarios[this.scenarios.currentIndex] : undefined
+      },
+
+      set (scenario) {
+        if (this.scenarios.currentIndex !== undefined) {
+          this.reportScenarios[this.scenarios.currentIndex] = scenario
+        }
+      },
+    },
+
+    currentSelectedScenario () {
+      return this.scenarios.selected ? this.reportScenarios.find(({ label }) => label === this.scenarios.selected) : undefined
+    },
+
+    scenarioOptions () {
+      return this.reportScenarios.map(({ label }) => label)
+    },
+
     reportViewer () {
       return this.report ? { name: 'report.view', params: { reportID: this.report.reportID } } : undefined
     },
@@ -448,6 +588,8 @@ export default {
     reportID: {
       immediate: true,
       handler (reportID) {
+        this.scenarios.selected = undefined
+
         if (reportID) {
           this.processing = true
 
@@ -471,8 +613,8 @@ export default {
     },
 
     // If block is added/reordered or deleted, vue-grid-layout needs fresh indexes to work properly
-    reindexBlocks (blocks = this.blocks.items || []) {
-      this.blocks.items = blocks.map((block, i) => {
+    reindexBlocks (blocks = this.reportBlocks || []) {
+      this.reportBlocks = blocks.map((block, i) => {
         return { ...block, i }
       })
     },
@@ -570,7 +712,7 @@ export default {
 
     // Blocks
     handleReportSave () {
-      this.report.blocks = this.blocks.items.map(({ moved, x, y, w, h, i, ...p }) => {
+      this.report.blocks = this.reportBlocks.map(({ moved, x, y, w, h, i, ...p }) => {
         p.elements = p.elements.map((e, index) => {
           e.name = `${index}_${e.kind}`
           return e
@@ -587,7 +729,7 @@ export default {
     },
 
     mapBlocks () {
-      this.blocks.items = this.report.blocks.map(({ xywh, ...p }, i) => {
+      this.reportBlocks = this.report.blocks.map(({ xywh, ...p }, i) => {
         const [x, y, w, h] = xywh
         return { ...p, x, y, w, h, i }
       })
@@ -607,29 +749,28 @@ export default {
         h,
       }
 
-      this.reindexBlocks([...this.blocks.items, newBlock])
+      this.reindexBlocks([...this.reportBlocks, newBlock])
     },
 
     updateBlock () {
-      if (this.blocks.current) {
-        const elements = this.blocks.current.elements
+      if (this.currentBlock) {
+        const elements = this.currentBlock.elements
 
-        this.blocks.items.splice(this.blocks.currentIndex, 1, { ...this.blocks.current, elements: [] })
+        this.reportBlocks.splice(this.blocks.currentIndex, 1, { ...this.currentBlock, elements: [] })
         setTimeout(() => {
-          this.blocks.items.splice(this.blocks.currentIndex, 1, { ...this.blocks.current, elements })
+          this.reportBlocks.splice(this.blocks.currentIndex, 1, { ...this.currentBlock, elements })
         }, 50)
       }
     },
 
     editBlock (index = undefined) {
       this.blocks.currentIndex = index
-      this.blocks.current = index !== undefined ? { ...this.blocks.items[index] } : undefined
-      this.setCurrentDisplayElement(this.blocks.current.elements.length ? 0 : undefined)
+      this.setCurrentDisplayElement(this.reportBlocks[this.blocks.currentIndex].elements.length ? 0 : undefined)
       this.blocks.showConfigurator = true
     },
 
     deleteBlock (index = undefined) {
-      this.reindexBlocks(this.blocks.items.filter((p, i) => index !== i))
+      this.reindexBlocks(this.reportBlocks.filter((p, i) => index !== i))
     },
 
     // Display elements
@@ -639,33 +780,58 @@ export default {
     },
 
     setCurrentDisplayElement (index) {
-      this.currentDisplayElementIndex = index
-      this.currentDisplayElement = index !== undefined ? this.currentDisplayElements[index] : undefined
+      this.displayElements.currentIndex = index
     },
 
     deleteCurrentDisplayElement () {
-      this.blocks.current.elements.splice(this.currentDisplayElementIndex, 1)
-      this.currentDisplayElementIndex = this.blocks.current.elements.length ? 0 : undefined
-      this.setCurrentDisplayElement(this.currentDisplayElementIndex)
+      this.currentBlock.elements.splice(this.displayElements.currentIndex, 1)
+      this.displayElements.currentIndex = this.currentBlock.elements.length ? 0 : undefined
+      this.setCurrentDisplayElement(this.displayElements.currentIndex)
     },
 
     addDisplayElement (kind) {
-      const name = `${this.blocks.items[this.blocks.currentIndex].elements.length}_${kind}`
+      const name = `${this.reportBlocks[this.blocks.currentIndex].elements.length}_${kind}`
 
       const newDisplayElement = reporter.DisplayElementMaker({ name, kind })
 
-      const blockElements = this.blocks.items[this.blocks.currentIndex].elements || []
-      this.$set(this.blocks.items[this.blocks.currentIndex], 'elements', [
-        ...blockElements,
-        newDisplayElement,
-      ])
-
-      this.currentDisplayElement = newDisplayElement
+      this.reportBlocks[this.blocks.currentIndex].elements.push(newDisplayElement)
 
       this.displayElements.showSelector = false
 
       this.editBlock(this.blocks.currentIndex)
-      this.setCurrentDisplayElement(this.blocks.current.elements.length - 1)
+      this.setCurrentDisplayElement(this.currentBlock.elements.length - 1)
+    },
+
+    // Scenarios
+    openScenarioConfigurator () {
+      this.scenarios.showConfigurator = true
+
+      if (this.reportScenarios.length) {
+        this.setCurrentScenario(0)
+      }
+    },
+
+    setCurrentScenario (index = -1) {
+      this.scenarios.currentIndex = this.reportScenarios.length && index >= 0 ? index : undefined
+    },
+
+    addScenario () {
+      if (!this.reportScenarios) {
+        this.reportScenarios = []
+      }
+
+      this.reportScenarios.push({
+        label: 'Scenario Name',
+        filters: {},
+      })
+
+      this.setCurrentScenario(this.reportScenarios.length - 1)
+    },
+
+    deleteCurrentScenario () {
+      this.reportScenarios.splice(this.scenarios.currentIndex, 1)
+      this.scenarios.currentIndex = this.reportScenarios.length ? 0 : undefined
+      this.setCurrentScenario(this.scenarios.currentIndex)
     },
   },
 }

@@ -93,6 +93,11 @@ export default {
       required: true,
     },
 
+    scenario: {
+      type: Object,
+      default: () => ({}),
+    },
+
     reportID: {
       type: String,
       required: false,
@@ -144,6 +149,22 @@ export default {
       })
     },
 
+    getScenarioDefinition (element) {
+      const scenarioDefinition = {}
+
+      // Generate filter for each load datasource
+      if (this.scenario.filters) {
+        element.options.datasources.forEach(({ name }) => {
+          scenarioDefinition[name] = {
+            ref: name,
+            filter: this.scenario.filters[name] || {},
+          }
+        })
+      }
+
+      return scenarioDefinition
+    },
+
     runReport () {
       this.processing = true
       this.dataframes = {}
@@ -153,7 +174,7 @@ export default {
         element = reporter.DisplayElementMaker(element)
 
         if (element && element.kind !== 'Text') {
-          const { dataframes = [] } = element.reportDefinitions()
+          const { dataframes = [] } = element.reportDefinitions(this.getScenarioDefinition(element))
 
           frames.push(...dataframes.filter(({ source }) => source).map(df => {
             df.name = `${this.index}-${df.name}`
@@ -184,6 +205,11 @@ export default {
       const frames = []
 
       if (element && element.kind !== 'Text') {
+        const scenarioDefinition = this.getScenarioDefinition(element)
+        Object.entries(definition).forEach(([key, value]) => {
+          definition[key] = { ...value, ...scenarioDefinition[key] }
+        })
+
         const { dataframes = [] } = element.reportDefinitions(definition)
 
         frames.push(...dataframes.filter(({ source }) => source).map(df => {

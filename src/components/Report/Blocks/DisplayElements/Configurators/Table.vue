@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="options"
+    v-if="displayElement && options"
   >
     <b-form-group
       v-if="options.datasources.length > 1"
@@ -182,7 +182,7 @@ export default {
 
       set (columns) {
         if (this.currentConfigurableDatasourceName) {
-          this.$set(this.displayElement.options.columns, this.currentConfigurableDatasourceName, columns || [])
+          this.$set(this.options.columns, this.currentConfigurableDatasourceName, columns || [])
         }
       },
     },
@@ -193,7 +193,7 @@ export default {
       immediate: true,
       handler (datasources) {
         datasources.forEach(({ name }) => {
-          this.$set(this.displayElement.options.columns, name, this.options.columns[name] || [])
+          this.$set(this.options.columns, name, this.options.columns[name] || [])
         })
 
         this.currentConfigurableDatasourceName = (datasources[0] || {}).name

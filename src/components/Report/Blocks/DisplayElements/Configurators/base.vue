@@ -23,7 +23,7 @@ export default {
         return this.displayElement.options || undefined
       },
 
-      set (options) {
+      set (options = {}) {
         this.$emit('update:displayElement', { ...this.displayElement, options })
       },
     },

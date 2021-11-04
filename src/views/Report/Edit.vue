@@ -115,6 +115,9 @@
                       required
                       :state="handleState"
                     />
+                    <b-form-invalid-feedback :state="handleState">
+                      {{ $t('invalid-handle-characters') }}
+                    </b-form-invalid-feedback>
                   </b-form-group>
                 </b-col>
               </b-row>
@@ -166,7 +169,9 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'EditReport',
-
+  i18nOptions: {
+    namespaces: 'edit',
+  },
   components: {
     EditorToolbar,
   },

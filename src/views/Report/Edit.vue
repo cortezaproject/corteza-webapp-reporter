@@ -111,7 +111,7 @@
                   >
                     <b-form-input
                       v-model="report.handle"
-                      placeholder="handle (a - z, 0 - 9, underscore, dash)"
+                      :placeholder="$t('placeholder-handle')"
                       required
                       :state="handleState"
                     />

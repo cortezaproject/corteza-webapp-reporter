@@ -3,7 +3,7 @@
     <draggable
       :list.sync="items"
       group="sort"
-      handle=".grab"
+      :handle="$t('builder:grab')"
     >
       <b-form-row
         v-for="(column, index) in items"
@@ -34,7 +34,7 @@
               <b-form-select-option
                 :value="undefined"
               >
-                None
+                {{ $t('builder:none') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -75,7 +75,7 @@
             size="sm"
             class="mr-1"
           />
-          Add
+          {{ $t('builder:add.label') }}
         </b-button>
       </b-col>
     </b-row>
@@ -111,8 +111,8 @@ export default {
   computed: {
     sortDirections () {
       return [
-        { value: false, text: 'Ascending' },
-        { value: true, text: 'Descending' },
+        { value: false, text: this.$t('builder:ascending') },
+        { value: true, text: this.$t('builder:descending') },
       ]
     },
   },

@@ -4,13 +4,13 @@
       <div
         class="d-flex align-items-center justify-content-between"
       >
-        Available
+        {{ $t('builder:available') }}
         <b-button
           variant="link"
           class="float-right"
           @click.prevent="selectedColumns = [...allColumns]"
         >
-          Select all
+          {{ $t('builder:select-all') }}
         </b-button>
       </div>
 
@@ -36,13 +36,13 @@
       <div
         class="d-flex align-items-center justify-content-between"
       >
-        Selected
+        {{ $t('builder:selected') }}
         <b-button
           variant="link"
           class="float-right"
           @click.prevent="selectedColumns = []"
         >
-          Unselect all
+          {{ $t('builder:unselect-all') }}
         </b-button>
       </div>
 

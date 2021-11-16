@@ -12,7 +12,7 @@
             :list.sync="items"
             :disabled="!draggable"
             group="items"
-            handle=".grab"
+            :handle="$t('builder:grab')"
           >
             <b-list-group-item
               v-for="(item, index) in items"
@@ -35,7 +35,7 @@
             :class="{ 'border-top-0': items.length }"
             @click="$emit('add')"
           >
-            + Add
+            {{ $t('builder:add.with-plus') }}
           </b-list-group-item>
         </b-list-group>
       </b-col>

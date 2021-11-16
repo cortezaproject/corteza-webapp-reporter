@@ -49,7 +49,7 @@
 
                 <b-form-input
                   v-model="arg.raw"
-                  placeholder="Filter expression"
+                  :placeholder="$t('builder:filter-expression')"
                 />
               </b-input-group>
             </td>
@@ -82,7 +82,7 @@
                     <b-form-select-option
                       value=""
                     >
-                      None
+                      {{ $t('builder:none') }}
                     </b-form-select-option>
                   </template>
                 </b-form-select>
@@ -95,7 +95,7 @@
 
                 <b-form-input
                   v-model="group.args[0].args[argIndex].args[0].args[1].value['@value']"
-                  placeholder="Value"
+                  :placeholder="$t('builder:value')"
                 />
               </b-input-group>
             </td>
@@ -128,7 +128,7 @@
                 size="sm"
                 class="mr-1"
               />
-              Add
+              {{ $t('builder:add.label') }}
             </b-button>
           </td>
         </tr>
@@ -179,7 +179,7 @@
           size="sm"
           class="mr-1"
         />
-        Add
+        {{ $t('builder:add.label') }}
       </b-button>
     </tr>
   </div>
@@ -216,8 +216,8 @@ export default {
       },
 
       conditions: [
-        { value: 'and', text: 'And' },
-        { value: 'or', text: 'Or' },
+        { value: 'and', text: this.$t('builder:add.label') },
+        { value: 'or', text: this.$t('builder:or') },
       ],
 
       operators: [

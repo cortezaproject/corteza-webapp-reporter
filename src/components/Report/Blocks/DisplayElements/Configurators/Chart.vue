@@ -6,13 +6,13 @@
       class="mb-3"
     >
       <h5 class="text-primary mb-2">
-        General
+        {{ $t('display-element:chart.configurator.general') }}
       </h5>
 
       <b-row>
         <b-col>
           <b-form-group
-            label="Type"
+            :label="$t('display-element:chart.configurator.type')"
             label-class="text-primary"
           >
             <b-form-select
@@ -24,7 +24,7 @@
         </b-col>
         <b-col>
           <b-form-group
-            label="Chart title"
+            :label="$t('display-element:chart.configurator.chart-title')"
             label-class="text-primary"
           >
             <b-form-input
@@ -37,7 +37,7 @@
       <b-row>
         <b-col>
           <b-form-group
-            label="Color scheme"
+            :label="$t('display-element:chart.configurator.color-scheme')"
             label-class="text-primary"
             class="mb-0"
           >
@@ -79,13 +79,13 @@
             v-model="options.showTooltips"
             class="pb-2"
           >
-            Show tooltips
+            {{ $t('display-element:chart.configurator.show.tooltips') }}
           </b-form-checkbox>
           <b-form-checkbox
             v-model="options.showLegend"
             class="pb-2"
           >
-            Show legend
+            {{ $t('display-element:chart.configurator.show.legend') }}
           </b-form-checkbox>
         </b-col>
       </b-row>
@@ -97,12 +97,12 @@
       class="mb-3"
     >
       <h5 class="text-primary mb-2">
-        Data
+        {{ $t('display-element:chart.configurator.data') }}
       </h5>
 
       <b-form-group
         v-if="options.labelColumn !== undefined"
-        label="Label column"
+        :label="$t('display-element:chart.configurator.label-column')"
         label-class="text-primary"
       >
         <b-form-select
@@ -115,7 +115,7 @@
             <b-form-select-option
               value=""
             >
-              None
+              {{ $t('display-element:chart.configurator.none') }}
             </b-form-select-option>
           </template>
         </b-form-select>
@@ -123,7 +123,7 @@
 
       <b-form-group
         v-if="options.dataColumns"
-        label="Data columns"
+        :label="$t('display-element:chart.configurator.data-columns')"
         label-class="text-primary"
       >
         <column-picker
@@ -141,12 +141,12 @@
           class="mb-3"
         >
           <h5 class="text-primary mb-2">
-            X-Axis
+            {{ $t('display-element:chart.configurator.x-axis.name') }}
           </h5>
           <b-row>
             <b-col>
               <b-form-group
-                label="Axis label"
+                :label="$t('display-element:chart.configurator.x-axis.label')"
                 label-class="text-primary"
               >
                 <b-form-input
@@ -156,7 +156,7 @@
             </b-col>
             <b-col>
               <b-form-group
-                label="Axis type"
+                :label="$t('display-element:chart.configurator.x-axis.type')"
                 label-class="text-primary"
               >
                 <b-form-select
@@ -167,7 +167,7 @@
                     <b-form-select-option
                       value=""
                     >
-                      Default
+                      {{ $t('display-element:chart.configurator.default') }}
                     </b-form-select-option>
                   </template>
                 </b-form-select>
@@ -178,7 +178,7 @@
           <b-row>
             <b-col>
               <b-form-group
-                label="Default value"
+                :label="$t('display-element:chart.configurator.default-value')"
                 label-class="text-primary"
                 class="mb-1"
               >
@@ -193,13 +193,13 @@
                 v-model="options.xAxis.skipMissing"
                 class="mb-3"
               >
-                Skip missing values
+                {{ $t('display-element:chart.configurator.skip-missing-values') }}
               </b-form-checkbox>
             </b-col>
             <b-col>
               <b-form-group
                 v-if="options.xAxis.type === 'time'"
-                label="Time unit"
+                :label="$t('display-element:chart.configurator.time.unit.label')"
                 label-class="text-primary"
               >
                 <b-form-select
@@ -210,7 +210,7 @@
                     <b-form-select-option
                       :value="undefined"
                     >
-                      Default
+                      {{ $t('display-element:chart.configurator.default') }}
                     </b-form-select-option>
                   </template>
                 </b-form-select>
@@ -223,12 +223,12 @@
 
         <div>
           <h5 class="text-primary mb-2">
-            Y-Axis
+            {{ $t('display-element:chart.configurator.y-axis.name') }}
           </h5>
           <b-row>
             <b-col>
               <b-form-group
-                label="Axis label"
+                :label="$t('display-element:chart.configurator.y-axis.label')"
                 label-class="text-primary"
               >
                 <b-form-input
@@ -238,7 +238,7 @@
             </b-col>
             <b-col>
               <b-form-group
-                label="Step size"
+                :label="$t('display-element:chart.configurator.step-size')"
                 label-class="text-primary"
               >
                 <b-form-input
@@ -251,7 +251,7 @@
           <b-row>
             <b-col>
               <b-form-group
-                label="Min value"
+                :label="$t('display-element:chart.configurator.value.min')"
                 label-class="text-primary"
               >
                 <b-form-input
@@ -262,7 +262,7 @@
             </b-col>
             <b-col>
               <b-form-group
-                label="Max value"
+                :label="$t('display-element:chart.configurator.value.max')"
                 label-class="text-primary"
               >
                 <b-form-input
@@ -279,7 +279,7 @@
                 <b-form-checkbox
                   v-model="options.yAxis.beginAtZero"
                 >
-                  Always begin axis scale at zero
+                  {{ $t('display-element:chart.configurator.begin-axis-at-zero') }}
                 </b-form-checkbox>
 
                 <b-form-checkbox
@@ -287,7 +287,7 @@
                   value="logarithmic"
                   unchecked-value="linear"
                 >
-                  Logarithmic scale
+                  {{ $t('display-element:chart.configurator.logarithmic-scale') }}
                 </b-form-checkbox>
 
                 <b-form-checkbox
@@ -295,7 +295,7 @@
                   value="right"
                   unchecked-value="left"
                 >
-                  Place axis on the right side
+                  {{ $t('display-element:chart.configurator.place-axis-on-right-side') }}
                 </b-form-checkbox>
               </b-form-group>
             </b-col>
@@ -343,14 +343,14 @@ export default {
 
     chartTypes () {
       const types = [
-        { value: 'bar', text: 'Bar' },
-        { value: 'line', text: 'Line' },
-        { value: 'pie', text: 'Pie' },
-        { value: 'doughnut', text: 'Doughnut' },
+        { value: 'bar', text: this.$t('display-element:chart.configurator.types.bar') },
+        { value: 'line', text: this.$t('display-element:chart.configurator.types.line') },
+        { value: 'pie', text: this.$t('display-element:chart.configurator.types.pie') },
+        { value: 'doughnut', text: this.$t('display-element:chart.configurator.types.doughnut') },
       ]
 
       if (this.datasource && this.datasource.step.group) {
-        types.push({ value: 'funnel', text: 'Funnel' })
+        types.push({ value: 'funnel', text: this.$t('display-element:chart.configurator.types.funnel') })
       }
 
       return types
@@ -358,18 +358,18 @@ export default {
 
     AxisTypes () {
       return [
-        { value: 'time', text: 'Time' },
+        { value: 'time', text: this.$t('display-element:chart.configurator.time.label') },
         { value: 'category', text: 'Category' },
       ]
     },
 
     timeUnits () {
       return [
-        { value: 'day', text: 'Date' },
-        { value: 'week', text: 'Week' },
-        { value: 'month', text: 'Month' },
-        { value: 'quarter', text: 'Quarter' },
-        { value: 'year', text: 'Year' },
+        { value: 'day', text: this.$t('display-element:chart.configurator.time.unit.types.date') },
+        { value: 'week', text: this.$t('display-element:chart.configurator.time.unit.types.week') },
+        { value: 'month', text: this.$t('display-element:chart.configurator.time.unit.types.month') },
+        { value: 'quarter', text: this.$t('display-element:chart.configurator.time.unit.types.quarter') },
+        { value: 'year', text: this.$t('display-element:chart.configurator.time.unit.types.year') },
       ]
     },
 

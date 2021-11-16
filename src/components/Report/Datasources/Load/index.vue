@@ -3,19 +3,19 @@
     v-if="step.load"
   >
     <b-form-group
-      label="Name"
+      :label="$t('datasources:name')"
       label-class="text-primary"
     >
       <b-form-input
         v-model="step.load.name"
-        placeholder="Datasource Name..."
+        :placeholder="$t('datasources:datasource-name')"
       />
     </b-form-group>
 
     <hr>
 
     <b-form-group
-      label="Source"
+      :label="$t('datasources:source')"
       label-class="text-primary"
     >
       <b-form-select
@@ -33,7 +33,7 @@
 
     <b-form-group
       v-if="columns.length"
-      label="Prefilter"
+      :label="$t('datasources:prefilter')"
       label-class="text-primary"
     >
       <prefilter
@@ -74,7 +74,7 @@ export default {
       // @todo get this from the API
       supportedSources: [
         {
-          text: 'Compose records',
+          text: this.$t('datasources:compose-records'),
           value: 'composeRecords',
           definition: [{
             label: 'namespace',
@@ -128,7 +128,7 @@ export default {
             const { columns = [] } = frames.find(({ source }) => describe.includes(source)) || {}
             this.columns = columns
           }).catch((e) => {
-            this.toastErrorHandler('Failed to describe datasource')(e)
+            this.toastErrorHandler(this.$t('notification:datasource.describe-failed'))(e)
           })
       }
     },

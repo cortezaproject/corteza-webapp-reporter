@@ -191,7 +191,7 @@ export default {
               return { ...element, dataframes }
             })
           }).catch((e) => {
-            this.toastErrorHandler('Failed to run report')(e)
+            this.toastErrorHandler(this.$t('notification:report.run-failed'))(e)
           }).finally(() => {
             this.processing = false
           })
@@ -227,7 +227,7 @@ export default {
               //   return { ...element, dataframes }
               // })
             }).catch((e) => {
-              this.toastErrorHandler('Failed to run report')(e)
+              this.toastErrorHandler(this.$t('notification:report.run-failed'))(e)
             })
         }
       }

@@ -23,7 +23,7 @@
           <font-awesome-icon
             :icon="['fas', 'cogs']"
           />
-          Report Builder
+          {{ $t('report.builder') }}
         </b-button>
         <b-button
           variant="primary"
@@ -62,7 +62,7 @@
                     class="mr-1"
                     :to="{ name: 'report.create' }"
                   >
-                    New Report
+                    {{ $t('new-report') }}
                   </b-button>
 
                   <c-permissions-button
@@ -70,7 +70,7 @@
                     :title="report.handle"
                     :target="report.handle"
                     :resource="`corteza::system:report/${report.reportID}`"
-                    button-label="Permissions"
+                    :button-label="$t('permissions')"
                     button-variant="light"
                     class="btn-lg ml-1"
                   />
@@ -89,12 +89,12 @@
                   xl="4"
                 >
                   <b-form-group
-                    label="Name*"
+                    :label="$t('name-with-star')"
                     class="text-primary"
                   >
                     <b-form-input
                       v-model="report.meta.name"
-                      placeholder="Name"
+                      :placeholder="$t('name')"
                       required
                       :state="nameState"
                     />
@@ -106,7 +106,7 @@
                   xl="4"
                 >
                   <b-form-group
-                    label="Handle*"
+                    :label="$t('handle-with-star')"
                     class="text-primary"
                   >
                     <b-form-input
@@ -123,12 +123,12 @@
               </b-row>
 
               <b-form-group
-                label="Description"
+                :label="$t('description')"
                 class="text-primary"
               >
                 <b-form-textarea
                   v-model="report.meta.description"
-                  placeholder="Report description..."
+                  :placeholder="$t('report.description')"
                   rows="5"
                 />
               </b-form-group>
@@ -222,7 +222,7 @@ export default {
     },
 
     pageTitle () {
-      return this.isNew ? 'Create Report' : 'Edit Report'
+      return this.isNew ? this.$t('report.create') : this.$t('report.edit')
     },
 
     reportBuilder () {

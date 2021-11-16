@@ -3,19 +3,19 @@
     v-if="step.group"
   >
     <b-form-group
-      label="Name"
+      :label="$t('datasources:name')"
       label-class="text-primary"
     >
       <b-form-input
         v-model="step.group.name"
-        placeholder="Datasource Name..."
+        :placeholder="$t('datasources:datasource-name')"
       />
     </b-form-group>
 
     <hr>
 
     <b-form-group
-      label="Source"
+      :label="$t('datasources:source')"
       label-class="text-primary"
     >
       <b-form-select
@@ -27,7 +27,7 @@
           <b-form-select-option
             :value="undefined"
           >
-            None
+            {{ $t('datasources:none') }}
           </b-form-select-option>
         </template>
       </b-form-select>
@@ -37,7 +37,7 @@
       v-if="step.group.source"
     >
       <b-form-group
-        label="Group by"
+        :label="$t('datasources:group-by')"
         label-class="text-primary"
       >
         <group-by
@@ -46,7 +46,7 @@
       </b-form-group>
 
       <b-form-group
-        label="Aggregate"
+        :label="$t('datasources:aggregate')"
         label-class="text-primary"
       >
         <aggregate
@@ -138,7 +138,7 @@ export default {
             const { columns = [] } = frames.find(({ source }) => describe.includes(source)) || {}
             this.columns = columns
           }).catch((e) => {
-            this.toastErrorHandler('Failed to describe datasource')(e)
+            this.toastErrorHandler(this.$t('notification:datasource.describe-failed'))(e)
           })
       }
     },

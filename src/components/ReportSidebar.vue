@@ -9,7 +9,7 @@
           v-model.trim="query"
           class="mw-100"
           type="search"
-          placeholder="Search reports"
+          :placeholder="$t('sidebar:search-reports')"
         />
 
         <c-sidebar-nav-items
@@ -24,7 +24,7 @@
         v-else
         class="d-flex justify-content-center mt-5"
       >
-        No Reports
+        {{ $t('sidebar:no-reports') }}
       </h5>
     </portal>
   </div>

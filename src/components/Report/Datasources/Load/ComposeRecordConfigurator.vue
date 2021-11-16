@@ -3,7 +3,7 @@
     <b-row>
       <b-col>
         <b-form-group
-          label="Namespace"
+          :label="$t('datasources:namespace')"
           class="text-primary"
         >
           <b-form-select
@@ -17,7 +17,7 @@
               <b-form-select-option
                 :value="undefined"
               >
-                None
+                {{ $t('datasources:none') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -26,7 +26,7 @@
       <b-col>
         <b-form-group
           v-if="namespace"
-          label="Module"
+          :label="$t('datasources:module')"
           class="text-primary"
         >
           <b-form-select
@@ -40,7 +40,7 @@
               <b-form-select-option
                 :value="undefined"
               >
-                None
+                {{ $t('datasources:none') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -143,7 +143,7 @@ export default {
       return this.$ComposeAPI.namespaceList({ sort: 'name' }).then(({ set = [] }) => {
         this.namespaces = set
       }).catch((e) => {
-        this.toastErrorHandler('Failed to fetch namespaces')(e)
+        this.toastErrorHandler(this.$t('notification:namespace.fetch-failed'))(e)
       })
     },
 
@@ -151,7 +151,7 @@ export default {
       return this.$ComposeAPI.moduleList({ namespaceID, sort: 'name' }).then(({ set = [] }) => {
         this.modules = set
       }).catch((e) => {
-        this.toastErrorHandler('Failed to fetch modules')(e)
+        this.toastErrorHandler(this.$t('notification:module.fetch-failed'))(e)
       })
     },
   },

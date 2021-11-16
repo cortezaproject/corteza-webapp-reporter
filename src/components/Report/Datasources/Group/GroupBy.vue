@@ -12,17 +12,17 @@
           <b-th
             class="w-25"
           >
-            Name
+            {{ $t('datasources:name') }}
           </b-th>
           <b-th
             class="w-25"
           >
-            Label
+            {{ $t('datasources:label') }}
           </b-th>
           <b-th
             class="w-50"
           >
-            Expression
+            {{ $t('datasources:expression') }}
           </b-th>
         </b-tr>
       </b-thead>
@@ -35,19 +35,19 @@
           <b-td>
             <b-form-input
               v-model="group.name"
-              placeholder="New name"
+              :placeholder="$t('datasources:new.name')"
             />
           </b-td>
           <b-td>
             <b-form-input
               v-model="group.label"
-              placeholder="New label"
+              :placeholder="$t('datasources:new.label')"
             />
           </b-td>
           <b-td>
             <b-form-input
               v-model="group.def.raw"
-              placeholder="Expression"
+              :placeholder="$t('datasources:expression')"
             />
           </b-td>
           <b-td
@@ -74,7 +74,7 @@
         size="sm"
         class="mr-1"
       />
-      Add
+      {{ $t('datasources:add') }}
     </b-button>
   </div>
 </template>

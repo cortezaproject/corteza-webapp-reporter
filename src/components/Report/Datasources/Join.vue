@@ -5,12 +5,12 @@
     <b-row>
       <b-col>
         <b-form-group
-          label="Name"
+          :label="$t('datasources:name')"
           label-class="text-primary"
         >
           <b-form-input
             v-model="step.join.name"
-            placeholder="Datasource Name..."
+            :placeholder="$t('datasources:datasource-name')"
           />
         </b-form-group>
       </b-col>
@@ -21,7 +21,7 @@
     <b-row>
       <b-col cols="6">
         <b-form-group
-          label="Primary Source"
+          :label="$t('datasources:primary.source')"
           label-class="text-primary"
         >
           <b-form-select
@@ -33,7 +33,7 @@
               <b-form-select-option
                 value=""
               >
-                None
+                {{ $t('datasources:none') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -41,7 +41,7 @@
       </b-col>
       <b-col cols="6">
         <b-form-group
-          label="Secondary Source"
+          :label="$t('datasources:secondary.source')"
           label-class="text-primary"
         >
           <b-form-select
@@ -53,7 +53,7 @@
               <b-form-select-option
                 value=""
               >
-                None
+                {{ $t('datasources:none') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -65,7 +65,7 @@
       <b-col cols="6">
         <b-form-group
           v-if="step.join.localSource"
-          label="Primary Column"
+          :label="$t('datasources:primary.column')"
           label-class="text-primary"
         >
           <b-form-select
@@ -78,7 +78,7 @@
               <b-form-select-option
                 value=""
               >
-                None
+                {{ $t('datasources:none') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -87,7 +87,7 @@
       <b-col cols="6">
         <b-form-group
           v-if="step.join.foreignSource"
-          label="Secondary Column"
+          :label="$t('datasources:secondary.column')"
           label-class="text-primary"
         >
           <b-form-select
@@ -100,7 +100,7 @@
               <b-form-select-option
                 value=""
               >
-                None
+                {{ $t('datasources:none') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -191,7 +191,7 @@ export default {
                 const { columns = [] } = frames.find(({ source }) => describe.includes(source)) || {}
                 this[`${source}Columns`] = columns
               }).catch((e) => {
-                this.toastErrorHandler('Failed to describe datasource')(e)
+                this.toastErrorHandler(this.$t('notification:datasource.describe-failed'))(e)
               })
           }
         }

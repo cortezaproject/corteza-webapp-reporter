@@ -16,7 +16,7 @@
           <vue-select
             v-model="scenarios.selected"
             :options="scenarioOptions"
-            placeholder="Pick a scenario"
+            :placeholder="$t('builder:pick-scenario')"
             class="h-100 bg-white"
             @input="refreshReport()"
           />
@@ -42,7 +42,7 @@
         class="mr-1"
         @click="openDatasourceConfigurator"
       >
-        Datasources
+        {{ $t('builder:datasources.label') }}
       </b-button>
 
       <b-button-group
@@ -58,7 +58,7 @@
           <font-awesome-icon
             :icon="['fas', 'eye']"
           />
-          View Report
+          {{ $t('builder:report.view') }}
         </b-button>
         <b-button
           variant="primary"
@@ -127,8 +127,8 @@
 
     <b-modal
       v-model="blocks.showConfigurator"
-      title="Block configuraton"
-      ok-title="Save Block"
+      :title="$t('builder:block.configuration')"
+      :ok-title="$t('builder:save-button')"
       ok-variant="primary"
       cancel-variant="link"
       scrollable
@@ -145,32 +145,32 @@
         card
       >
         <b-tab
-          title="General"
+          :title="$t('builder:general')"
           active
         >
           <b-form-group
-            label="Title"
+            :label="$t('builder:title')"
             label-class="text-primary"
           >
             <b-form-input
               v-model="currentBlock.title"
               type="text"
-              placeholder="Block title"
+              :placeholder="$t('builder:block.title')"
             />
           </b-form-group>
 
           <b-form-group
-            label="Description"
+            :label="$t('builder:description')"
             label-class="text-primary"
           >
             <b-form-textarea
               v-model="currentBlock.description"
-              placeholder="Block description"
+              :placeholder="$t('builder:block.description')"
             />
           </b-form-group>
 
           <b-form-group
-            label="Layout"
+            :label="$t('builder:layout')"
             label-class="text-primary"
           >
             <b-form-radio-group
@@ -184,7 +184,7 @@
 
         <b-tab
           :active="!!currentBlock.elements.length"
-          title="Elements"
+          :title="$t('builder:elements')"
         >
           <configurator
             :items="currentDisplayElements"
@@ -220,9 +220,9 @@
       v-model="datasources.showConfigurator"
       size="xl"
       scrollable
-      ok-title="Save Datasources"
+      :ok-title="$t('builder:datasources.save')"
       ok-variant="primary"
-      title="Datasources"
+      :title="$t('builder:datasources.label')"
       body-class="py-3"
       @ok="refreshReport()"
     >
@@ -259,7 +259,7 @@
       size="lg"
       scrollable
       hide-footer
-      title="Add display element"
+      :title="$t('builder:add.display-element')"
       body-class="px-0 py-3"
     >
       <selector
@@ -273,7 +273,7 @@
       size="lg"
       scrollable
       hide-footer
-      title="Add datasource"
+      :title="$t('builder:add.datasource')"
       body-class="px-0 py-3"
     >
       <selector
@@ -287,9 +287,9 @@
       v-model="scenarios.showConfigurator"
       size="xl"
       scrollable
-      ok-title="Save Scenarios"
+      :ok-title="$t('builder:scenarios.save')"
       ok-variant="primary"
-      title="Scenarios"
+      :title="$t('builder:scenarios.label')"
       body-class="py-3"
     >
       <configurator
@@ -334,7 +334,7 @@
           size="lg"
           @click="createBlock"
         >
-          + Add block
+          {{ $t('builder:add.with-plus') }}
         </b-button>
       </editor-toolbar>
     </portal>
@@ -399,22 +399,22 @@ export default {
 
         types: [
           {
-            label: 'Text',
+            label: this.$t('builder:display-elements.types.text'),
             kind: 'Text',
             value: displayElementThumbnails.Text,
           },
           {
-            label: 'Metric',
+            label: this.$t('builder:display-elements.types.metric'),
             kind: 'Metric',
             value: displayElementThumbnails.Metric,
           },
           {
-            label: 'Table',
+            label: this.$t('builder:display-elements.types.table'),
             kind: 'Table',
             value: displayElementThumbnails.Table,
           },
           {
-            label: 'Chart',
+            label: this.$t('builder:display-elements.types.chart'),
             kind: 'Chart',
             value: displayElementThumbnails.Chart,
           },
@@ -429,19 +429,19 @@ export default {
 
         types: [
           {
-            label: 'Load',
+            label: this.$t('builder:datasource.types.load.label'),
             kind: 'Load',
-            value: 'Loads data from a specified resource, such as Compose records',
+            value: this.$t('builder:datasource.types.load.loads-data-from-specified-resource-such-as-compose-records'),
           },
           {
-            label: 'Join',
+            label: this.$t('builder:datasource.types.join.label'),
             kind: 'Join',
-            value: 'Joins two Load datasources with a unique column that links them together, such as a Compose record selector',
+            value: this.$t('builder:datasource.types.join.joins-two-load-datasources-such-as-compose-record-selector'),
           },
           {
-            label: 'Group',
+            label: this.$t('builder:datasource.types.group.label'),
             kind: 'Group',
-            value: 'Groups data from a load datasource based on a column value and aggregates it, such as counting the number of Accounts with the same status',
+            value: this.$t('builder:datasource.types.group.groups-data-from-load-datasource-like-counting-number-of-accounts-with-same-status'),
           },
         ],
       },
@@ -463,7 +463,7 @@ export default {
 
     pageTitle () {
       const title = this.report ? (this.report.meta.name || this.report.handle) : ''
-      return `Report Builder - '${title}'` || 'Report Builder'
+      return `${this.$t('builder:report.builder')} - '${title}'` || this.$t('builder:report.builder')
     },
 
     canRead () {
@@ -578,8 +578,8 @@ export default {
 
     blockLayoutOptions () {
       return [
-        { text: 'Horizontal', value: 'horizontal' },
-        { text: 'Vertical', value: 'vertical' },
+        { text: this.$t('builder:layout-options.horizontal'), value: 'horizontal' },
+        { text: this.$t('builder:layout-options.vertical'), value: 'vertical' },
       ]
     },
   },

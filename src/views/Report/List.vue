@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex w-100 py-3">
     <portal to="topbar-title">
-      List of Reports
+      {{ $t('report.list') }}
     </portal>
 
     <b-container fluid="xl">
@@ -30,13 +30,13 @@
                       class="mr-1"
                       :to="{ name: 'report.create' }"
                     >
-                      New Report
+                      {{ $t('report.new') }}
                     </b-button>
 
                     <c-permissions-button
                       v-if="canGrant"
                       resource="corteza::system:report/*"
-                      button-label="Permissions"
+                      :button-label="$t('permissions')"
                       button-variant="light"
                       class="btn-lg"
                     />
@@ -86,7 +86,7 @@
                     class="mr-2"
                     :to="{ name: 'report.builder', params: { reportID: r.reportID } }"
                   >
-                    Report Builder
+                    {{ $t('report.builder') }}
                   </b-button>
                   <b-button
                     v-if="r.canUpdateReport"
@@ -94,7 +94,7 @@
                     class="mr-2"
                     :to="{ name: 'report.edit', params: { reportID: r.reportID } }"
                   >
-                    Edit
+                    {{ $t('report.edit') }}
                   </b-button>
                   <c-permissions-button
                     v-if="r.canGrant"

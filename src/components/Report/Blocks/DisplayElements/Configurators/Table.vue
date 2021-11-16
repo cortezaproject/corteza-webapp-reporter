@@ -4,7 +4,7 @@
   >
     <b-form-group
       v-if="options.datasources.length > 1"
-      label="Joined datasource handling"
+      :label="$t('display-element:table.configurator.joined-datasource-handling')"
       label-class="text-primary"
     >
       <b-form-select
@@ -17,7 +17,7 @@
 
     <b-form-group
       v-if="currentConfigurableDatasourceName && currentColumns.length"
-      label="Columns"
+      :label="$t('display-element:table.configurator.columns')"
       label-class="text-primary"
     >
       <column-picker
@@ -29,7 +29,7 @@
     <b-row no-gutters>
       <b-col class="pr-3">
         <b-form-group
-          label="Table Variant"
+          :label="$t('display-element:table.configurator.table.variant')"
           label-class="text-primary"
         >
           <b-form-select
@@ -40,7 +40,7 @@
       </b-col>
       <b-col>
         <b-form-group
-          label="Head Variant"
+          :label="$t('display-element:table.configurator.head-variant')"
           label-class="text-primary"
         >
           <b-form-radio-group
@@ -51,19 +51,19 @@
               :value="null"
               inline
             >
-              None
+              {{ $t('display-element:table.configurator.none') }}
             </b-form-radio>
             <b-form-radio
               value="light"
               inline
             >
-              Light
+              {{ $t('display-element:table.configurator.light') }}
             </b-form-radio>
             <b-form-radio
               value="dark"
               inline
             >
-              Dark
+              {{ $t('display-element:table.configurator.dark') }}
             </b-form-radio>
           </b-form-radio-group>
         </b-form-group>
@@ -71,62 +71,62 @@
     </b-row>
 
     <b-form-group
-      label="Table Options"
+      :label="$t('display-element:table.configurator.table.options.label')"
       label-class="text-primary"
     >
       <b-form-checkbox
         v-model="options.striped"
         inline
       >
-        Striped
+        {{ $t('display-element:table.configurator.table.options.striped') }}
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.bordered"
         inline
       >
-        Bordered
+        {{ $t('display-element:table.configurator.table.options.bordered') }}
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.borderless"
         inline
       >
-        Borderless
+        {{ $t('display-element:table.configurator.table.options.borderless') }}
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.small"
         inline
       >
-        Small
+        {{ $t('display-element:table.configurator.table.options.small') }}
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.hover"
         inline
       >
-        Hover
+        {{ $t('display-element:table.configurator.table.options.hover') }}
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.dark"
         inline
       >
-        Dark
+        {{ $t('display-element:table.configurator.table.options.dark') }}
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.responsive"
         inline
       >
-        Responsive
+        {{ $t('display-element:table.configurator.table.options.responsive') }}
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.fixed"
         inline
       >
-        Fixed
+        {{ $t('display-element:table.configurator.table.options.fixed') }}
       </b-form-checkbox>
       <b-form-checkbox
         v-model="options.noCollapse"
         inline
       >
-        No border collapse
+        {{ $t('display-element:table.configurator.table.options.no-collapse') }}
       </b-form-checkbox>
     </b-form-group>
   </div>
@@ -152,15 +152,15 @@ export default {
   computed: {
     tableVariants () {
       return [
-        { value: '', text: 'None' },
-        { value: 'primary', text: 'Primary' },
-        { value: 'secondary', text: 'Secondary' },
-        { value: 'info', text: 'Info' },
-        { value: 'danger', text: 'Danger' },
-        { value: 'warning', text: 'Warning' },
-        { value: 'success', text: 'Success' },
-        { value: 'light', text: 'Light' },
-        { value: 'dark', text: 'Dark' },
+        { value: '', text: this.$t('display-element:table.configurator.none') },
+        { value: 'primary', text: this.$t('display-element:table.configurator.table.variants.primary') },
+        { value: 'secondary', text: this.$t('display-element:table.configurator.table.variants.secondary') },
+        { value: 'info', text: this.$t('display-element:table.configurator.table.variants.info') },
+        { value: 'danger', text: this.$t('display-element:table.configurator.table.variants.danger') },
+        { value: 'warning', text: this.$t('display-element:table.configurator.table.variants.warning') },
+        { value: 'success', text: this.$t('display-element:table.configurator.table.variants.success') },
+        { value: 'light', text: this.$t('display-element:table.configurator.table.variants.light') },
+        { value: 'dark', text: this.$t('display-element:table.configurator.table.variants.dark') },
       ]
     },
 

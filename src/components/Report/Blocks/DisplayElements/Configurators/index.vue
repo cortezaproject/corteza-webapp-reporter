@@ -9,7 +9,7 @@
       variant="primary"
       class="mb-2"
     >
-      Datasources
+      {{ $t('builder:datasources.label') }}
     </b-button>
 
     <b-collapse
@@ -19,7 +19,7 @@
       accordion
     >
       <b-form-group
-        label="Datasource"
+        :label="$t('builder:datasources.label')"
         label-class="text-primary"
       >
         <b-form-select
@@ -34,7 +34,7 @@
       >
         <b-form-group
           v-if="options.datasources.length > 1"
-          label="Joined datasource handling"
+          :label="$t('builder:joined-datasource-handling')"
           label-class="text-primary"
         >
           <b-form-select
@@ -51,7 +51,7 @@
         >
           <b-form-group
             v-if="columns.length"
-            label="Prefilter"
+            :label="$t('builder:prefilter')"
             label-class="text-primary"
           >
             <prefilter
@@ -62,7 +62,7 @@
 
           <b-form-group
             v-if="columns.length"
-            label="Presort order"
+            :label="$t('builder:presort-order')"
             label-class="text-primary"
           >
             <presort
@@ -73,7 +73,7 @@
 
           <b-form-group
             v-if="displayElement.kind === 'Table'"
-            label="Limit"
+            :label="$t('builder:limit')"
             label-class="text-primary"
           >
             <b-form-input
@@ -92,7 +92,7 @@
       variant="primary"
       class="mb-2"
     >
-      Element
+      {{ $t('builder:element') }}
     </b-button>
 
     <b-collapse
@@ -161,7 +161,7 @@ export default {
     },
 
     sources () {
-      const options = [{ value: '', text: 'None' }]
+      const options = [{ value: '', text: this.$t('builder:none') }]
 
       this.datasources.forEach(({ step }, index) => {
         Object.values(step).forEach(({ name }) => {
@@ -245,7 +245,7 @@ export default {
           .then((frames = []) => {
             this.columns = frames.filter(({ source }) => source === this.options.source).map(({ columns = [] }) => columns.sort((a, b) => a.label.localeCompare(b.label))) || []
           }).catch((e) => {
-            this.toastErrorHandler('Failed to describe datasource')(e)
+            this.toastErrorHandler(this.$t('notification:datasource.describe-failed'))(e)
           })
       }
     },

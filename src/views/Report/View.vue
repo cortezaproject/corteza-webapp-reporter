@@ -14,7 +14,7 @@
         <vue-select
           v-model="scenarios.selected"
           :options="scenarioOptions"
-          placeholder="Pick a scenario"
+          :placeholder="$t('pick-scenario')"
           class="h-100 bg-white"
           @input="refreshReport()"
         />
@@ -33,7 +33,7 @@
           <font-awesome-icon
             :icon="['fas', 'cogs']"
           />
-          Report Builder
+          {{ $t('report.builder') }}
         </b-button>
         <b-button
           variant="primary"
@@ -73,6 +73,10 @@ import VueSelect from 'vue-select'
 export default {
   name: 'ReportView',
 
+  i18nOptions: {
+    namespaces: 'view',
+  },
+
   components: {
     Grid,
     Block,
@@ -100,7 +104,7 @@ export default {
 
     pageTitle () {
       const title = this.report ? (this.report.meta.name || this.report.handle) : ''
-      return title || 'Report View'
+      return title || this.$t('report.view')
     },
 
     canRead () {

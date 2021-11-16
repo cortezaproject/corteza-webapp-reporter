@@ -2,7 +2,7 @@
   <div>
     <b-form-group
       v-if="options.valueColumn !== undefined"
-      label="Label column"
+      :label="$t('display-element:metric.configurator.label-column')"
       label-class="text-primary"
     >
       <b-form-select
@@ -15,7 +15,7 @@
           <b-form-select-option
             value=""
           >
-            None
+            {{ $t('display-element:metric.configurator.none') }}
           </b-form-select-option>
         </template>
       </b-form-select>
@@ -24,7 +24,7 @@
     <b-row>
       <b-col>
         <b-form-group
-          label="Format"
+          :label="$t('display-element:metric.configurator.format')"
           label-class="text-primary"
         >
           <b-form-input
@@ -35,7 +35,7 @@
       </b-col>
       <b-col>
         <b-form-group
-          label="Prefix"
+          :label="$t('display-element:metric.configurator.prefix')"
           label-class="text-primary"
         >
           <b-form-input
@@ -46,7 +46,7 @@
       </b-col>
       <b-col>
         <b-form-group
-          label="Suffix"
+          :label="$t('display-element:metric.configurator.suffix')"
           label-class="text-primary"
         >
           <b-form-input
@@ -60,7 +60,7 @@
     <b-row>
       <b-col>
         <b-form-group
-          label="Text color"
+          :label="$t('display-element:metric.configurator.color.text')"
         >
           <b-form-input
             v-model="options.color"
@@ -70,7 +70,7 @@
       </b-col>
       <b-col>
         <b-form-group
-          label="Background color"
+          :label="$t('display-element:metric.configurator.color.background')"
         >
           <b-form-input
             v-model="options.backgroundColor"

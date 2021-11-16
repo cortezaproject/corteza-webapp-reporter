@@ -40,7 +40,7 @@
     class="d-flex align-items-center justify-content-center h-50 w-100"
   >
     <h4>
-      No blocks added yet
+      {{ $t('builder:no-blocks-added') }}
     </h4>
   </div>
 </template>

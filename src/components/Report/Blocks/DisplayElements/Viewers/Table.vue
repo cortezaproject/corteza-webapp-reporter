@@ -134,7 +134,7 @@
             :icon="['fas', 'angle-left']"
             class="mr-1"
           />
-          Previous
+          {{ $t('display-element:table.view.previous') }}
         </b-button>
         <b-button
           :disabled="!hasNextPage"
@@ -142,7 +142,7 @@
           class="d-flex align-items-center text-dark"
           @click="goToPage('nextPage')"
         >
-          Next
+          {{ $t('display-element:table.view.next') }}
           <font-awesome-icon
             :icon="['fas', 'angle-right']"
             class="ml-1"

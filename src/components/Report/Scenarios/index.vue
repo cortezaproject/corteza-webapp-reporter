@@ -3,17 +3,17 @@
     v-if="scenario"
   >
     <b-form-group
-      label="Label"
+      :label="$t('scenarios:label')"
       label-class="text-primary"
     >
       <b-form-input
         v-model="scenario.label"
-        placeholder="Scenario Name..."
+        :placeholder="$t('scenarios:scenario-name')"
       />
     </b-form-group>
 
     <b-form-group
-      label="Datasource"
+      :label="$t('scenarios:datasource')"
       label-class="text-primary"
     >
       <b-form-select
@@ -24,7 +24,7 @@
 
     <b-form-group
       v-if="currentDatasourceName && scenario.filters[currentDatasourceName]"
-      label="Prefilter"
+      :label="$t('scenarios:prefilter')"
       label-class="text-primary"
     >
       <prefilter
@@ -71,7 +71,7 @@ export default {
 
   computed: {
     datasourceOptions () {
-      const options = [{ value: '', text: 'None' }]
+      const options = [{ value: '', text: this.$t('scenarios:none') }]
 
       this.datasources.forEach(({ step }, index) => {
         Object.entries(step).forEach(([kind, { name }]) => {
@@ -120,7 +120,7 @@ export default {
           .then((frames = []) => {
             this.columns = ((frames[0] || {}).columns || []).sort((a, b) => a.label.localeCompare(b.label))
           }).catch((e) => {
-            this.toastErrorHandler('Failed to describe datasource')(e)
+            this.toastErrorHandler(this.$t('notification:datasource.describe-failed'))(e)
           })
       }
     },

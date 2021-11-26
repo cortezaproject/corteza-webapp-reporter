@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="displayElement && options"
+    v-if="options"
   >
     <b-row>
       <b-col>
@@ -192,7 +192,7 @@ export default {
     },
 
     typeChanged () {
-      this.options = reporter.ChartOptionsMaker(this.options)
+      this.options = reporter.ChartOptionsMaker(this.options) || {}
     },
   },
 }

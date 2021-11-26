@@ -1,9 +1,9 @@
 <script>
 export default {
   props: {
-    displayElement: {
+    displayElementOptions: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
 
     columns: {
@@ -20,11 +20,11 @@ export default {
   computed: {
     options: {
       get () {
-        return this.displayElement.options || undefined
+        return this.displayElementOptions || undefined
       },
 
       set (options = {}) {
-        this.$emit('update:displayElement', { ...this.displayElement, options })
+        this.$emit('update:displayElementOptions', options)
       },
     },
   },

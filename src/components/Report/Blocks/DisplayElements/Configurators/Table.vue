@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="displayElement && options"
+    v-if="options"
   >
     <b-form-group
       v-if="options.datasources.length > 1"

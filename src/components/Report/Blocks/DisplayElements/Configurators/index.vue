@@ -102,7 +102,7 @@
     >
       <component
         :is="displayElementConfigurator"
-        :display-element.sync="displayElement"
+        :display-element-options.sync="options"
         :columns="columns"
         :datasource="currentDatasource"
       />

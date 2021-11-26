@@ -27,6 +27,7 @@
           <b-form-select
             v-model="step.join.localSource"
             :options="supportedSources"
+            @change="onSourceChange('local')"
           >
             <template #first>
               <b-form-select-option
@@ -46,6 +47,7 @@
           <b-form-select
             v-model="step.join.foreignSource"
             :options="supportedSources"
+            @change="onSourceChange('foreign')"
           >
             <template #first>
               <b-form-select-option
@@ -157,20 +159,30 @@ export default {
 
     'step.join.localSource': {
       handler () {
-        this.step.join.localColumn = undefined
         this.getSourceColumns(['local'])
       },
     },
 
     'step.join.foreignSource': {
       handler () {
-        this.step.join.foreignColumn = undefined
         this.getSourceColumns(['foreign'])
       },
     },
   },
 
   methods: {
+    onSourceChange (s) {
+      switch (s) {
+        case 'local':
+          this.step.join.localColumn = undefined
+          break
+
+        case 'foreign':
+          this.step.join.foreignColumn = undefined
+          break
+      }
+    },
+
     async getSourceColumns (sources = []) {
       sources.forEach(source => {
         this[`${source}Columns`] = []

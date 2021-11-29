@@ -101,7 +101,7 @@
             </td>
           </template>
           <td
-            class="d-flex align-items-center justify-content-center pl-2 pr-0"
+            class="fit text-center align-middle pl-2 pr-0"
           >
             <c-input-confirm
               variant="link"

@@ -680,6 +680,10 @@ export default {
             step = reporter.StepFactory({
               join: {
                 name: 'Join',
+                foreignColumn: '',
+                foreignSource: '',
+                localColumn: '',
+                localSource: '',
               },
             })
             break

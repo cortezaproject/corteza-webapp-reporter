@@ -31,7 +31,7 @@
           >
             <template #first>
               <b-form-select-option
-                :value="undefined"
+                value=""
               >
                 None
               </b-form-select-option>
@@ -51,7 +51,7 @@
           >
             <template #first>
               <b-form-select-option
-                :value="undefined"
+                value=""
               >
                 None
               </b-form-select-option>
@@ -76,7 +76,7 @@
           >
             <template #first>
               <b-form-select-option
-                :value="undefined"
+                value=""
               >
                 None
               </b-form-select-option>
@@ -98,7 +98,7 @@
           >
             <template #first>
               <b-form-select-option
-                :value="undefined"
+                value=""
               >
                 None
               </b-form-select-option>
@@ -172,7 +172,7 @@ export default {
 
   methods: {
     onSourceChange (source) {
-      this.step.join[`${source}Column`] = undefined
+      this.step.join[`${source}Column`] = ''
     },
 
     async getSourceColumns (sources = []) {

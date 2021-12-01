@@ -1,6 +1,6 @@
 <template>
-  <div class="d-flex columns">
-    <div class="available mr-2">
+  <b-row>
+    <b-col class="available">
       <div
         class="d-flex align-items-center justify-content-between"
       >
@@ -30,9 +30,9 @@
           </span>
         </div>
       </draggable>
-    </div>
+    </b-col>
 
-    <div class="selected">
+    <b-col class="selected">
       <div
         class="d-flex align-items-center justify-content-between"
       >
@@ -62,8 +62,8 @@
           </span>
         </div>
       </draggable>
-    </div>
-  </div>
+    </b-col>
+  </b-row>
 </template>
 <script>
 import draggable from 'vuedraggable'
@@ -104,35 +104,22 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.columns {
-  flex-flow: row nowrap;
+.selected .column {
+  cursor: pointer;
+}
 
-  .selected .column {
-    cursor: pointer;
-  }
+.available .column {
+  cursor: grab;
+}
 
-  .available .column {
-    cursor: grab;
-  }
+.drag-area {
+  height: 150px;
+  overflow-x: auto;
+  padding: 2px;
+  width: 100%;
+}
 
-  & > div {
-    flex: 1;
-    clear: both;
-
-    button.btn-link {
-      font-size: 90%;
-    }
-
-    .drag-area {
-      height: 150px;
-      overflow-x: auto;
-      padding: 2px;
-      width: 100%;
-    }
-
-    span.system {
-      font-size: 80%;
-    }
-  }
+span.system {
+  font-size: 80%;
 }
 </style>

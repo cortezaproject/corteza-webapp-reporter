@@ -2,61 +2,104 @@
   <div
     v-if="options"
   >
-    <b-row>
-      <b-col>
-        <b-form-group
-          label="Type"
-          label-class="text-primary"
-        >
-          <b-form-select
-            v-model="options.type"
-            :options="chartTypes"
-            @change="typeChanged"
-          />
-        </b-form-group>
-      </b-col>
-      <b-col>
-        <b-form-group
-          label="Color scheme"
-          label-class="text-primary"
-          class="mb-0"
-        >
-          <vue-select
-            v-model="options.colorScheme"
-            :options="colorSchemes"
-            :reduce="cs => cs.value"
-            label="label"
-            option-text="label"
-            option-value="value"
-            clearable
-            class="h-100 w-100"
+    <div
+      class="mb-3"
+    >
+      <h5 class="text-primary mb-2">
+        General
+      </h5>
+
+      <b-row>
+        <b-col>
+          <b-form-group
+            label="Type"
+            label-class="text-primary"
           >
-            <template #option="option">
+            <b-form-select
+              v-model="options.type"
+              :options="chartTypes"
+              @change="typeChanged"
+            />
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group
+            label="Chart title"
+            label-class="text-primary"
+          >
+            <b-form-input
+              v-model="options.title"
+            />
+          </b-form-group>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>
+          <b-form-group
+            label="Color scheme"
+            label-class="text-primary"
+            class="mb-0"
+          >
+            <vue-select
+              v-model="options.colorScheme"
+              :options="colorSchemes"
+              :reduce="cs => cs.value"
+              label="label"
+              option-text="label"
+              option-value="value"
+              clearable
+              class="h-100 w-100"
+            >
+              <template #option="option">
+                <div
+                  v-for="(color, index) in option.colors"
+                  :key="`${option.value}-${index}`"
+                  :style="`background: ${color};`"
+                  class="d-inline-block color-box mr-1"
+                />
+              </template>
+            </vue-select>
+            <template
+              v-if="currentColorScheme"
+            >
               <div
-                v-for="(color, index) in option.colors"
-                :key="`${option.value}-${index}`"
+                v-for="(color, index) in currentColorScheme.colors"
+                :key="`${currentColorScheme.value}-${index}`"
                 :style="`background: ${color};`"
                 class="d-inline-block color-box mr-1"
               />
             </template>
-          </vue-select>
-          <template
-            v-if="currentColorScheme"
+          </b-form-group>
+        </b-col>
+        <b-col
+          align-self="center"
+        >
+          <b-form-checkbox
+            v-model="options.showTooltips"
+            class="pb-2"
           >
-            <div
-              v-for="(color, index) in currentColorScheme.colors"
-              :key="`${currentColorScheme.value}-${index}`"
-              :style="`background: ${color};`"
-              class="d-inline-block color-box mr-1"
-            />
-          </template>
-        </b-form-group>
-      </b-col>
-    </b-row>
+            Show tooltips
+          </b-form-checkbox>
+          <b-form-checkbox
+            v-model="options.showLegend"
+            class="pb-2"
+          >
+            Show legend
+          </b-form-checkbox>
+        </b-col>
+      </b-row>
+      <hr>
+    </div>
 
     <div
       v-if="options.source"
+      class="mb-3"
     >
+      <h5 class="text-primary mb-2">
+        Data
+      </h5>
+
       <b-form-group
         v-if="options.labelColumn !== undefined"
         label="Label column"
@@ -88,6 +131,177 @@
           :columns.sync="options.dataColumns"
         />
       </b-form-group>
+
+      <div
+        v-if="['bar', 'line'].includes(options.type)"
+      >
+        <hr>
+
+        <div
+          class="mb-3"
+        >
+          <h5 class="text-primary mb-2">
+            X-Axis
+          </h5>
+          <b-row>
+            <b-col>
+              <b-form-group
+                label="Axis label"
+                label-class="text-primary"
+              >
+                <b-form-input
+                  v-model="options.xAxis.label"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group
+                label="Axis type"
+                label-class="text-primary"
+              >
+                <b-form-select
+                  v-model="options.xAxis.type"
+                  :options="AxisTypes"
+                >
+                  <template #first>
+                    <b-form-select-option
+                      value=""
+                    >
+                      Default
+                    </b-form-select-option>
+                  </template>
+                </b-form-select>
+              </b-form-group>
+            </b-col>
+          </b-row>
+
+          <b-row>
+            <b-col>
+              <b-form-group
+                label="Default value"
+                label-class="text-primary"
+                class="mb-1"
+              >
+                <b-form-input
+                  v-model="options.xAxis.defaultValue"
+                  :disabled="!options.xAxis.skipMissing"
+                  :type="options.xAxis.type === 'time' ? 'date' : 'text'"
+                />
+              </b-form-group>
+
+              <b-form-checkbox
+                v-model="options.xAxis.skipMissing"
+                class="mb-3"
+              >
+                Skip missing values
+              </b-form-checkbox>
+            </b-col>
+            <b-col>
+              <b-form-group
+                v-if="options.xAxis.type === 'time'"
+                label="Time unit"
+                label-class="text-primary"
+              >
+                <b-form-select
+                  v-model="options.xAxis.unit"
+                  :options="timeUnits"
+                >
+                  <template #first>
+                    <b-form-select-option
+                      :value="undefined"
+                    >
+                      Default
+                    </b-form-select-option>
+                  </template>
+                </b-form-select>
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </div>
+
+        <hr>
+
+        <div>
+          <h5 class="text-primary mb-2">
+            Y-Axis
+          </h5>
+          <b-row>
+            <b-col>
+              <b-form-group
+                label="Axis label"
+                label-class="text-primary"
+              >
+                <b-form-input
+                  v-model="options.yAxis.label"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group
+                label="Step size"
+                label-class="text-primary"
+              >
+                <b-form-input
+                  v-model="options.yAxis.stepSize"
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+
+          <b-row>
+            <b-col>
+              <b-form-group
+                label="Min value"
+                label-class="text-primary"
+              >
+                <b-form-input
+                  v-model="options.yAxis.min"
+                  type="number"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group
+                label="Max value"
+                label-class="text-primary"
+              >
+                <b-form-input
+                  v-model="options.yAxis.max"
+                  type="number"
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+
+          <b-row>
+            <b-col>
+              <b-form-group>
+                <b-form-checkbox
+                  v-model="options.yAxis.beginAtZero"
+                >
+                  Always begin axis scale at zero
+                </b-form-checkbox>
+
+                <b-form-checkbox
+                  v-model="options.yAxis.type"
+                  value="logarithmic"
+                  unchecked-value="linear"
+                >
+                  Logarithmic scale
+                </b-form-checkbox>
+
+                <b-form-checkbox
+                  v-model="options.yAxis.position"
+                  value="right"
+                  unchecked-value="left"
+                >
+                  Place axis on the right side
+                </b-form-checkbox>
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -140,6 +354,23 @@ export default {
       }
 
       return types
+    },
+
+    AxisTypes () {
+      return [
+        { value: 'time', text: 'Time' },
+        { value: 'category', text: 'Category' },
+      ]
+    },
+
+    timeUnits () {
+      return [
+        { value: 'day', text: 'Date' },
+        { value: 'week', text: 'Week' },
+        { value: 'month', text: 'Month' },
+        { value: 'quarter', text: 'Quarter' },
+        { value: 'year', text: 'Year' },
+      ]
     },
 
     labelColumns () {

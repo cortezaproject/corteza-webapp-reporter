@@ -297,7 +297,7 @@ export default {
       const relFrames = this.getForeignFrames(frame)
       const usedKeys = this.keyColumns(frame)
 
-      for (const r of frame.rows) {
+      for (const r of frame.rows || []) {
         maxSize = 1
 
         const row = this.tabelifyRow(r, [...selectedCols])

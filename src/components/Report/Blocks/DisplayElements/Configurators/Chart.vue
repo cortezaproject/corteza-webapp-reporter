@@ -126,9 +126,9 @@
         :label="$t('display-element:chart.configurator.data-columns')"
         label-class="text-primary"
       >
-        <column-picker
-          :all-columns="dataColumns"
-          :columns.sync="options.dataColumns"
+        <item-picker
+          :all-items="dataColumns"
+          :items.sync="options.dataColumns"
         />
       </b-form-group>
 
@@ -308,7 +308,7 @@
 
 <script>
 import base from './base'
-import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
+import ItemPicker from 'corteza-webapp-reporter/src/components/Common/ItemPicker'
 import colorschemes from 'chartjs-plugin-colorschemes/src/colorschemes'
 import VueSelect from 'vue-select'
 import { reporter } from '@cortezaproject/corteza-js'
@@ -316,7 +316,7 @@ import { reporter } from '@cortezaproject/corteza-js'
 export default {
   components: {
     VueSelect,
-    ColumnPicker,
+    ItemPicker,
   },
 
   extends: base,

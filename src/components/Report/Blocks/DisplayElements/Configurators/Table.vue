@@ -2,143 +2,161 @@
   <div
     v-if="options"
   >
-    <b-form-group
-      v-if="options.datasources.length > 1"
-      :label="$t('display-element:table.configurator.joined-datasource-handling')"
-      label-class="text-primary"
+    <div
+      class="mb-3"
     >
-      <b-form-select
-        v-model="currentConfigurableDatasourceName"
-        :options="options.datasources"
-        text-field="name"
-        value-field="name"
-      />
-    </b-form-group>
+      <h5 class="text-primary mb-2">
+        {{ $t('display-element:table.configurator.general') }}
+      </h5>
 
-    <b-form-group
-      v-if="currentConfigurableDatasourceName && currentColumns.length"
-      :label="$t('display-element:table.configurator.columns')"
-      label-class="text-primary"
-    >
-      <column-picker
-        :all-columns="currentColumns"
-        :columns.sync="currentSelectedColumns"
-      />
-    </b-form-group>
-
-    <b-row no-gutters>
-      <b-col class="pr-3">
-        <b-form-group
-          :label="$t('display-element:table.configurator.table.variant')"
-          label-class="text-primary"
-        >
-          <b-form-select
-            v-model="options.tableVariant"
-            :options="tableVariants"
-          />
-        </b-form-group>
-      </b-col>
-      <b-col>
-        <b-form-group
-          :label="$t('display-element:table.configurator.head-variant')"
-          label-class="text-primary"
-        >
-          <b-form-radio-group
-            v-model="options.headVariant"
-            class="mt-lg-2"
+      <b-row no-gutters>
+        <b-col class="pr-3">
+          <b-form-group
+            :label="$t('display-element:table.configurator.table.variant')"
+            label-class="text-primary"
           >
-            <b-form-radio
-              :value="null"
-              inline
+            <b-form-select
+              v-model="options.tableVariant"
+              :options="tableVariants"
+            />
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group
+            :label="$t('display-element:table.configurator.head-variant')"
+            label-class="text-primary"
+          >
+            <b-form-radio-group
+              v-model="options.headVariant"
+              class="mt-lg-2"
             >
-              {{ $t('display-element:table.configurator.none') }}
-            </b-form-radio>
-            <b-form-radio
-              value="light"
-              inline
-            >
-              {{ $t('display-element:table.configurator.light') }}
-            </b-form-radio>
-            <b-form-radio
-              value="dark"
-              inline
-            >
-              {{ $t('display-element:table.configurator.dark') }}
-            </b-form-radio>
-          </b-form-radio-group>
-        </b-form-group>
-      </b-col>
-    </b-row>
+              <b-form-radio
+                :value="null"
+                inline
+              >
+                {{ $t('display-element:table.configurator.none') }}
+              </b-form-radio>
+              <b-form-radio
+                value="light"
+                inline
+              >
+                {{ $t('display-element:table.configurator.light') }}
+              </b-form-radio>
+              <b-form-radio
+                value="dark"
+                inline
+              >
+                {{ $t('display-element:table.configurator.dark') }}
+              </b-form-radio>
+            </b-form-radio-group>
+          </b-form-group>
+        </b-col>
+      </b-row>
 
-    <b-form-group
-      :label="$t('display-element:table.configurator.table.options.label')"
-      label-class="text-primary"
+      <b-form-group
+        :label="$t('display-element:table.configurator.table.options.label')"
+        label-class="text-primary"
+      >
+        <b-form-checkbox
+          v-model="options.striped"
+          inline
+        >
+          {{ $t('display-element:table.configurator.table.options.striped') }}
+        </b-form-checkbox>
+        <b-form-checkbox
+          v-model="options.bordered"
+          inline
+        >
+          {{ $t('display-element:table.configurator.table.options.bordered') }}
+        </b-form-checkbox>
+        <b-form-checkbox
+          v-model="options.borderless"
+          inline
+        >
+          {{ $t('display-element:table.configurator.table.options.borderless') }}
+        </b-form-checkbox>
+        <b-form-checkbox
+          v-model="options.small"
+          inline
+        >
+          {{ $t('display-element:table.configurator.table.options.small') }}
+        </b-form-checkbox>
+        <b-form-checkbox
+          v-model="options.hover"
+          inline
+        >
+          {{ $t('display-element:table.configurator.table.options.hover') }}
+        </b-form-checkbox>
+        <b-form-checkbox
+          v-model="options.dark"
+          inline
+        >
+          {{ $t('display-element:table.configurator.table.options.dark') }}
+        </b-form-checkbox>
+        <b-form-checkbox
+          v-model="options.responsive"
+          inline
+        >
+          {{ $t('display-element:table.configurator.table.options.responsive') }}
+        </b-form-checkbox>
+        <b-form-checkbox
+          v-model="options.fixed"
+          inline
+        >
+          {{ $t('display-element:table.configurator.table.options.fixed') }}
+        </b-form-checkbox>
+        <b-form-checkbox
+          v-model="options.noCollapse"
+          inline
+        >
+          {{ $t('display-element:table.configurator.table.options.no-collapse') }}
+        </b-form-checkbox>
+      </b-form-group>
+    </div>
+
+    <hr>
+
+    <div
+      class="mb-3"
     >
-      <b-form-checkbox
-        v-model="options.striped"
-        inline
+      <h5 class="text-primary mb-2">
+        {{ $t('display-element:table.configurator.data') }}
+      </h5>
+
+      <b-form-group
+        v-if="options.datasources.length > 1"
+        :label="$t('display-element:table.configurator.joined-datasource-handling')"
+        label-class="text-primary"
       >
-        {{ $t('display-element:table.configurator.table.options.striped') }}
-      </b-form-checkbox>
-      <b-form-checkbox
-        v-model="options.bordered"
-        inline
+        <b-form-select
+          v-model="currentConfigurableDatasourceName"
+          :options="options.datasources"
+          text-field="name"
+          value-field="name"
+        />
+      </b-form-group>
+
+      <b-form-group
+        v-if="currentConfigurableDatasourceName && currentColumns.length"
+        :label="$t('display-element:table.configurator.columns')"
+        label-class="text-primary"
       >
-        {{ $t('display-element:table.configurator.table.options.bordered') }}
-      </b-form-checkbox>
-      <b-form-checkbox
-        v-model="options.borderless"
-        inline
-      >
-        {{ $t('display-element:table.configurator.table.options.borderless') }}
-      </b-form-checkbox>
-      <b-form-checkbox
-        v-model="options.small"
-        inline
-      >
-        {{ $t('display-element:table.configurator.table.options.small') }}
-      </b-form-checkbox>
-      <b-form-checkbox
-        v-model="options.hover"
-        inline
-      >
-        {{ $t('display-element:table.configurator.table.options.hover') }}
-      </b-form-checkbox>
-      <b-form-checkbox
-        v-model="options.dark"
-        inline
-      >
-        {{ $t('display-element:table.configurator.table.options.dark') }}
-      </b-form-checkbox>
-      <b-form-checkbox
-        v-model="options.responsive"
-        inline
-      >
-        {{ $t('display-element:table.configurator.table.options.responsive') }}
-      </b-form-checkbox>
-      <b-form-checkbox
-        v-model="options.fixed"
-        inline
-      >
-        {{ $t('display-element:table.configurator.table.options.fixed') }}
-      </b-form-checkbox>
-      <b-form-checkbox
-        v-model="options.noCollapse"
-        inline
-      >
-        {{ $t('display-element:table.configurator.table.options.no-collapse') }}
-      </b-form-checkbox>
-    </b-form-group>
+        <item-picker
+          :all-items="currentColumns"
+          :items.sync="currentSelectedColumns"
+        />
+      </b-form-group>
+    </div>
   </div>
 </template>
 
 <script>
 import base from './base'
-import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
+import ItemPicker from 'corteza-webapp-reporter/src/components/Common/ItemPicker'
 
 export default {
   components: {
-    ColumnPicker,
+    ItemPicker,
   },
 
   extends: base,

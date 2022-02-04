@@ -334,7 +334,12 @@
           size="lg"
           @click="createBlock"
         >
-          {{ $t('builder:add.with-plus') }}
+          <font-awesome-icon
+            :icon="['fas', 'plus']"
+            size="sm"
+            class="mr-1"
+          />
+          {{ $t('general:label.add') }}
         </b-button>
       </editor-toolbar>
     </portal>

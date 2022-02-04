@@ -82,7 +82,7 @@
                     <b-form-select-option
                       value=""
                     >
-                      {{ $t('builder:none') }}
+                      {{ $t('general:label.none') }}
                     </b-form-select-option>
                   </template>
                 </b-form-select>
@@ -128,7 +128,7 @@
                 size="sm"
                 class="mr-1"
               />
-              {{ $t('builder:add.label') }}
+              {{ $t('general:label.add') }}
             </b-button>
           </td>
         </tr>
@@ -179,7 +179,7 @@
           size="sm"
           class="mr-1"
         />
-        {{ $t('builder:add.label') }}
+        {{ $t('general:label.add') }}
       </b-button>
     </tr>
   </div>
@@ -216,7 +216,7 @@ export default {
       },
 
       conditions: [
-        { value: 'and', text: this.$t('builder:add.label') },
+        { value: 'and', text: this.$t('general:label.add') },
         { value: 'or', text: this.$t('builder:or') },
       ],
 

@@ -47,9 +47,15 @@
       label="Presort order"
       label-class="text-primary"
     >
-      <presort
-        :presort.sync="step.load.sort"
-        :columns="columns"
+      <c-input-presort
+        v-model="step.load.sort"
+        :fields="columns"
+        :labels="{
+          add: $t('general:label.add'),
+          ascending: $t('general:label.ascending'),
+          descending: $t('general:label.descending'),
+          none: $t('general:label.none'),
+        }"
       />
     </b-form-group> -->
   </div>
@@ -59,12 +65,12 @@
 import base from '../base.vue'
 import loader from './loader'
 import Prefilter from 'corteza-webapp-reporter/src/components/Common/Prefilter'
-import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
-
+// import { components } from '@cortezaproject/corteza-vue'
+// const { CInputPresort } = components
 export default {
   components: {
     Prefilter,
-    Presort,
+    // CInputPresort,
   },
 
   extends: base,

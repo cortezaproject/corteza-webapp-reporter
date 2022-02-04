@@ -65,9 +65,15 @@
             :label="$t('builder:presort-order')"
             label-class="text-primary"
           >
-            <presort
-              :presort.sync="options.datasources[currentConfigurableDatasourceIndex].sort"
-              :columns="columns[currentConfigurableDatasourceIndex]"
+            <c-input-presort
+              v-model="options.datasources[currentConfigurableDatasourceIndex].sort"
+              :fields="columns[currentConfigurableDatasourceIndex]"
+              :labels="{
+                add: $t('general:label.add'),
+                ascending: $t('general:label.ascending'),
+                descending: $t('general:label.descending'),
+                none: $t('general:label.none'),
+              }"
             />
           </b-form-group>
 
@@ -113,12 +119,13 @@
 <script>
 import getDisplayElementConfigurator from './loader'
 import Prefilter from 'corteza-webapp-reporter/src/components/Common/Prefilter'
-import Presort from 'corteza-webapp-reporter/src/components/Common/Presort'
+import { components } from '@cortezaproject/corteza-vue'
+const { CInputPresort } = components
 
 export default {
   components: {
     Prefilter,
-    Presort,
+    CInputPresort,
   },
 
   props: {
@@ -161,7 +168,7 @@ export default {
     },
 
     sources () {
-      const options = [{ value: '', text: this.$t('builder:none') }]
+      const options = [{ value: '', text: this.$t('general:none') }]
 
       this.datasources.forEach(({ step }, index) => {
         Object.values(step).forEach(({ name }) => {

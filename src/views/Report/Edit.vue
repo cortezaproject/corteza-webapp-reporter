@@ -31,7 +31,7 @@
           :to="reportViewer"
         >
           <font-awesome-icon
-            :icon="['fas', 'eye']"
+            :icon="['far', 'eye']"
           />
         </b-button>
       </b-button-group>

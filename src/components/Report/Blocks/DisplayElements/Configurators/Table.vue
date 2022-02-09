@@ -141,9 +141,10 @@
         :label="$t('display-element:table.configurator.columns')"
         label-class="text-primary"
       >
-        <item-picker
+        <column-picker
           :all-items="currentColumns"
-          :items.sync="currentSelectedColumns"
+          :selected-items.sync="currentSelectedColumns"
+          class="d-flex flex-column"
         />
       </b-form-group>
     </div>
@@ -152,11 +153,11 @@
 
 <script>
 import base from './base'
-import ItemPicker from 'corteza-webapp-reporter/src/components/Common/ItemPicker'
+import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
 
 export default {
   components: {
-    ItemPicker,
+    ColumnPicker,
   },
 
   extends: base,

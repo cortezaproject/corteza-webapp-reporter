@@ -20,7 +20,6 @@ import {
   faThumbtack,
   faPen,
   faCogs,
-  faEye,
   faRemoveFormat,
   faBold,
   faItalic,
@@ -49,6 +48,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import {
+  faEye,
   faEdit,
   faTrashAlt,
   faQuestionCircle,
@@ -57,6 +57,7 @@ import {
 
 library.add(
   faEdit,
+  faEye,
   faTrashAlt,
   faCheck,
   faTimes,
@@ -80,7 +81,6 @@ library.add(
   faThumbtack,
   faPen,
   faCogs,
-  faEye,
   faRemoveFormat,
   faBold,
   faItalic,

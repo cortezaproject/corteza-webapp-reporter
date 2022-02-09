@@ -122,13 +122,14 @@
       </b-form-group>
 
       <b-form-group
-        v-if="options.dataColumns"
+        v-if="options.dataColumns && columns.length"
         :label="$t('display-element:chart.configurator.data-columns')"
         label-class="text-primary"
       >
-        <item-picker
+        <column-picker
           :all-items="dataColumns"
-          :items.sync="options.dataColumns"
+          :selected-items.sync="options.dataColumns"
+          class="d-flex flex-column"
         />
       </b-form-group>
 
@@ -308,7 +309,7 @@
 
 <script>
 import base from './base'
-import ItemPicker from 'corteza-webapp-reporter/src/components/Common/ItemPicker'
+import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
 import colorschemes from 'chartjs-plugin-colorschemes/src/colorschemes'
 import VueSelect from 'vue-select'
 import { reporter } from '@cortezaproject/corteza-js'
@@ -316,7 +317,7 @@ import { reporter } from '@cortezaproject/corteza-js'
 export default {
   components: {
     VueSelect,
-    ItemPicker,
+    ColumnPicker,
   },
 
   extends: base,

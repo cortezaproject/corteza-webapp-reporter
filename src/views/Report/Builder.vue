@@ -195,7 +195,7 @@
             @delete="deleteCurrentDisplayElement"
           >
             <template v-slot:label="{ item: { kind, name } }">
-              {{ kind || name }}
+              {{ name || kind }}
               <font-awesome-icon
                 :icon="['fas', 'bars']"
                 class="grab text-grey"
@@ -722,11 +722,6 @@ export default {
     // Blocks
     handleReportSave () {
       this.report.blocks = this.reportBlocks.map(({ moved, x, y, w, h, i, ...p }) => {
-        p.elements = p.elements.map((e, index) => {
-          e.name = `${index}_${e.kind}`
-          return e
-        })
-
         return { ...p, key: `${i}`, xywh: [x, y, w, h] }
       })
 
@@ -799,9 +794,7 @@ export default {
     },
 
     addDisplayElement (kind) {
-      const name = `${this.reportBlocks[this.blocks.currentIndex].elements.length}_${kind}`
-
-      const newDisplayElement = reporter.DisplayElementMaker({ name, kind })
+      const newDisplayElement = reporter.DisplayElementMaker({ kind })
 
       this.reportBlocks[this.blocks.currentIndex].elements.push(newDisplayElement)
 

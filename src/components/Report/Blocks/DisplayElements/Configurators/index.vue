@@ -2,6 +2,15 @@
   <div
     v-if="displayElement"
   >
+    <b-form-group
+      :label="$t('general:label.name')"
+      label-class="text-primary"
+    >
+      <b-form-input
+        v-model="displayElement.name"
+      />
+    </b-form-group>
+
     <b-button
       v-b-toggle.datasources
       block
@@ -231,7 +240,7 @@ export default {
       },
     },
 
-    'displayElement.name': {
+    'displayElement.elementID': {
       immediate: true,
       handler () {
         this.currentConfigurableDatasourceIndex = this.datasources.length ? 0 : -1

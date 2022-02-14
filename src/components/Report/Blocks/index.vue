@@ -58,6 +58,10 @@
           <display-element
             v-else
             :display-element="element"
+            :labels="{
+              previous: $t('display-element:table.view.previous'),
+              next: $t('display-element:table.view.next'),
+            }"
             @update="updateDataframes({ displayElementIndex, definition: $event })"
           />
         </split-area>
@@ -176,10 +180,7 @@ export default {
         if (element && element.kind !== 'Text') {
           const { dataframes = [] } = element.reportDefinitions(this.getScenarioDefinition(element))
 
-          frames.push(...dataframes.filter(({ source }) => source).map(df => {
-            df.name = `${this.index}-${df.name}`
-            return df
-          }))
+          frames.push(...dataframes.filter(({ source }) => source))
         }
       })
 
@@ -187,7 +188,7 @@ export default {
         this.$SystemAPI.reportRun({ frames, reportID: this.reportID })
           .then(({ frames = [] }) => {
             this.block.elements = this.block.elements.map(element => {
-              const dataframes = frames.filter(({ name }) => name.split('-')[1] === element.name)
+              const dataframes = frames.filter(({ name }) => name === element.elementID)
               return { ...element, dataframes }
             })
           }).catch((e) => {
@@ -212,20 +213,12 @@ export default {
 
         const { dataframes = [] } = element.reportDefinitions(definition)
 
-        frames.push(...dataframes.filter(({ source }) => source).map(df => {
-          df.name = `${this.index}-${df.name}`
-          return df
-        }))
+        frames.push(...dataframes.filter(({ source }) => source))
 
         if (frames.length) {
           this.$SystemAPI.reportRun({ frames, reportID: this.reportID })
             .then(({ frames = [] }) => {
-              this.block.elements.find(({ name }) => name === element.name).dataframes = frames
-
-              // this.block.elements = this.block.elements.map(element => {
-              //   const dataframes = frames.filter(({ name }) => name.split('-')[1] === element.name)
-              //   return { ...element, dataframes }
-              // })
+              this.block.elements.find(({ elementID }) => elementID === element.elementID).dataframes = frames
             }).catch((e) => {
               this.toastErrorHandler(this.$t('notification:report.run-failed'))(e)
             })

@@ -1,20 +1,29 @@
 import Vue from 'vue'
 import { capitalize } from 'lodash'
+import { components } from '@cortezaproject/corteza-vue'
 
-import Text from './Text'
-import Chart from './Chart'
-import Table from './Table'
-import Metric from './Metric'
+// Need to import it here since it inits when imported
+// Order is important, colorschemes first others after
+/* eslint-disable no-unused-vars */
+import colorschemes from 'chartjs-plugin-colorschemes'
+import Funnel from 'chartjs-plugin-funnel'
+
+const {
+  CReportChart,
+  CReportMetric,
+  CReportTable,
+  CReportText,
+} = components
 
 /**
  * List of all known display element components
  *
  */
 const Registry = {
-  Text,
-  Chart,
-  Table,
-  Metric,
+  Chart: CReportChart,
+  Metric: CReportMetric,
+  Table: CReportTable,
+  Text: CReportText,
 }
 
 function GetComponent ({ displayElement }) {

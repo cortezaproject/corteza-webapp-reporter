@@ -185,7 +185,7 @@
               >
                 <b-form-input
                   v-model="options.xAxis.defaultValue"
-                  :disabled="!options.xAxis.skipMissing"
+                  :disabled="options.xAxis.skipMissing"
                   :type="options.xAxis.type === 'time' ? 'date' : 'text'"
                 />
               </b-form-group>

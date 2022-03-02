@@ -120,8 +120,14 @@ export default {
   },
 
   watch: {
-    'block.elements.length': {
+    'block.blockID': {
       immediate: true,
+      handler () {
+        this.renderBlock()
+      },
+    },
+
+    'block.elements.length': {
       handler (length, oldLength) {
         if (length) {
           const defaultSize = Math.floor(100 / length)
@@ -133,20 +139,27 @@ export default {
             e.meta.size = !addedOrRemoved && e.meta.size ? e.meta.size : defaultSize
             return e
           })
-
-          this.runReport()
-
-          // Hack around split not rerendering
-          this.showDisplayElements = false
-          this.$nextTick().then(() => {
-            this.showDisplayElements = true
-          })
         }
+
+        this.renderBlock()
       },
     },
   },
 
   methods: {
+    renderBlock () {
+      const { elements = [] } = this.block || {}
+      if (elements.length) {
+        this.runReport()
+
+        // Hack around split not rerendering
+        this.showDisplayElements = false
+        this.$nextTick().then(() => {
+          this.showDisplayElements = true
+        })
+      }
+    },
+
     setDisplayElementSizes (sizes = []) {
       sizes.forEach((size, index) => {
         this.block.elements[index].meta.size = size

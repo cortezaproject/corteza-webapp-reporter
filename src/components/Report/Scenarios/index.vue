@@ -71,7 +71,7 @@ export default {
 
   computed: {
     datasourceOptions () {
-      const options = [{ value: '', text: this.$t('scenarios:none') }]
+      const options = [{ value: '', text: this.$t('general:label.none') }]
 
       this.datasources.forEach(({ step }, index) => {
         Object.entries(step).forEach(([kind, { name }]) => {

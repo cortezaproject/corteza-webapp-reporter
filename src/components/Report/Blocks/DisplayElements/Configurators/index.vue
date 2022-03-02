@@ -177,7 +177,7 @@ export default {
     },
 
     sources () {
-      const options = [{ value: '', text: this.$t('general:none') }]
+      const options = [{ value: '', text: this.$t('general:label.none') }]
 
       this.datasources.forEach(({ step }, index) => {
         Object.values(step).forEach(({ name }) => {

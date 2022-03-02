@@ -27,7 +27,7 @@
           <b-form-select-option
             :value="undefined"
           >
-            {{ $t('datasources:none') }}
+            {{ $t('general:label.none') }}
           </b-form-select-option>
         </template>
       </b-form-select>

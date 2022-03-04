@@ -15,7 +15,7 @@
           v-model="scenarios.selected"
           :options="scenarioOptions"
           :placeholder="$t('pick-scenario')"
-          class="h-100 bg-white"
+          class="h-100 bg-white rounded"
           @input="refreshReport()"
         />
       </div>

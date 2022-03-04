@@ -17,7 +17,7 @@
             v-model="scenarios.selected"
             :options="scenarioOptions"
             :placeholder="$t('builder:pick-scenario')"
-            class="h-100 bg-white"
+            class="h-100 bg-white rounded"
             @input="refreshReport()"
           />
 
@@ -25,6 +25,7 @@
             <b-button
               variant="secondary"
               :disabled="!canUpdate"
+              class="py-0"
               @click="openScenarioConfigurator"
             >
               <font-awesome-icon

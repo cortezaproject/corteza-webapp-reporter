@@ -75,6 +75,8 @@ th {
   padding: 0.375rem;
   border-width: 2px;
   border-color: $light;
+  padding-top: 0.1em !important;
+  padding-bottom: 0.3em !important;
 
   .vs__selected {
     margin: 0;

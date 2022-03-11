@@ -37,14 +37,7 @@ module.exports = ({ appFlavour, appLabel, version = process.env.BUILD_VERSION, t
   return {
     publicPath: './',
 
-    // Vue ESLint does not understand that it should NOT dive into node_modules!
-    //
-    // This presents a problem because it loads @cortezaproject/corteza-*/.eslintrc.js files
-    // that contain @typescript-eslint plugins + the entire typescript toolset that we do not
-    // want or need here.
-    //
-    // Keep this value on false and run `yarn lint` to inspect and fix lint issues.
-    lintOnSave: false,
+    lintOnSave: true,
 
     runtimeCompiler: true,
 
@@ -102,11 +95,6 @@ module.exports = ({ appFlavour, appLabel, version = process.env.BUILD_VERSION, t
       hot: true,
       disableHostCheck: true,
 
-      overlay: {
-        warnings: true,
-        errors: true,
-      },
-
       watchOptions: {
         ignored: [
           // Do not watch for changes under node_modules
@@ -122,7 +110,6 @@ module.exports = ({ appFlavour, appLabel, version = process.env.BUILD_VERSION, t
       sourceMap: isDevelopment,
       loaderOptions: {
         sass: {
-          sourceMap: isDevelopment,
           // @todo cleanup all components and remove this global import
           additionalData: `@import "./src/themes/${theme}/variables.scss";`,
         },

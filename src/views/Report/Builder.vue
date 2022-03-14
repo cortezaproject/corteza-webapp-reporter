@@ -52,17 +52,19 @@
       >
         <b-button
           variant="primary"
-          style="margin-right:2px;"
+          class="d-flex align-items-center justify-content-center"
           :disabled="!canRead"
           :to="reportViewer"
         >
+          {{ $t('builder:report.view') }}
           <font-awesome-icon
+            class="ml-2"
             :icon="['far', 'eye']"
           />
-          {{ $t('builder:report.view') }}
         </b-button>
         <b-button
           variant="primary"
+          style="margin-left:2px;"
           :disabled="!canUpdate"
           :to="reportEditor"
         >

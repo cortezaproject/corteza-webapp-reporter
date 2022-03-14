@@ -16,17 +16,19 @@
       >
         <b-button
           variant="primary"
-          style="margin-right:2px;"
+          class="d-flex align-items-center justify-content-center"
           :disabled="!report.canUpdateReport"
           :to="reportBuilder"
         >
+          {{ $t('report.builder') }}
           <font-awesome-icon
+            class="ml-2"
             :icon="['fas', 'cogs']"
           />
-          {{ $t('report.builder') }}
         </b-button>
         <b-button
           variant="primary"
+          style="margin-left:2px;"
           :disabled="!canRead"
           :to="reportViewer"
         >

@@ -49,7 +49,7 @@
                   >
                     <b-input
                       v-model.trim="query"
-                      class="h-100 mw-100"
+                      class="h-100 mw-100 text-truncate"
                       :placeholder="$t('searchPlaceholder')"
                     />
                     <b-input-group-append>

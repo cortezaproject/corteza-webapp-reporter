@@ -71,17 +71,20 @@ export default {
       immediate: true,
       handler ({ name }) {
         if (!['report.list', 'report.create', 'report.edit'].includes(name)) {
-          this.$SystemAPI.reportList()
-            .then(({ set = [] }) => {
-              this.reports = set
-            })
-            .catch(this.toastErrorHandler(this.$t('notification:report.listFetchFailed')))
+          this.fetchReports()
         }
       },
     },
   },
 
-  mounted () {
+  methods: {
+    fetchReports () {
+      this.$SystemAPI.reportList()
+        .then(res => {
+          this.reports = (res || {}).set || []
+        })
+        .catch(this.toastErrorHandler(this.$t('notification:report.listFetchFailed')))
+    },
   },
 }
 </script>

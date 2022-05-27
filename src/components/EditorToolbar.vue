@@ -10,6 +10,7 @@
       <b-col>
         <b-button
           v-if="backLink"
+          data-test-id="button-back"
           variant="link"
           size="lg"
           :to="backLink"
@@ -46,6 +47,7 @@
         </c-input-confirm>
         <b-button
           variant="primary"
+          data-test-id="button-save"
           size="lg"
           :disabled="saveDisabled || processing"
           @click="$emit('save')"

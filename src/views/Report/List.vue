@@ -25,6 +25,7 @@
                   >
                     <b-button
                       v-if="canCreate"
+                      data-test-id="button-create-report"
                       variant="primary"
                       size="lg"
                       class="mr-1"

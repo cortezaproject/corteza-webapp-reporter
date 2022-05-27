@@ -16,6 +16,7 @@
       >
         <b-button
           variant="primary"
+          data-test-id="button-report-builder"
           class="d-flex align-items-center justify-content-center"
           :disabled="!report.canUpdateReport"
           :to="reportBuilder"
@@ -59,6 +60,7 @@
                 <div>
                   <b-button
                     v-if="canCreate"
+                    data-test-id="button-create-report"
                     variant="primary"
                     size="lg"
                     class="mr-1"
@@ -96,6 +98,7 @@
                   >
                     <b-form-input
                       v-model="report.meta.name"
+                      data-test-id="input-name"
                       :placeholder="$t('name')"
                       required
                       :state="nameState"
@@ -113,11 +116,15 @@
                   >
                     <b-form-input
                       v-model="report.handle"
+                      data-test-id="input-handle"
                       :placeholder="$t('placeholder-handle')"
                       required
                       :state="handleState"
                     />
-                    <b-form-invalid-feedback :state="handleState">
+                    <b-form-invalid-feedback
+                      data-test-id="input-handle-invalid-state"
+                      :state="handleState"
+                    >
                       {{ $t('invalid-handle-characters') }}
                     </b-form-invalid-feedback>
                   </b-form-group>
@@ -130,6 +137,7 @@
               >
                 <b-form-textarea
                   v-model="report.meta.description"
+                  data-test-id="input-description"
                   :placeholder="$t('report.description')"
                   rows="5"
                 />

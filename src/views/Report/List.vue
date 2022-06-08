@@ -45,22 +45,10 @@
                 </div>
 
                 <div class="flex-grow-1">
-                  <b-input-group
-                    class="h-100 mw-100"
-                  >
-                    <b-input
-                      v-model.trim="query"
-                      class="h-100 mw-100 text-truncate"
-                      :placeholder="$t('searchPlaceholder')"
-                    />
-                    <b-input-group-append>
-                      <b-input-group-text class="text-primary bg-white">
-                        <font-awesome-icon
-                          :icon="['fas', 'search']"
-                        />
-                      </b-input-group-text>
-                    </b-input-group-append>
-                  </b-input-group>
+                  <c-input-search
+                    v-model.trim="query"
+                    :placeholder="$t('searchPlaceholder')"
+                  />
                 </div>
               </b-row>
             </b-card-header>
@@ -117,12 +105,18 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { components } from '@cortezaproject/corteza-vue'
+const { CInputSearch } = components
 
 export default {
   name: 'ReportList',
 
   i18nOptions: {
     namespaces: 'list',
+  },
+
+  components: {
+    CInputSearch,
   },
 
   data () {

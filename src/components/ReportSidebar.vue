@@ -5,10 +5,8 @@
         v-if="reports.length"
         class="h-100"
       >
-        <b-input
+        <c-input-search
           v-model.trim="query"
-          class="mw-100"
-          type="search"
           :placeholder="$t('sidebar:search-reports')"
         />
 
@@ -32,11 +30,12 @@
 
 <script>
 import { components } from '@cortezaproject/corteza-vue'
-const { CSidebarNavItems } = components
+const { CSidebarNavItems, CInputSearch } = components
 
 export default {
   components: {
     CSidebarNavItems,
+    CInputSearch,
   },
 
   data () {

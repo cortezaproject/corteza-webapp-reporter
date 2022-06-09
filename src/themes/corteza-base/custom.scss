@@ -240,3 +240,23 @@ input[type="search"]::-webkit-search-cancel-button {
     margin-top: 0.25rem;
   }
 }
+
+// Supporting CSS to improve print-to-PDF option
+@media print {
+  @page {
+    size: auto;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  header, footer, aside, nav {
+    display: none;
+  }
+
+  .block {
+    break-inside: avoid;
+    width: 100%;
+  }
+}

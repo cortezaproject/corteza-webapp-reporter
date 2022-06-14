@@ -244,24 +244,22 @@ export default {
     },
 
     nameState () {
-      if (this.report) {
-        const { name = '' } = this.report.meta
-        return name.length ? true : null
-      }
-
-      return null
+      const { name = '' } = this.report.meta
+      return name.length ? null : false
     },
 
     handleState () {
-      if (!this.report || !this.report.handle.length) {
-        return null
+      const { handle } = this.report
+
+      if (!handle || handle.length === 0) {
+        return false
       }
 
-      return /^[A-Za-z][0-9A-Za-z_\-.]*[A-Za-z0-9]$/.test(this.report.handle)
+      return /^[A-Za-z][0-9A-Za-z_\-.]*[A-Za-z0-9]$/.test(handle) ? null : false
     },
 
     canSave () {
-      return this.canUpdate && this.nameState && this.handleState
+      return this.canUpdate && ![this.nameState, this.handleState].includes(false)
     },
   },
 

@@ -1,0 +1,6 @@
+export { default as PieChart } from './Generic/Pie.c3'
+export { default as DoughnutChart } from './Generic/Doughnut.c3'
+export { default as LineChart } from './Generic/Line.c3'
+export { default as BarChart } from './Generic/Bar.c3'
+export { default as FunnelChart } from './Funnel.c3'
+export { default as GaugeChart } from './Gauge.c3'

@@ -150,8 +150,12 @@ export default {
         {
           key: 'name',
           sortable: true,
+          filterByFormatted: true,
           tdClass: 'align-middle pl-4 text-nowrap',
           thClass: 'pl-4',
+          formatter: (name, key, item) => {
+            return item.meta.name
+          },
         },
         {
           key: 'handle',

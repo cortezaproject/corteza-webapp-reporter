@@ -87,6 +87,7 @@
                   </b-button>
                   <c-permissions-button
                     v-if="r.canGrant"
+                    :tooltip="$t('tooltip.permissions')"
                     :title="r.handle"
                     :target="r.handle"
                     resource="corteza::system:report/*"

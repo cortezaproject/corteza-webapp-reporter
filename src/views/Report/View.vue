@@ -39,6 +39,7 @@
         <b-button
           variant="primary"
           style="margin-left:2px;"
+          :title="$t('tooltip.edit.report-configuration')"
           :to="reportEditor"
         >
           <font-awesome-icon

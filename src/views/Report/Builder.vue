@@ -25,6 +25,7 @@
             <b-button
               variant="secondary"
               :disabled="!canUpdate"
+              :title="$t('builder:tooltip.configure-scenarios')"
               class="py-0"
               @click="openScenarioConfigurator"
             >
@@ -65,6 +66,7 @@
         <b-button
           variant="primary"
           style="margin-left:2px;"
+          :title="$t('builder:tooltip.edit.report')"
           :disabled="!canUpdate"
           :to="reportEditor"
         >
@@ -102,6 +104,7 @@
             <b-button
               variant="link"
               class="text-light"
+              :title="$t('builder:tooltip.edit.block')"
               @click="editBlock(index)"
             >
               <font-awesome-icon

@@ -45,6 +45,7 @@ import {
   faFilter,
   faGripVertical,
   faEyeSlash,
+  faQuestion,
 } from '@fortawesome/free-solid-svg-icons'
 
 import {
@@ -106,4 +107,5 @@ library.add(
   faAngleDoubleLeft,
   faGripVertical,
   faEyeSlash,
+  faQuestion,
 )

@@ -216,8 +216,8 @@ export default {
       },
 
       conditions: [
-        { value: 'and', text: this.$t('general:label.add') },
-        { value: 'or', text: this.$t('builder:or') },
+        { value: 'and', text: this.$t('general:label.and') },
+        { value: 'or', text: this.$t('general:label.or') },
       ],
 
       operators: [

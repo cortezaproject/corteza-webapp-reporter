@@ -411,7 +411,7 @@ export default {
 
         rr.push({
           label: `${capitalize(g)}: ${capitalize(gn.label)}`,
-          colors: [...colorschemes[g][sc]].reverse(),
+          colors: [...colorschemes[g][sc]],
           value: `${g}.${sc}`,
         })
       }

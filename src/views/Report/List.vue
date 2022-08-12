@@ -44,7 +44,7 @@
                   </div>
                 </div>
 
-                <div class="flex-grow-1">
+                <div class="flex-grow-1 w-25">
                   <c-input-search
                     v-model.trim="query"
                     :placeholder="$t('searchPlaceholder')"

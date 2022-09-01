@@ -446,12 +446,12 @@ export default {
           },
           {
             label: this.$t('builder:datasource.types.link.label'),
-            kind: 'Join',
+            kind: 'Link',
             value: this.$t('builder:datasource.types.link.load-datasources'),
           },
           {
             label: this.$t('builder:datasource.types.aggregate.label'),
-            kind: 'Group',
+            kind: 'Aggregate',
             value: this.$t('builder:datasource.types.aggregate.load-datasource'),
           },
         ],
@@ -675,10 +675,10 @@ export default {
         let step
 
         switch (kind) {
-          case 'Group':
+          case 'Aggregate':
             step = reporter.StepFactory({
-              group: {
-                name: 'Group',
+              aggregate: {
+                name: 'Aggregate',
                 keys: [],
                 columns: [],
                 filter: {},
@@ -687,10 +687,10 @@ export default {
             })
             break
 
-          case 'Join':
+          case 'Link':
             step = reporter.StepFactory({
-              join: {
-                name: 'Join',
+              link: {
+                name: 'Link',
                 foreignColumn: '',
                 foreignSource: '',
                 localColumn: '',

@@ -1,11 +1,11 @@
 import { default as Load } from './Load'
-import { default as Join } from './Join'
-import { default as Group } from './Group'
+import { default as Link } from './Link'
+import { default as Aggregate } from './Aggregate'
 
 const Registry = {
   load: Load,
-  join: Join,
-  group: Group,
+  link: Link,
+  aggregate: Aggregate,
 }
 
 export default function (k) {

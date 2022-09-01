@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="step.join"
+    v-if="step.link"
   >
     <b-row>
       <b-col>
@@ -9,7 +9,7 @@
           label-class="text-primary"
         >
           <b-form-input
-            v-model="step.join.name"
+            v-model="step.link.name"
             :placeholder="$t('datasources:datasource-name')"
           />
         </b-form-group>
@@ -25,7 +25,7 @@
           label-class="text-primary"
         >
           <b-form-select
-            v-model="step.join.localSource"
+            v-model="step.link.localSource"
             :options="supportedSources"
             @change="onSourceChange('local')"
           >
@@ -45,7 +45,7 @@
           label-class="text-primary"
         >
           <b-form-select
-            v-model="step.join.foreignSource"
+            v-model="step.link.foreignSource"
             :options="supportedSources"
             @change="onSourceChange('foreign')"
           >
@@ -64,12 +64,12 @@
     <b-row>
       <b-col cols="6">
         <b-form-group
-          v-if="step.join.localSource"
+          v-if="step.link.localSource"
           :label="$t('datasources:primary.column')"
           label-class="text-primary"
         >
           <b-form-select
-            v-model="step.join.localColumn"
+            v-model="step.link.localColumn"
             :options="localColumns"
             value-field="name"
             text-field="label"
@@ -86,12 +86,12 @@
       </b-col>
       <b-col cols="6">
         <b-form-group
-          v-if="step.join.foreignSource"
+          v-if="step.link.foreignSource"
           :label="$t('datasources:secondary.column')"
           label-class="text-primary"
         >
           <b-form-select
-            v-model="step.join.foreignColumn"
+            v-model="step.link.foreignColumn"
             :options="foreignColumns"
             value-field="name"
             text-field="label"
@@ -148,7 +148,7 @@ export default {
   },
 
   watch: {
-    'step.join.name': {
+    'step.link.name': {
       immediate: true,
       handler (newStep, oldStep) {
         if (!oldStep && newStep) {
@@ -157,13 +157,13 @@ export default {
       },
     },
 
-    'step.join.localSource': {
+    'step.link.localSource': {
       handler () {
         this.getSourceColumns(['local'])
       },
     },
 
-    'step.join.foreignSource': {
+    'step.link.foreignSource': {
       handler () {
         this.getSourceColumns(['foreign'])
       },
@@ -172,17 +172,17 @@ export default {
 
   methods: {
     onSourceChange (source) {
-      this.step.join[`${source}Column`] = ''
+      this.step.link[`${source}Column`] = ''
     },
 
     async getSourceColumns (sources = []) {
       sources.forEach(source => {
         this[`${source}Columns`] = []
 
-        const sourceType = this.step.join[`${source}Source`]
+        const sourceType = this.step.link[`${source}Source`]
 
         if (sourceType) {
-          const steps = this.datasources.filter(({ step }) => step.load || step.group).map(({ step }) => step)
+          const steps = this.datasources.filter(({ step }) => step.load || step.aggregate).map(({ step }) => step)
           const describe = [sourceType]
 
           if (steps.length && describe.length) {

@@ -445,14 +445,14 @@ export default {
             value: this.$t('builder:datasource.types.load.loads-data-from-specified-resource-such-as-compose-records'),
           },
           {
-            label: this.$t('builder:datasource.types.join.label'),
-            kind: 'Join',
-            value: this.$t('builder:datasource.types.join.joins-two-load-datasources-such-as-compose-record-selector'),
+            label: this.$t('builder:datasource.types.link.label'),
+            kind: 'Link',
+            value: this.$t('builder:datasource.types.link.link-two-load-datasources-such-as-compose-record-selector'),
           },
           {
-            label: this.$t('builder:datasource.types.group.label'),
-            kind: 'Group',
-            value: this.$t('builder:datasource.types.group.groups-data-from-load-datasource-like-counting-number-of-accounts-with-same-status'),
+            label: this.$t('builder:datasource.types.aggregate.label'),
+            kind: 'Aggregate',
+            value: this.$t('builder:datasource.types.aggregate.aggregates-data-from-load-datasource-like-counting-number-of-accounts-with-same-status'),
           },
         ],
       },
@@ -675,10 +675,10 @@ export default {
         let step
 
         switch (kind) {
-          case 'Group':
+          case 'Aggregate':
             step = reporter.StepFactory({
-              group: {
-                name: 'Group',
+              aggregate: {
+                name: 'Aggregate',
                 keys: [],
                 columns: [],
                 filter: {},
@@ -687,10 +687,10 @@ export default {
             })
             break
 
-          case 'Join':
+          case 'Link':
             step = reporter.StepFactory({
-              join: {
-                name: 'Join',
+              link: {
+                name: 'Link',
                 foreignColumn: '',
                 foreignSource: '',
                 localColumn: '',

@@ -1,13 +1,13 @@
 <template>
   <div
-    v-if="step.group"
+    v-if="step.aggregate"
   >
     <b-form-group
       :label="$t('datasources:name')"
       label-class="text-primary"
     >
       <b-form-input
-        v-model="step.group.name"
+        v-model="step.aggregate.name"
         :placeholder="$t('datasources:datasource-name')"
       />
     </b-form-group>
@@ -19,7 +19,7 @@
       label-class="text-primary"
     >
       <b-form-select
-        v-model="step.group.source"
+        v-model="step.aggregate.source"
         :options="supportedSources"
         @change="reset"
       >
@@ -34,14 +34,14 @@
     </b-form-group>
 
     <div
-      v-if="step.group.source"
+      v-if="step.aggregate.source"
     >
       <b-form-group
         :label="$t('datasources:group-by')"
         label-class="text-primary"
       >
         <group-by
-          :group-by.sync="step.group.keys"
+          :group-by.sync="step.aggregate.keys"
         />
       </b-form-group>
 
@@ -50,7 +50,7 @@
         label-class="text-primary"
       >
         <aggregate
-          :aggregate.sync="step.group.columns"
+          :aggregate.sync="step.aggregate.columns"
         />
       </b-form-group>
 
@@ -60,7 +60,7 @@
         label-class="text-primary"
       >
         <prefilter
-          :filter.sync="step.group.filter"
+          :filter.sync="step.aggregate.filter"
           :columns="columns"
         />
       </b-form-group> -->
@@ -71,7 +71,7 @@
         label-class="text-primary"
       >
         <c-input-presort
-          v-model="step.group.sort"
+          v-model="step.aggregate.sort"
           :fields="columns"
           :labels="{
             add: $t('general:label.add'),
@@ -137,7 +137,7 @@ export default {
     async getSourceColumns () {
       const steps = this.datasources.filter(({ step }) => step.load).map(({ step }) => step)
       steps.push(this.step)
-      const describe = [this.step.group.name]
+      const describe = [this.step.aggregate.name]
 
       if (steps.length && describe.length) {
         this.$SystemAPI.reportDescribe({ steps, describe })
@@ -151,10 +151,10 @@ export default {
     },
 
     reset () {
-      this.step.group.filter = {}
-      this.step.group.sort = ''
-      this.step.group.keys = []
-      this.step.group.columns = []
+      this.step.aggregate.filter = {}
+      this.step.aggregate.sort = ''
+      this.step.aggregate.keys = []
+      this.step.aggregate.columns = []
     },
   },
 }

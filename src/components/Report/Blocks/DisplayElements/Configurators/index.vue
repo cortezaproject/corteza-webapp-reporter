@@ -190,7 +190,7 @@ export default {
 
     currentDatasource () {
       if (this.options.source) {
-        return this.datasources.find(({ step: { load = {}, join = {}, group = {} } }) => [load.name, join.name, group.name].includes(this.options.source))
+        return this.datasources.find(({ step: { load = {}, link = {}, aggregate = {} } }) => [load.name, link.name, aggregate.name].includes(this.options.source))
       }
 
       return undefined

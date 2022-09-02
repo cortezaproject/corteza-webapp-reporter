@@ -71,7 +71,7 @@ export default {
   data () {
     return {
       // All blocks in vue-grid friendly structure
-      grid: [],
+      grid: undefined,
 
       // Grid items bounding rect info
       boundingRects: [],
@@ -81,16 +81,17 @@ export default {
   computed: {
     layout: {
       get () {
-        return this.grid
+        return this.grid || this.blocks
       },
 
       set (layout) {
-        this.grid = layout
+        // Only update parent blocks when editable to avoid unnecessary updates
+        if (this.editable) {
+          this.$emit('update:blocks', layout)
+        } else {
+          this.grid = layout
+        }
       },
-    },
-
-    sortedGrid () {
-      return Array.from(this.grid).sort((a, b) => Math.sqrt(a.x * a.x + a.y * a.y) - Math.sqrt(b.x * b.x + b.y * b.y))
     },
   },
 
@@ -99,7 +100,9 @@ export default {
       immediate: true,
       deep: true,
       handler (blocks) {
-        this.grid = blocks
+        if (this.editable) {
+          this.grid = blocks
+        }
       },
     },
   },

@@ -514,7 +514,7 @@ export default {
 
     reportBlocks: {
       get () {
-        return this.blocks.items ? this.blocks.items : []
+        return this.blocks.items || []
       },
 
       set (blocks) {

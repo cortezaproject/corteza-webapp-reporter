@@ -50,7 +50,7 @@
 
     <grid
       v-if="report && canRead && showReport"
-      :blocks.sync="report.blocks"
+      :blocks="report.blocks"
     >
       <template
         slot-scope="{ block, index }"
@@ -165,6 +165,8 @@ export default {
 
     async fetchReport (reportID) {
       this.processing = true
+
+      this.report = undefined
 
       return this.$SystemAPI.reportRead({ reportID })
         .then(report => {

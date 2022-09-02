@@ -2,7 +2,7 @@
   <div class="h-100 p-2 overflow-hidden">
     <b-card
       no-body
-      class="h-100 border-0 shadow-sm"
+      class="h-100 border-0 shadow-sm overflow-hidden"
     >
       <b-card-header
         class="sticky-top border-0 border-bottom p-0"

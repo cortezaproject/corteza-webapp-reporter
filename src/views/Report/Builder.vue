@@ -12,12 +12,13 @@
       >
         <b-input-group
           size="sm"
+          class="flex-nowrap"
         >
           <vue-select
             v-model="scenarios.selected"
             :options="scenarioOptions"
             :placeholder="$t('builder:pick-scenario')"
-            class="h-100 bg-white rounded"
+            class="bg-white rounded"
             @input="refreshReport()"
           />
 
@@ -26,7 +27,6 @@
               variant="secondary"
               :disabled="!canUpdate"
               :title="$t('builder:tooltip.configure-scenarios')"
-              class="py-0"
               @click="openScenarioConfigurator"
             >
               <font-awesome-icon

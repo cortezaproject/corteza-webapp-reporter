@@ -442,17 +442,17 @@ export default {
           {
             label: this.$t('builder:datasource.types.load.label'),
             kind: 'Load',
-            value: this.$t('builder:datasource.types.load.loads-data-from-specified-resource-such-as-compose-records'),
+            value: this.$t('builder:datasource.types.load.data-from-resource'),
           },
           {
-            label: this.$t('builder:datasource.types.join.label'),
+            label: this.$t('builder:datasource.types.link.label'),
             kind: 'Join',
-            value: this.$t('builder:datasource.types.join.joins-two-load-datasources-such-as-compose-record-selector'),
+            value: this.$t('builder:datasource.types.link.load-datasources'),
           },
           {
-            label: this.$t('builder:datasource.types.group.label'),
+            label: this.$t('builder:datasource.types.aggregate.label'),
             kind: 'Group',
-            value: this.$t('builder:datasource.types.group.groups-data-from-load-datasource-like-counting-number-of-accounts-with-same-status'),
+            value: this.$t('builder:datasource.types.aggregate.load-datasource'),
           },
         ],
       },

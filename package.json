@@ -1,6 +1,6 @@
 {
   "name": "corteza-reporter",
-  "version": "2022.3.5-rc.1",
+  "version": "2022.3.5-rc.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

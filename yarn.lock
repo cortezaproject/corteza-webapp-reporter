@@ -954,13 +954,13 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@cortezaproject/corteza-js@^2022.9.0-dev.1":
-  version "2022.9.0-dev.1"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2022.9.0-dev.1.tgz#2ec9005f42c1e55756dcb10775ac0ec352997f6c"
-  integrity sha512-mr1kEvoFnFQWL2PJvJnpYIwM8dH7EWusJzZ020Eah84JqOXMNgFTIV0lqtUMMz8scb9x/wV4QebUhj/qsF2Bsg==
+"@cortezaproject/corteza-js@^2022.9.0-dev.3":
+  version "2022.9.0-dev.3"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2022.9.0-dev.3.tgz#ffc2297a9439bb52066906da7586fe9f461960ff"
+  integrity sha512-6mg+vEsDMX7m/i7qNSg0aPI1yp2NOB5LaDkRCM6AzHAb71ig9xnJ8buJ3Cca+4LlNwIq08T+KFUFIegrL36BYg==
   dependencies:
     axios "^0.21.1"
-    chart.js "2.9.3"
+    chartjs-plugin-colorschemes "^0.4.0"
     hex-rgb "^4.1.0"
     lodash "^4.17.15"
     minimalist "^1.0.0"
@@ -969,12 +969,12 @@
     numeral "^2.0.6"
     pino "^5.16.0"
 
-"@cortezaproject/corteza-vue@^2022.9.0-dev.1":
-  version "2022.9.0-dev.1"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-vue/-/corteza-vue-2022.9.0-dev.1.tgz#5bed65e65210458124a0fc8d06e712066f2a9bb7"
-  integrity sha512-QnwDqXu7lZC8H99Rt+vcr/2JltgFkPT+Wjfhj1pL2n9PV/gg5dRTxH0j4tUDRLYNd1yvyrGgUKJsu7O2sF37QQ==
+"@cortezaproject/corteza-vue@^2022.9.0-dev.3":
+  version "2022.9.0-dev.3"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-vue/-/corteza-vue-2022.9.0-dev.3.tgz#c6dcdfbeb7bb554dd53d0e1b794ed69cef3e9029"
+  integrity sha512-SgvNik6XqFs0qy9c6WejBK5bFiZZFyjCCAwWJkM/my3l3LylaJCge6gtAxx+/AzupQkexSTt41JQXb4BhZ7rzw==
   dependencies:
-    "@cortezaproject/corteza-js" "^2022.9.0-dev.1"
+    "@cortezaproject/corteza-js" "^2022.9.0-dev.3"
     "@fortawesome/fontawesome-svg-core" "^1.2.26"
     "@fortawesome/free-solid-svg-icons" "^5.12.0"
     "@fortawesome/vue-fontawesome" "^0.1.9"
@@ -982,8 +982,7 @@
     "@popperjs/core" "^2.11.2"
     acorn "^7.3.1"
     bootstrap-vue "^2.21.2"
-    chartjs-plugin-colorschemes "^0.4.0"
-    chartjs-plugin-funnel "^1.1.5"
+    echarts "^5.3.3"
     fuzzysort "^1.2.1"
     highlight.js "^10.4.1"
     html-parse-stringify "^3.0.1"
@@ -1001,7 +1000,7 @@
     tiptap "^1.26.0"
     tiptap-extensions "^1.28.4"
     v-photoswipe "^1.0.3-1"
-    vue "^2.6.14"
+    vue-echarts "^6.2.3"
     vue-select "^3.4.0"
     vue-swatches "^1.0.4"
     vuedraggable "^2.23.0"
@@ -3073,40 +3072,10 @@ chardet@^0.7.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
-chart.js@2.9.3, chart.js@>2.7.0:
-  version "2.9.3"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.9.3.tgz#ae3884114dafd381bc600f5b35a189138aac1ef7"
-  integrity sha512-+2jlOobSk52c1VU6fzkh3UwqHMdSlgH1xFv9FKMqHiNCpXsGPQa/+81AFa+i3jZ253Mq9aAycPwDjnn1XbRNNw==
-  dependencies:
-    chartjs-color "^2.1.0"
-    moment "^2.10.2"
-
-chartjs-color-string@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/chartjs-color-string/-/chartjs-color-string-0.6.0.tgz#1df096621c0e70720a64f4135ea171d051402f71"
-  integrity sha512-TIB5OKn1hPJvO7JcteW4WY/63v6KwEdt6udfnDE9iCAZgy+V4SrbSxoIbTw/xkUIapjEI4ExGtD0+6D3KyFd7A==
-  dependencies:
-    color-name "^1.0.0"
-
-chartjs-color@^2.1.0:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/chartjs-color/-/chartjs-color-2.4.1.tgz#6118bba202fe1ea79dd7f7c0f9da93467296c3b0"
-  integrity sha512-haqOg1+Yebys/Ts/9bLo/BqUcONQOdr/hoEr2LLTRl6C5LXctUdHxsCYfvQVg5JIxITrfCNUDr4ntqmQk9+/0w==
-  dependencies:
-    chartjs-color-string "^0.6.0"
-    color-convert "^1.9.3"
-
 chartjs-plugin-colorschemes@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/chartjs-plugin-colorschemes/-/chartjs-plugin-colorschemes-0.4.0.tgz#7a310c32411ef0b5135df1f47da4d379e22220f7"
   integrity sha512-GUAulGFa6igdhi/xF9XopLJknwtXZT0wwEB+e/D4SJcRGY1HdwzX84pVn5BSpnk1idF6RJxZoA7w396R7BOE9A==
-
-chartjs-plugin-funnel@^1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/chartjs-plugin-funnel/-/chartjs-plugin-funnel-1.1.5.tgz#45f262d5a1f322be326692fdde2a730a43fc21d2"
-  integrity sha512-iblHmQ+8ApfVLaWPVRM7+4GAzCIGyKh540rhEpUcjtmDgKdKkHQ9KNqm3QEEpHAWlb4RUWWIdI1dCDRHXxiLSw==
-  dependencies:
-    chart.js ">2.7.0"
 
 check-error@^1.0.2:
   version "1.0.2"
@@ -7616,11 +7585,6 @@ moment@2.29.2:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.2.tgz#00910c60b20843bcba52d37d58c628b47b1f20e4"
   integrity sha512-UgzG4rvxYpN15jgCmVJwac49h9ly9NurikMWGPdVxm8GZD6XjkKPxDTjQQ43gtGgnV3X0cAyWDdP2Wexoquifg==
 
-moment@^2.10.2:
-  version "2.29.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
-  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
-
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -11661,7 +11625,7 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue@2.6.14, vue@^2.6.14:
+vue@2.6.14:
   version "2.6.14"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.14.tgz#e51aa5250250d569a3fbad3a8a5a687d6036e235"
   integrity sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==

@@ -61,8 +61,9 @@ export default {
       required: true,
     },
 
-    disableSorting: {
+    enableSorting: {
       type: Boolean,
+      default: false,
     },
   },
 
@@ -96,7 +97,7 @@ export default {
     options () {
       const fields = this.allItems
 
-      if (!this.disableSorting) {
+      if (this.enableSorting) {
         fields.sort((a, b) => a.label.localeCompare(b.label))
       }
 

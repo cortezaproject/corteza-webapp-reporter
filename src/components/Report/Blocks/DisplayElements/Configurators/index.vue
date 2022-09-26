@@ -42,7 +42,7 @@
         v-if="currentConfigurableDatasourceName"
       >
         <b-form-group
-          v-if="options.datasources.length > 1"
+          v-if="hasMultipleConfigurableDatasources"
           :label="$t('builder:joined-datasource-handling')"
           label-class="text-primary"
         >
@@ -190,10 +190,14 @@ export default {
 
     currentDatasource () {
       if (this.options.source) {
-        return this.datasources.find(({ step: { load = {}, link = {}, aggregate = {} } }) => [load.name, link.name, aggregate.name].includes(this.options.source))
+        return this.datasources.find(({ step: { load = {}, link = {}, join = {}, aggregate = {} } }) => [load.name, link.name, join.name, aggregate.name].includes(this.options.source))
       }
 
       return undefined
+    },
+
+    hasMultipleConfigurableDatasources () {
+      return this.currentDatasource && this.currentDatasource.step.link && this.options.datasources.length > 1
     },
 
     options: {
@@ -259,7 +263,7 @@ export default {
         const steps = this.datasources.map(({ step }) => step)
         this.$SystemAPI.reportDescribe({ steps, describe: [this.options.source] })
           .then((frames = []) => {
-            this.columns = frames.filter(({ source }) => source === this.options.source).map(({ columns = [] }) => columns.sort((a, b) => a.label.localeCompare(b.label))) || []
+            this.columns = frames.filter(({ source }) => source === this.options.source).map(({ columns = [] }) => columns) || []
           }).catch((e) => {
             this.toastErrorHandler(this.$t('notification:datasource.describe-failed'))(e)
           })
@@ -274,9 +278,9 @@ export default {
       if (source) {
         configurableDatasources = [source]
 
-        const { join } = this.currentDatasource.step
-        if (join) {
-          configurableDatasources = [join.localSource, join.foreignSource]
+        const { link } = this.currentDatasource.step
+        if (link) {
+          configurableDatasources = [link.localSource, link.foreignSource]
         }
       }
 

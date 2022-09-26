@@ -253,6 +253,7 @@
           <component
             :is="getDatasourceComponent(reportDatasources[datasources.currentIndex])"
             v-if="currentDatasourceStep"
+            :index="datasources.currentIndex"
             :datasources="reportDatasources"
             :step.sync="currentDatasourceStep"
           />
@@ -448,6 +449,11 @@ export default {
             label: this.$t('builder:datasource.types.link.label'),
             kind: 'Link',
             value: this.$t('builder:datasource.types.link.load-datasources'),
+          },
+          {
+            label: this.$t('builder:datasource.types.join.label'),
+            kind: 'Join',
+            value: this.$t('builder:datasource.types.join.load-datasources'),
           },
           {
             label: this.$t('builder:datasource.types.aggregate.label'),
@@ -691,6 +697,18 @@ export default {
             step = reporter.StepFactory({
               link: {
                 name: 'Link',
+                foreignColumn: '',
+                foreignSource: '',
+                localColumn: '',
+                localSource: '',
+              },
+            })
+            break
+
+          case 'Join':
+            step = reporter.StepFactory({
+              join: {
+                name: 'Join',
                 foreignColumn: '',
                 foreignSource: '',
                 localColumn: '',

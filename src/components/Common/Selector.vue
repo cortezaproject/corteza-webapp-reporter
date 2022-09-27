@@ -9,6 +9,7 @@
             v-for="element in items"
             :key="element.kind"
             button
+            class="text-truncate"
             @mouseover="currentValue = element.value"
             @click="$emit('select', element.kind)"
           >

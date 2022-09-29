@@ -75,7 +75,7 @@
                   :options="columns"
                   text-field="label"
                   value-field="name"
-                  style="max-width: 25%;"
+                  style="max-width: 33%;"
                   @change="setType(groupIndex, argIndex)"
                 >
                   <template #first>
@@ -90,7 +90,7 @@
                 <b-form-select
                   v-model="group.args[0].args[argIndex].args[0].ref"
                   :options="operators"
-                  style="max-width: 10%;"
+                  style="max-width: 60px;"
                 />
 
                 <b-form-input

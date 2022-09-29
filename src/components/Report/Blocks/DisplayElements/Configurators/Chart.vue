@@ -357,7 +357,7 @@ export default {
         { value: 'doughnut', text: this.$t('display-element:chart.configurator.types.doughnut') },
       ]
 
-      if (this.datasource && this.datasource.step.group) {
+      if (this.datasource && this.datasource.step.aggregate) {
         types.push({ value: 'funnel', text: this.$t('display-element:chart.configurator.types.funnel') })
       }
 

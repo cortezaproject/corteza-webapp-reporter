@@ -118,7 +118,7 @@ export default {
 
         this.$SystemAPI.reportDescribe({ steps, describe: [this.currentDatasourceName] })
           .then((frames = []) => {
-            this.columns = ((frames[0] || {}).columns || []).sort((a, b) => a.label.localeCompare(b.label))
+            this.columns = ((frames[0] || {}).columns || [])
           }).catch((e) => {
             this.toastErrorHandler(this.$t('notification:datasource.describe-failed'))(e)
           })

@@ -47,6 +47,7 @@
             'overflow-hidden h-100': element.kind !== 'Text',
             'w-100': block.elements.length === 1
           }"
+          class="position-relative"
         >
           <div
             v-if="processing"

@@ -383,9 +383,7 @@ export default {
 
     labelColumns () {
       const columns = this.columns.length ? this.columns[0] : []
-      return [
-        ...columns.filter(({ kind }) => this.allowedLabelKinds.includes(kind)),
-      ].sort((a, b) => a.label.localeCompare(b.label))
+      return columns.filter(({ kind }) => this.allowedLabelKinds.includes(kind))
     },
 
     dataColumns () {

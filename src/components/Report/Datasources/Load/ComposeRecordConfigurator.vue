@@ -7,7 +7,7 @@
           class="text-primary"
         >
           <b-form-select
-            :value="namespace"
+            v-model="namespace"
             :options="namespaces"
             text-field="name"
             value-field="namespaceID"
@@ -30,11 +30,10 @@
           class="text-primary"
         >
           <b-form-select
-            :value="module"
+            v-model="module"
             :options="modules"
             text-field="name"
             value-field="moduleID"
-            @change="module = $event"
           >
             <template #first>
               <b-form-select-option
@@ -111,6 +110,22 @@ export default {
     },
   },
 
+  watch: {
+    namespace: {
+      immediate: true,
+      handler (namespace) {
+        if (namespace) {
+          this.processing = true
+
+          this.fetchModules(namespace)
+            .finally(() => {
+              this.processing = false
+            })
+        }
+      },
+    },
+  },
+
   created () {
     this.processing = true
 
@@ -125,18 +140,8 @@ export default {
   },
 
   methods: {
-    selectNamespace (namespace) {
-      this.namespace = namespace
-
-      if (namespace) {
-        this.processing = true
-
-        this.fetchModules(namespace)
-          .finally(() => {
-            this.module = undefined
-            this.processing = false
-          })
-      }
+    selectNamespace () {
+      this.module = undefined
     },
 
     fetchNamespaces () {

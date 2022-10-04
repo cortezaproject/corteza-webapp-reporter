@@ -89,7 +89,7 @@
           class="h-100 editable-block"
         >
           <div
-            class="add-element d-flex align-items-center justify-items-between mr-3 mt-3"
+            class="add-element d-flex align-items-center justify-items-between mr-3 mt-3 pr-1"
           >
             <b-button
               variant="link"

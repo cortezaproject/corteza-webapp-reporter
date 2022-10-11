@@ -315,9 +315,9 @@
 <script>
 import base from './base'
 import ColumnPicker from 'corteza-webapp-reporter/src/components/Common/ColumnPicker'
-import colorschemes from 'chartjs-plugin-colorschemes/src/colorschemes'
 import VueSelect from 'vue-select'
-import { reporter } from '@cortezaproject/corteza-js'
+import { reporter, shared } from '@cortezaproject/corteza-js'
+const { colorschemes } = shared
 
 export default {
   components: {

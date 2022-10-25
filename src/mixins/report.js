@@ -25,9 +25,23 @@ export default {
     async handleSave () {
       this.processing = true
 
+      const { blocks } = this.report
+
+      // Remove dataframes from elements before saving report
+      const report = {
+        ...this.report,
+        blocks: blocks.map(block => {
+          block.elements = block.elements.map(element => {
+            delete element.dataframes
+            return element
+          })
+          return block
+        }),
+      }
+
       // If new then create otherwise update
       if (this.isNew) {
-        return this.$SystemAPI.reportCreate(this.report)
+        return this.$SystemAPI.reportCreate(report)
           .then(report => {
             this.report = new system.Report(report)
             this.toastSuccess(this.$t('notification:report.created'))
@@ -38,7 +52,7 @@ export default {
             this.processing = false
           })
       } else {
-        return this.$SystemAPI.reportUpdate(this.report)
+        return this.$SystemAPI.reportUpdate(report)
           .then(report => {
             this.report = new system.Report(report)
             this.toastSuccess(this.$t('notification:report.updated'))

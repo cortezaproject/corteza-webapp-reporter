@@ -7,97 +7,85 @@
     <b-container fluid="xl">
       <b-row no-gutters>
         <b-col>
-          <b-card
-            no-body
-            class="shadow-sm"
+          <c-resource-list
+            :primary-key="primaryKey"
+            :filter="filter"
+            :sorting="sorting"
+            :pagination="pagination"
+            :fields="tableFields"
+            :items="reportList"
+            :translations="{
+              searchPlaceholder: $t('searchPlaceholder'),
+              notFound: $t('general:resourceList.notFound'),
+              noItems: $t('general:resourceList.noItems'),
+              loading: $t('general:label.loading'),
+              showingPagination: 'general:resourceList.pagination.showing',
+              singlePluralPagination: 'general:resourceList.pagination.single_plural',
+              prevPagination: $t('general:resourceList.pagination.prev'),
+              nextPagination: $t('general:resourceList.pagination.next'),
+            }"
+            clickable
+            class="h-100"
+            @search="filterList"
+            @row-clicked="viewReport"
           >
-            <b-card-header
-              header-bg-variant="white"
-              class="py-3"
-            >
-              <b-row
-                class="justify-content-between wrap-with-vertical-gutters"
-                no-gutters
+            <template #header>
+              <b-button
+                v-if="canCreate"
+                data-test-id="button-create-report"
+                variant="primary"
+                size="lg"
+                class="mr-1"
+                :to="{ name: 'report.create' }"
               >
-                <div class="flex-grow-1">
-                  <div
-                    class="wrap-with-vertical-gutters"
-                  >
-                    <b-button
-                      v-if="canCreate"
-                      data-test-id="button-create-report"
-                      variant="primary"
-                      size="lg"
-                      class="mr-1"
-                      :to="{ name: 'report.create' }"
-                    >
-                      {{ $t('report.new') }}
-                    </b-button>
+                {{ $t('report.new') }}
+              </b-button>
 
-                    <c-permissions-button
-                      v-if="canGrant"
-                      resource="corteza::system:report/*"
-                      :button-label="$t('permissions')"
-                      button-variant="light"
-                      class="btn-lg"
-                    />
-                  </div>
-                </div>
+              <c-permissions-button
+                v-if="canGrant"
+                resource="corteza::system:report/*"
+                :button-label="$t('permissions')"
+                button-variant="light"
+                class="btn-lg"
+              />
+            </template>
 
-                <div class="flex-grow-1 w-25">
-                  <c-input-search
-                    v-model.trim="query"
-                    :placeholder="$t('searchPlaceholder')"
-                  />
-                </div>
-              </b-row>
-            </b-card-header>
-            <b-card-body class="p-0">
-              <b-table
-                :fields="tableFields"
-                :items="reports"
-                :filter="query"
-                :filter-included-fields="['handle', 'name']"
-                head-variant="light"
-                tbody-tr-class="pointer"
-                responsive
-                hover
-                :class="{ 'mb-0': !!reports.length }"
-                @row-clicked="viewReport"
+            <template #name="{ item: r }">
+              {{ r.meta.name }}
+            </template>
+
+            <template #updatedAt="{ item }">
+              {{ (item.updatedAt || item.createdAt) | locFullDateTime }}
+            </template>
+
+            <template #actions="{ item: r }">
+              <b-button
+                v-if="r.canUpdateReport"
+                variant="light"
+                class="mr-2"
+                :to="{ name: 'report.builder', params: { reportID: r.reportID } }"
               >
-                <template v-slot:cell(name)="{ item: r }">
-                  {{ r.meta.name }}
-                </template>
-                <template v-slot:cell(actions)="{ item: r }">
-                  <b-button
-                    v-if="r.canUpdateReport"
-                    variant="light"
-                    class="mr-2"
-                    :to="{ name: 'report.builder', params: { reportID: r.reportID } }"
-                  >
-                    {{ $t('report.builder') }}
-                  </b-button>
-                  <b-button
-                    v-if="r.canUpdateReport"
-                    variant="link"
-                    class="mr-2"
-                    :to="{ name: 'report.edit', params: { reportID: r.reportID } }"
-                  >
-                    {{ $t('report.edit') }}
-                  </b-button>
-                  <c-permissions-button
-                    v-if="r.canGrant"
-                    :tooltip="$t('permissions:resources.system.report.tooltip')"
-                    :title="r.handle"
-                    :target="r.handle"
-                    resource="corteza::system:report/*"
-                    class="btn px-2"
-                    link
-                  />
-                </template>
-              </b-table>
-            </b-card-body>
-          </b-card>
+                {{ $t('report.builder') }}
+              </b-button>
+              <b-button
+                v-if="r.canUpdateReport"
+                variant="link"
+                class="mr-2"
+                :to="{ name: 'report.edit', params: { reportID: r.reportID } }"
+              >
+                {{ $t('report.edit') }}
+              </b-button>
+              <c-permissions-button
+                v-if="r.canGrant"
+                :tooltip="$t('permissions:resources.system.report.tooltip')"
+                :title="r.handle"
+                :target="r.handle"
+                resource="corteza::system:report/*"
+                class="btn px-2"
+                link
+              />
+            </template>
+          </c-resource-list>
         </b-col>
       </b-row>
     </b-container>
@@ -106,8 +94,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import listHelpers from 'corteza-webapp-reporter/src/mixins/listHelpers'
 import { components } from '@cortezaproject/corteza-vue'
-const { CInputSearch } = components
+const { CResourceList } = components
 
 export default {
   name: 'ReportList',
@@ -117,13 +106,25 @@ export default {
   },
 
   components: {
-    CInputSearch,
+    CResourceList,
   },
+
+  mixins: [
+    listHelpers,
+  ],
 
   data () {
     return {
-      query: '',
-      reports: [],
+      primaryKey: 'reportID',
+
+      filter: {
+        query: '',
+      },
+
+      sorting: {
+        sortBy: 'updatedAt',
+        sortDesc: true,
+      },
     }
   },
 
@@ -144,28 +145,16 @@ export default {
       return [
         {
           key: 'name',
-          sortable: true,
-          filterByFormatted: true,
-          tdClass: 'align-middle pl-4 text-nowrap',
-          thClass: 'pl-4',
-          formatter: (name, key, item) => {
-            return item.meta.name
-          },
+          tdClass: 'text-nowrap',
         },
         {
           key: 'handle',
           sortable: true,
-          tdClass: 'align-middle',
         },
         {
           key: 'updatedAt',
           sortable: true,
-          sortByFormatted: true,
-          tdClass: 'align-middle',
-          class: 'text-right',
-          formatter: (updatedAt, key, item) => {
-            return new Date(updatedAt || item.createdAt).toLocaleDateString('en-US')
-          },
+          class: 'text-right text-nowrap',
         },
         {
           key: 'actions',
@@ -176,19 +165,7 @@ export default {
     },
   },
 
-  created () {
-    this.fetchReports()
-  },
-
   methods: {
-    fetchReports () {
-      this.$SystemAPI.reportList()
-        .then(({ set = [] }) => {
-          this.reports = set
-        })
-        .catch(this.toastErrorHandler(this.$t('notification:report.listFetchFailed')))
-    },
-
     viewReport ({ reportID, canReadReport = false }) {
       if (reportID) {
         if (canReadReport) {
@@ -200,6 +177,10 @@ export default {
           this.toastDanger(this.$t('notification:report.notAllowed.read'))
         }
       }
+    },
+
+    reportList () {
+      return this.procListResults(this.$SystemAPI.reportList(this.encodeListParams()))
     },
   },
 }

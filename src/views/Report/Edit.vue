@@ -174,6 +174,7 @@
 
 <script>
 import { system } from '@cortezaproject/corteza-js'
+import { handle } from '@cortezaproject/corteza-vue'
 import report from 'corteza-webapp-reporter/src/mixins/report'
 import EditorToolbar from 'corteza-webapp-reporter/src/components/EditorToolbar'
 import { mapGetters } from 'vuex'
@@ -250,13 +251,7 @@ export default {
     },
 
     handleState () {
-      const { handle } = this.report
-
-      if (!handle || handle.length === 0) {
-        return false
-      }
-
-      return /^[A-Za-z][0-9A-Za-z_\-.]*[A-Za-z0-9]$/.test(handle) ? null : false
+      return handle.handleState(this.report.handle)
     },
 
     canSave () {
